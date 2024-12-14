@@ -5,7 +5,7 @@ from . models import Note
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
+        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email']
         extra_kwargs = {'password': {'write_only': True}} # allows password to be written only but not reading or returning password when getting data from the user
         
     def create(self, validated_data):
