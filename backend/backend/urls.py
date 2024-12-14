@@ -1,3 +1,5 @@
+
+
 """
 URL configuration for backend project.
 
@@ -18,6 +20,7 @@ from django.contrib import admin
 from django.urls import path, include
 from api.views import CreateUserView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,3 +30,4 @@ urlpatterns = [
     path('api-auth', include('rest_framework.urls')),
     path('api/', include('api.urls')), # forward urls to urls from the api folder if it doesnt match any url from the backend url
 ]
+
