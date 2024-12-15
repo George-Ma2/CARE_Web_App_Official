@@ -35,8 +35,9 @@ function StudentInformation() {
 
       <nav className="navbar">
         <form className="form-inline">
+        <div className="left-content">
           <button
-            className="btn btn-outline-success"
+            className="btn btn-outline-secondary"
             type="button"
             onClick={() => navigate('/userdash/calendar')}
           >
@@ -50,11 +51,18 @@ function StudentInformation() {
             Box Information
           </button>
           <button
-            className="btn btn-outline-secondary"
+            className="btn btn-outline-success"
             type="button"
             onClick={() => navigate('/userdash/studentinfo')}
           >
             Student Info
+          </button>
+          </div>
+          <button
+            className="btn btn-logout-btn"
+            type="button"
+            onClick={handleLogout}>
+            Logout
           </button>
         </form>
       </nav>
@@ -72,10 +80,6 @@ function StudentInformation() {
           events={events}
         />
       </div>
-
-      <button className="logout-btn" onClick={handleLogout}>
-        Logout
-      </button>
     </div>
   );
 }
