@@ -9,7 +9,7 @@ from .models import Note
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny] # Allow anyone to user the CreateUserView? verificar
+    permission_classes = [AllowAny]
 
 class NoteListCreate(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
