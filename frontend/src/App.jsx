@@ -8,6 +8,8 @@ import BoxInfo from "./pages/BoxInformation"
 import StudentInfo from "./pages/StudentInfo"
 import ProtectedRoute from "./components/ProtectedRoute"
 import 'bootstrap/dist/css/bootstrap.min.css';
+import PasswordResetRequest from "./components/PasswordResetRequest"
+import PasswordReset from "./components/PasswordReset"
 
 function Logout() {
   localStorage.clear()
@@ -27,6 +29,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
+        <Route path="/request/reset_password" element={<PasswordResetRequest />} />
+        <Route path="/password_reset/:token" element={<PasswordReset />} />
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/userdash/calendar" element={<ProtectedRoute> <Calendar /> </ProtectedRoute>}/>
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>

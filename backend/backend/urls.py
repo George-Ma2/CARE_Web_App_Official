@@ -21,7 +21,6 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from api.views import CreateUserView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,11 +28,8 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='get_token'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh'),
     path('api-auth/', include('rest_framework.urls')),
-    path('reset_password/', auth_views.PasswordResetView.as_view(), name='reset_password'),
-    path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset_password_complete/', auth_views.PasswordResetView.as_view(), name='password_reset_complete'),
-
-    path('api/', include('api.urls')), # forward urls to urls from the api folder if it doesnt match any url from the backend url
+    path('api/password_reset/',include('django_rest_passwordreset.urls', namespace='password_reset')), 
+    # path('api/password_reset/confirm/',include('django_rest_passwordreset.urls', namespace='password_reset/confirm')), 
+    path('api/', include('api.urls')) # forward urls to urls from the api folder if it doesnt match any url from the backend url
 ]
 

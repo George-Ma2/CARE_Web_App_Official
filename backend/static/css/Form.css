@@ -1,0 +1,102 @@
+/* General Form Container */
+.form-container {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    max-width: 400px;
+    width: 100%;
+    min-height: 400px;
+}
+
+/* Title and Description */
+.form-container h3 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-container p {
+    color: #666;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form Input Styling */
+.form-input {
+    width: 90%;
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Focused Input */
+.form-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Submit Button Styling */
+.form-button {
+    width: 95%;
+    padding: 12px;
+    margin: 20px 0;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Button Hover Effect */
+.form-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px); /* Subtle lift effect */
+}
+
+/* Footer Links */
+.form-footer {
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+    color: #333;
+}
+
+/* Link Styling */
+.form-footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design for Small Screens */
+@media (max-width: 480px) {
+    .form-container {
+        padding: 20px;
+        width: 90%;
+    }
+
+    .form-input {
+        width: 100%;
+    }
+
+    .form-button {
+        width: 100%;
+    }
+}
