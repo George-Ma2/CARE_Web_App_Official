@@ -1,4 +1,4 @@
-import "../styles/Calendar.css";
+import "../styles/BoxInformation.css";
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,15 +24,17 @@ function BoxInformation() {
 
       <nav className="navbar">
         <form className="form-inline">
-          <button
-            className="btn btn-outline-success"
+          <div className="left-content">
+        <button
+            className="btn btn-outline-secondary"
             type="button"
             onClick={() => navigate('/userdash/calendar')}
           >
-            Calendar
+           Calendar
           </button>
+
           <button
-            className="btn btn-outline-secondary"
+            className="btn btn-outline-success"
             type="button"
             onClick={() => navigate('/userdash/boxinfo')}
           >
@@ -45,6 +47,14 @@ function BoxInformation() {
           >
             Student Info
           </button>
+          </div>
+          <button
+            className="btn btn-logout-btn"
+            type="button"
+            onClick={handleLogout}>
+            Logout
+          </button>
+      
         </form>
       </nav>
 
@@ -93,9 +103,6 @@ function BoxInformation() {
   </main>
 </div>
 
-      <button className="logout-btn" onClick={handleLogout}>
-        Logout
-      </button>
     </div>
   );
 }
