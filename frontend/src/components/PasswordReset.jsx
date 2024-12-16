@@ -29,7 +29,7 @@ const PasswordReset = () => {
         }
 
         if (password !== confirmPassword) {
-            setErrorMessage('Password do not match.');
+            setErrorMessage('Passwords do not match.');
             return;
         }
 
@@ -37,9 +37,11 @@ const PasswordReset = () => {
         setSuccessMessage('');
 
         try {
-            const response = await api.post('/password_reset/confirm', 
-                { password },
-                { token },
+            const response = await api.post('api/password_reset/confirm/', 
+                {
+                    "password": password,
+                    "token": token
+                }
             );
 
             if (response.status === 200) {
@@ -50,6 +52,7 @@ const PasswordReset = () => {
             }
         } catch (error) {
             setErrorMessage('An error occurred while sending the password reset password. Please try again later.');
+            
         }
 
         setPassword('');
