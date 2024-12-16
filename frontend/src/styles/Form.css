@@ -71,14 +71,14 @@ background-color: #0056b3;
 }
 
 .form-file-upload label {
-    font-family: Arial, sans-serif; /* Explicitly set the font */
+    font-family: Arial, sans-serif;
     font-size: 14px;
     margin-bottom: 5px;
     color: #333;
 }
 
 .form-file-upload input[type="file"] {
-    width: 90%;                    /* Make the input width consistent with other fields */
+    width: 90%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
