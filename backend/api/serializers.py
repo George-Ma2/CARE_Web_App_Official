@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers # gets the model data or object such as the user and converts to JSON
-from . models import Note
+from . models import Note, Product
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,5 +18,9 @@ class NoteSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "content", "created_at", "author"]
         extra_kwargs = {"author": {"read_only": True}}
 
-
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'category', 'qty_on_hand', 'qty_delivered', 'qty_on_change', 'exp_date', 'created_by']
+        extra_kwargs = {"created_by": {"read_only": True}}       
 

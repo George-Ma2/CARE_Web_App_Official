@@ -1,0 +1,52 @@
+.box-creation {
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+  }
+  
+  .box-creation h1 {
+    text-align: center;
+  }
+  
+  .box-creation-section {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .inventory table,
+  .selected-products table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table th,
+  table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  table th {
+    background: #f1f1f1;
+  }
+  
+  button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  button:hover:not(:disabled) {
+    background: #0056b3;
+  }
+  

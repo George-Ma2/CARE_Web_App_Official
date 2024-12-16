@@ -1,0 +1,43 @@
+.dashboard {
+    padding: 20px;
+    display: grid;
+    gap: 20px;
+  }
+  
+  .dashboard h1 {
+    text-align: center;
+  }
+  
+  .dashboard-section {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .chart-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .student-list table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .student-list th, .student-list td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .student-list th {
+    background: #f1f1f1;
+  }
+  
+  .summary {
+    text-align: center;
+    font-size: 1.2em;
+  }
+  
