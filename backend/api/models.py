@@ -21,8 +21,8 @@ class Note(models.Model):
 @receiver(reset_password_token_created)
 def password_reset_token_created(reset_password_token, *args, **kwargs):
     sitelink = "http://localhost:5173/"
-    token = "?token={}".format(reset_password_token.key)
-    full_link = str(sitelink)+str("password-reset")+str(token)
+    token = "{}".format(reset_password_token.key)
+    full_link = str(sitelink)+str("password_reset/")+str(token)
 
     print (full_link)
     print (token)
