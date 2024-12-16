@@ -122,7 +122,7 @@ function Form({ route, method }) {
                 <div className="form-footer">
                     <a href="/reset-password">Forgot Password?</a>
                     <br></br>
-                    <p>Already have an account? </p>
+                    <p>Don't have an account? </p>
                     <a href="/register">Register</a>
                 </div>
             )}
