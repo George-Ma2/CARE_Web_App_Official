@@ -9,12 +9,13 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
 
+
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', unique=True)
     photo_id = models.ImageField(upload_to='photos/', null=True, blank=True)
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username}'s Profile"
 
 
 

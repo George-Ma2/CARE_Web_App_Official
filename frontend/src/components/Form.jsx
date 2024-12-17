@@ -33,10 +33,9 @@ function Form({ route, method }) {
             formData.append("profile.photo_id", photoId); // Match the backend field
             
         }
-    
         try {
             const res = await api.post(route, formData);
-    
+        
             if (method === "login") {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
@@ -46,11 +45,16 @@ function Form({ route, method }) {
                 navigate("/login");
             }
         } catch (error) {
-            if (error.response && error.response.data) {
-                alert("Error: " + JSON.stringify(error.response.data));
+            console.error("API Error:", error);
+            
+            if (error.response) {
+                console.error("Server Response Data:", error.response.data);
+                console.error("HTTP Status Code:", error.response.status);
+                alert(`Error: ${JSON.stringify(error.response.data)}`);
             } else {
                 alert("Form submission error: " + error.message);
             }
+        
         } finally {
             setLoading(false);
         }

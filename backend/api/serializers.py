@@ -25,16 +25,10 @@ class UserSerializer(serializers.ModelSerializer):
         # Create the user
         user = User.objects.create_user(**validated_data)
 
-        # Create the profile if profile data exists
-        if profile_data:
-            photo = profile_data.get('photo_id')
-            if photo:
-                # Validate and save the profile with the uploaded file
-                Profile.objects.create(user=user, photo_id=photo)
-                print("Profile photo uploaded:", photo)
-            else:
-                raise ValidationError({"profile": "Photo upload failed."})
-        
+       
+        if not hasattr(user, 'profile'):
+            Profile.objects.create(user=user, **profile_data)
+
         return user
 
 
