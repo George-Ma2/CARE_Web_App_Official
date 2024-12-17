@@ -123,9 +123,9 @@ function DisplayID() {
               <section className="box-section">
                 <h2>Student ID</h2>
                 <h1>Welcome, {userData.username}</h1>
-                {userData.photo_id ? (
+                {userData.profile.photo_id ? (
                   <img
-                    src={userData.photo_id}
+                    src={userData.profile.photo_id}
                     alt="User Photo ID"
                     style={{ width: "200px", height: "auto", marginTop: "10px" }}
                   />
