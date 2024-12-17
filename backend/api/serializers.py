@@ -1,16 +1,42 @@
+
+from rest_framework import serializers
 from django.contrib.auth.models import User
-from rest_framework import serializers # gets the model data or object such as the user and converts to JSON
-from . models import Note
+from .models import Profile, Note
+from rest_framework.exceptions import ValidationError
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['photo_id']
+
 
 class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(required=False)  # Include nested profile serializer
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email']
-        extra_kwargs = {'password': {'write_only': True}} # allows password to be written only but not reading or returning password when getting data from the user
-        
+        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'email', 'profile']
+        extra_kwargs = {'password': {'write_only': True}}
+
     def create(self, validated_data):
+        print("Validated Data:", validated_data)
+        profile_data = validated_data.pop('profile', None)
+        print("Profile Data:", profile_data)
+        # Create the user
         user = User.objects.create_user(**validated_data)
+
+        # Create the profile if profile data exists
+        if profile_data:
+            photo = profile_data.get('photo_id')
+            if photo:
+                # Validate and save the profile with the uploaded file
+                Profile.objects.create(user=user, photo_id=photo)
+                print("Profile photo uploaded:", photo)
+            else:
+                raise ValidationError({"profile": "Photo upload failed."})
+        
         return user
+
 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:

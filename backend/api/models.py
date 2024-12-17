@@ -8,6 +8,16 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    photo_id = models.ImageField(upload_to='photos/', null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+
 class Note(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -44,3 +54,17 @@ def password_reset_token_created(reset_password_token, *args, **kwargs):
 
     msg.attach_alternative(email_html_message, "text/html")
     msg.send()
+
+
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, **kwargs):
+    if kwargs.get('created', False):
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

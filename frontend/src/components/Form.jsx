@@ -2,8 +2,8 @@ import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
-import "../styles/Form.css"
-import reactLogo from "../assets/react.svg"
+import "../styles/Form.css";
+import reactLogo from "../assets/react.svg";
 
 function Form({ route, method }) {
     const [username, setUsername] = useState("");
@@ -12,50 +12,64 @@ function Form({ route, method }) {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [photoId, setPhotoId] = useState(null);
+    const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const name = method === "login" ? "Login" : "Register";
 
     const handleSubmit = async (e) => {
-        setLoading(true);
         e.preventDefault();
-
+        setLoading(true);
+    
         const formData = new FormData();
         formData.append("username", username);
         formData.append("password", password);
+    
         if (method === "register") {
             formData.append("first_name", firstName);
             formData.append("last_name", lastName);
             formData.append("email", email);
-            if (photoId) {
-                formData.append("photo_id", photoId);
-            }
+            formData.append("profile.photo_id", photoId); // Match the backend field
+            
         }
-
+    
         try {
             const res = await api.post(route, formData);
+    
             if (method === "login") {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                navigate("/userdash/calendar")
-            } else {
-                navigate("/login")
+                navigate("/userdash/calendar");
+            } else if (method === "register") {
+                alert("Registration successful. Please log in.");
+                navigate("/login");
             }
         } catch (error) {
-            alert(error)
+            if (error.response && error.response.data) {
+                alert("Error: " + JSON.stringify(error.response.data));
+            } else {
+                alert("Form submission error: " + error.message);
+            }
         } finally {
-            setLoading(false)
+            setLoading(false);
+        }
+    };
+    
+
+    const handlePhotoUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPhotoId(file);
+            setPreview(URL.createObjectURL(file));
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className="form-container">
-
             <div className="form-logo">
                 <img src={reactLogo} alt="Logo" className="logo-img" />
             </div>
-
 
             <h1>{name}</h1>
 
@@ -102,15 +116,26 @@ function Form({ route, method }) {
                         placeholder="Email"
                         required
                     />
+
+                    {/* Photo Upload Component */}
                     <div className="form-file-upload">
-                        <label htmlFor="photo-id">Upload Student ID (optional):</label>
+                        <label htmlFor="photo_id">Upload Student ID (optional):</label>
                         <input
-                            id="photo-id"
+                            id="photo_id"
                             type="file"
-                            onChange={(e) => setPhotoId(e.target.files[0])}
+                            onChange={handlePhotoUpload}
                         />
                     </div>
 
+                    {preview && (
+                        <div className="photo-preview">
+                            <img
+                                src={preview}
+                                alt="Uploaded Photo Preview"
+                                style={{ width: "200px", height: "auto", marginTop: "10px" }}
+                            />
+                        </div>
+                    )}
                 </>
             )}
 
@@ -121,15 +146,14 @@ function Form({ route, method }) {
             {method === "login" && (
                 <div className="form-footer">
                     <a href="/request/reset_password">Forgot Password?</a>
-                    <br></br>
-                    <p>Don't have an account? </p>
+                    <br />
+                    <p>Don't have an account?</p>
                     <a href="/register">Register</a>
                 </div>
             )}
-
             {method === "register" && (
                 <div className="form-footer">
-                    <p>Already have an account? </p>
+                    <p>Already have an account?</p>
                     <a href="/login">Login</a>
                 </div>
             )}
@@ -137,4 +161,4 @@ function Form({ route, method }) {
     );
 }
 
-export default Form
+export default Form;
