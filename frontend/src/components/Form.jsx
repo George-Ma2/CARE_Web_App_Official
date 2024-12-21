@@ -3,7 +3,7 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import "../styles/Form.css";
-import reactLogo from "../assets/react.svg";
+import careLogo from "../assets/care.png";
 
 function Form({ route, method }) {
     const [username, setUsername] = useState("");
@@ -70,12 +70,13 @@ function Form({ route, method }) {
     };
 
     return (
+        
+        
         <form onSubmit={handleSubmit} className="form-container">
-            <div className="form-logo">
-                <img src={reactLogo} alt="Logo" className="logo-img" />
-            </div>
-
-            <h1>{name}</h1>
+            
+                <img src={careLogo} alt="Logo" className="form-logo" />
+               
+            <h2>{name}</h2>
 
             <input
                 className="form-input"
@@ -158,7 +159,7 @@ function Form({ route, method }) {
             {method === "register" && (
                 <div className="form-footer">
                     <p>Already have an account?</p>
-                    <a href="/login">Login</a>
+                    <a href="/login">Go back to Login!</a>
                 </div>
             )}
         </form>
