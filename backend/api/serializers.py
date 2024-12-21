@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers # gets the model data or object such as the user and converts to JSON
 from . models import Note
+from . models import Inventory
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,5 +19,14 @@ class NoteSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "content", "created_at", "author"]
         extra_kwargs = {"author": {"read_only": True}}
 
+class InventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = ['id', 'name', 'category', 'quantity', 'expiration_date', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'created_at': {'read_only': True},
+            'updated_at': {'read_only': True},
+        }
 
 
