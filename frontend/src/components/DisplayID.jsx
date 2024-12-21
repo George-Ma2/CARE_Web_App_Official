@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 
-import "../styles/BoxInformation.css";
+import "../styles/StudentInfo.css";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api"; // Ensure this is correctly configured
@@ -127,7 +127,14 @@ function DisplayID() {
                   <img
                     src={userData.profile.photo_id}
                     alt="User Photo ID"
-                    style={{ width: "200px", height: "auto", marginTop: "10px" }}
+                    style={{
+                      width: "500px",
+                      height: "auto",
+                      marginTop: "10px",
+                      borderRadius: "30px", // Increases rounding of the corners
+                      boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)", // Makes the shadow more noticeable
+                      border: "5px solid #004092" // Adds a thick blue border
+                    }}
                   />
                 ) : (
                   <p>No photo uploaded.</p>
