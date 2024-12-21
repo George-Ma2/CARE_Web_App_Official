@@ -1,7 +1,7 @@
 import "../styles/BoxInformation.css";
+import "../styles/Box.css";
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 
 function BoxInformation() {
   const navigate = useNavigate();
@@ -15,6 +15,16 @@ function BoxInformation() {
     navigate('/login');
   };
 
+  // Function to fetch order details from the database
+  const fetchOrderDetails = async () => {
+    // Example API endpoint - replace with your actual backend endpoint
+    const response = await fetch('/api/get-order-details');
+    const data = await response.json();
+    setOrderInfo({
+      packageName: data.packageName,
+      pickupLocation: data.pickupLocation,
+    });
+  };
 
   return (
     <div className="container">
@@ -25,86 +35,115 @@ function BoxInformation() {
       <nav className="navbar">
         <form className="form-inline">
           <div className="left-content">
-        <button
-            className="btn btn-outline-secondary"
-            type="button"
-            onClick={() => navigate('/userdash/calendar')}
-          >
-           Calendar
-          </button>
+            <button
+              className="btn btn-outline-secondary"
+              type="button"
+              onClick={() => navigate('/userdash/calendar')}
+            >
+              Calendar
+            </button>
 
-          <button
-            className="btn btn-outline-success"
-            type="button"
-            onClick={() => navigate('/userdash/boxinfo')}
-          >
-            Box Information
-          </button>
-          <button
-            className="btn btn-outline-secondary"
-            type="button"
-            onClick={() => navigate('/userdash/studentinfo')}
-          >
-            Student Info
-          </button>
+            <button
+              className="btn btn-outline-success"
+              type="button"
+              onClick={() => navigate('/userdash/boxinfo')}
+            >
+              Box Information
+            </button>
+
+            <button
+              className="btn btn-outline-secondary"
+              type="button"
+              onClick={() => navigate('/userdash/studentinfo')}
+            >
+              Student Info
+            </button>
           </div>
+          
           <button
             className="btn btn-logout-btn"
             type="button"
-            onClick={handleLogout}>
+            onClick={handleLogout}
+          >
             Logout
           </button>
-      
         </form>
       </nav>
 
-      <div class="student-dashboard">
- 
-  
-  <main class="main-content">
-    <div class="content-grid">
-      <div class="content-column">
-        <section class="box-section">
-          <h2>Box Content</h2>
-          <div class="box-preview"></div>
-        </section>
-      </div>
-      
-      <div class="content-column">
-        <div class="order-section">
-          <div class="divider"></div>
-          <form class="order-form">
-            <div class="order-summary">
-              <h3 class="summary-header">Order Summary:</h3>
-              <div class="summary-content">
-                <p class="package-info">1x CARE Weekly Box FREE</p>
-                <p class="pickup-location">Pick-up @ IDEA Center</p>
-                
-                <div class="checkbox-group">
-                  <input type="checkbox" id="pickup-agreement" class="checkbox" required />
-                  <label for="pickup-agreement" class="checkbox-label">
-                    By clicking, I ensure I will pick up the package within the date established. If I do not send prior notice, I accept I may not receive my reserved box. Certain exceptions may be made with prior notice.
-                  </label>
+      <div className="student-dashboard">
+        <main className="main-content">
+          <div className="content-grid">
+            <div className="content-column">
+              <section className="box-section">
+                <h2>Box Content</h2>
+                <div id="logo">
+                  <div className="box">
+                    <div className="side front"></div>
+                    <div className="side left"></div>
+                    <div className="side back"></div>
+                    <div className="side right"></div>
+                    <div className="side bottom"></div>
+                    <div className="flap front"></div>
+                    <div className="flap back"></div>
+                    <div className="flap left"></div>
+                    <div className="flap right"></div>
+
+                    {/* Update to use onClick for React */}
+                    <button className="box-button" onClick={fetchOrderDetails}>
+                      View Goodies!
+                    </button>
+                  </div>
                 </div>
-                
-                <div class="checkbox-group">
-                  <input type="checkbox" id="availability-agreement" class="checkbox" required />
-                  <label for="availability-agreement" class="checkbox-label">
-                    I also understand that donations are limited and boxes will be prepared on a rolling basis. Certain items may not be available for my personal box once the order is recieved.
-                  </label>
-                </div>
+              </section>
+            </div>
+
+            <div className="content-column">
+              <div className="order-section">
+                <div className="divider"></div>
+                <form className="order-form">
+                  <div className="order-summary">
+                  <h3 className="summary-header">Package Details:</h3>
+                    <div className="summary-content">
+                      <label htmlFor="packageDate">Package Date:</label>
+                      <input
+                        type="text"
+                        id="packageDate"
+                        className="order-info"
+                        placeholder = "12/21/2024"
+                        value={""}
+                        readOnly
+                      />
+                      <label htmlFor="pickupLocation">Pick-up Location:</label>
+                      <input
+                        type="text"
+                        id="pickupLocation"
+                        className="order-info"
+                        placeholder = "Oficina CARE"
+                        value={""}
+                        readOnly
+                      />
+
+                      <label htmlFor="packageContents">Package Contents:</label>
+                      <input
+                        type="text"
+                        id="packageContents"
+                        className="order-info"
+                        placeholder = "A list of products included within the package."
+                        value={""}
+                        readOnly
+                      />
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
-            <button type="submit" class="submit-button">Register my order!</button>
-          </form>
-        </div>
+          </div>
+        </main>
       </div>
-    </div>
-  </main>
-</div>
-
     </div>
   );
 }
 
+
 export default BoxInformation;
+

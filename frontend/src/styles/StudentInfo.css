@@ -1,4 +1,8 @@
 
+:root {
+  --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .student-dashboard {
   background: #fff;
   display: flex;
@@ -159,7 +163,7 @@
 }
 
 .summary-header {
-  background: #C6302C;
+  background: #d90f13;
   font-size: 20px;
   color: #fff;
   text-align: center;

@@ -1,0 +1,224 @@
+:root {
+    --box-light: #f1b074;
+    --box-mid: #a67549;
+    --box-inner-mid: #9a673e;
+    --box-dark: #8f5f37;
+    --box-inner-dark: #7c4b26;
+    --box-inner-darkest: #6b3e1c;
+}
+
+:root {
+    --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+body {
+    display: grid;
+    place-items: center;
+    height: 100vh;
+    margin: 0; /* Ensure there's no margin on body */
+}
+
+#logo {
+    --size: 60vmin;
+    width: var(--size);
+    height: var(--size);
+    padding: 1rem;
+    border-radius: 1rem;
+    perspective: 30rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center; /* Centering the box within #logo */
+    align-items: center;
+}
+
+.box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: translateZ(-20rem) rotatex(-15deg) rotatey(45deg);
+    font-size: 2.5rem;
+    text-align: center;
+    transition: 0.75s;
+}
+
+.box > * {
+    position: absolute;
+    background: #0008;
+    transition: 0.5s;
+}
+
+.side {
+    &.front,
+    &.left,
+    &.back,
+    &.right {
+        width: var(--size);
+        height: calc(var(--size) * 0.75);
+        transform:
+            translateY(calc(var(--size) * 0.25))
+            rotateY(var(--angle, 0deg))
+            translateZ(calc(var(--size) * 0.499));
+    }
+
+    &.front {
+        background: var(--box-mid);
+    }
+
+    &.right {
+        --angle: 90deg;
+        background: var(--box-inner-mid);
+    }
+
+    &.back {
+        --angle: 180deg;
+        background: var(--box-inner-dark);
+    }
+
+    &.left {
+        --angle: -90deg;
+        background: var(--box-dark);
+    }
+
+    &.bottom {
+        width: var(--size);
+        height: var(--size);
+        transform:
+            translateY(calc(var(--size) * 0.25))
+            rotateX(90deg)
+            translateZ(calc(var(--size) * -0.249));
+        background: var(--box-inner-darkest);
+    }
+}
+
+.flap {
+    background: var(--box-light);
+
+    &.front,
+    &.back {
+        width: var(--size);
+        height: calc(var(--size) * 0.5);
+    }
+
+    &.left,
+    &.right {
+        width: calc(var(--size) * 0.5);
+        height: var(--size);
+    }
+
+    &.front {
+        transform-origin: 50% 100% calc(var(--size) * 0.5);
+        transform:
+            translateY(calc(var(--size) * -0.25))
+            rotateX(90deg)
+            translateZ(calc(var(--size) * 0.499));
+    }
+
+    &.back {
+        transform-origin: 50% 100% calc(var(--size) * -0.5);
+        transform:
+            translateY(calc(var(--size) * -0.25))
+            rotateX(-90deg)
+            translateZ(calc(var(--size) * -0.499));
+    }
+
+    &.left {
+        transform-origin: 0 50% 0;
+        transform:
+            translateY(calc(var(--size) * -0.25))
+            rotateX(90deg)
+            rotateY(0deg);
+    }
+
+    &.right {
+        transform-origin: 0 50% 0;
+        transform:
+            translateX(var(--size))
+            translateY(calc(var(--size) * -0.25))
+            rotateX(90deg)
+            rotateY(180deg);
+    }
+}
+
+/* Make the button hidden by default */
+.box-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1rem 2rem;
+    background-color: #174bda;
+    color: white;
+    font-weight: bold;
+    font-family: 'Poppins', var(--default-font-family);
+    font-size: 4rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    opacity: 0; /* Hide the button initially */
+    transition: opacity 0.3s ease;
+}
+
+/* Show the button when hovering over the #logo */
+#logo:hover .box-button {
+    opacity: 1; /* Make the button visible */
+}
+
+#logo:hover .box {
+    transform: translateZ(-30rem) rotatex(-40deg) rotatey(15deg);
+}
+
+#logo:hover .box .flap {
+    background: var(--box-inner-mid);
+
+    &.front {
+        transform:
+            translateY(calc(var(--size) * -0.25))
+            rotateX(-120deg)
+            translateZ(calc(var(--size) * 0.499));
+    }
+
+    &.back {
+        transform:
+            translateY(calc(var(--size) * -0.25))
+            rotateX(120deg)
+            translateZ(calc(var(--size) * -0.499));
+    }
+
+    &.left {
+        transform:
+            translateY(calc(var(--size) * -0.25))
+            rotateX(90deg)
+            rotateY(-210deg);
+    }
+
+    &.right {
+        transform:
+            translateX(var(--size))
+            translateY(calc(var(--size) * -0.25))
+            rotateX(90deg)
+            rotateY(380deg);
+    }
+}
+
+/* Initially, position the item list off-screen (hidden) */
+.item-list {
+    display: none;
+    opacity: 0;
+    position: absolute;
+    top: 50%;  /* Vertically center */
+    right: 0;  /* Align to the right of the container */
+    transform: translateY(-50%);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* When the box is clicked, show the item list on the right side */
+#logo.clicked .item-list {
+    display: block;
+    opacity: 1;
+    transform: translateY(-50%) translateX(0); /* Move it into view */
+}
+
+#logo.clicked .box {
+    transform: translateX(-50%) translateZ(-20rem);
+}

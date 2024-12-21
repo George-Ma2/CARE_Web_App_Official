@@ -1,4 +1,18 @@
+:root {
+  --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
+.student-dashboard h2 {
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 50px; 
+  font-weight: 700;
+  color: black;
+  background-color: #F6C932;
+  margin-bottom: 20px;
+  margin-right: 70px; 
+  border-radius: 5px;
+
+}
 .student-dashboard {
   background: #fff;
   display: flex;
@@ -20,7 +34,7 @@
   border-bottom: 1px solid #eaeaea;
   padding: 10px 20px;
   display: flex;
-  flex-wrap: wrap; /* Allows the content to wrap on smaller screens */
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin: 0;
@@ -32,7 +46,7 @@
 .navbar .form-inline {
   padding: 10px;
   display: flex;
-  flex-wrap: wrap; /* Adjust layout when screen width is smaller */
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 20px;
@@ -79,19 +93,15 @@
 }
 
 .left-content {
-  display: flex; /* Ensure proper layout for left-side content */
+  display: flex;
   gap: 20px;
   padding-right: 550px;
 }
 
 .top-left-img {
-  position: relative;
-  top: 0;
-  left: 0; /* Ensures proper alignment */
   width: 100px;
   height: auto;
 }
-
 
 .main-content {
   align-self: center;
@@ -108,7 +118,6 @@
 .content-column {
   display: flex;
   flex-direction: column;
-  line-height: normal;
   width: 50%;
 }
 
@@ -116,16 +125,9 @@
   display: flex;
   margin-top: 19px;
   flex-direction: column;
-  color: #000;
+  color: black;
   text-align: center;
   font: 700 32px Poppins, sans-serif;
-}
-
-.box-preview {
-  background: #AD8468;
-  display: flex;
-  margin-top: 89px;
-  height: 428px;
 }
 
 .order-section {
@@ -147,7 +149,6 @@
   margin-top: 11px;
   flex-direction: column;
   flex-grow: 1;
-  flex-basis: 0;
   width: fit-content;
 }
 
@@ -159,7 +160,7 @@
 }
 
 .summary-header {
-  background: #C6302C;
+  background: #d90f13;
   font-size: 20px;
   color: #fff;
   text-align: center;
@@ -177,14 +178,29 @@
   padding: 0 64px 0 20px;
 }
 
-.package-info {
-  text-align: center;
-  margin-left: 30px;
-}
-
+.package-info,
 .pickup-location {
   text-align: center;
-  margin: 64px 0 0 40px;
+}
+
+.order-info {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.order-info:focus {
+  outline: none;
+  border-color: #174bda;
+  box-shadow: 0 0 5px rgba(23, 75, 218, 0.4);
 }
 
 .checkbox-group {
@@ -195,7 +211,6 @@
 
 .checkbox {
   background: #D9D9D9;
-  align-self: start;
   width: 26px;
   height: 26px;
   border: 1px solid #000;
@@ -231,73 +246,99 @@
   border: 0;
 }
 
-
-
 @media (max-width: 991px) {
   .header-container {
     max-width: 100%;
   }
-  
-  .nav-menu {
-    max-width: 100%;
-  }
-  
-  .nav-item {
-    padding: 0 20px;
-  }
-  
+
   .main-content {
     max-width: 100%;
     margin-top: 40px;
   }
-  
+
   .content-grid {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
   }
-  
+
   .content-column {
     width: 100%;
   }
-  
-  .box-section {
-    margin-top: 40px;
-  }
-  
-  .box-preview {
-    margin-top: 40px;
-  }
-  
+
   .order-section {
     margin-top: 40px;
   }
-  
+
   .order-summary,
   .summary-header,
   .summary-content {
     max-width: 100%;
   }
-  
+
   .summary-content {
     padding-right: 20px;
     margin-top: 40px;
   }
-  
+
   .package-info,
   .pickup-location {
     margin-left: 10px;
   }
-  
+
   .pickup-location {
     margin-top: 40px;
   }
-  
+
   .checkbox-group {
     margin-top: 40px;
   }
-  
+
   .submit-button {
     padding-left: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .header-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar {
+    padding: 8px 15px;
+  }
+
+  .navbar .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .main-content {
+    margin-top: 20px;
+    padding: 0 15px;
+  }
+
+  .content-grid {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .order-section {
+    margin-top: 20px;
+  }
+
+  .order-summary,
+  .summary-header,
+  .summary-content {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  .submit-button {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 20px;
+    width: auto;
   }
 }
