@@ -4,7 +4,7 @@
 
 
 .student-dashboard { 
-  background: #fff;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -166,6 +166,7 @@ body {
   margin-top: 108px;
   width: 100%;
   max-width: 1016px;
+  
 }
 
 .content-grid {

@@ -123,7 +123,7 @@ function DisplayID() {
               <section className="box-section">
                 <h2>Student ID</h2>
                 <h1>Welcome, {userData.username}</h1>
-                {userData.profile.photo_id ? (
+                  {userData.profile.photo_id ? (
                   <img
                     src={userData.profile.photo_id}
                     alt="User Photo ID"
@@ -131,6 +131,7 @@ function DisplayID() {
                       width: "500px",
                       height: "auto",
                       marginTop: "10px",
+                      marginRight: "100px",
                       borderRadius: "30px", // Increases rounding of the corners
                       boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)", // Makes the shadow more noticeable
                       border: "5px solid #004092" // Adds a thick blue border

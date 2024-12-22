@@ -43,6 +43,7 @@ function Form({ route, method }) {
             } else if (method === "register") {
                 alert("Registration successful. Please log in.");
                 navigate("/login");
+             
             }
         } catch (error) {
             console.error("API Error:", error);
@@ -159,7 +160,7 @@ function Form({ route, method }) {
             {method === "register" && (
                 <div className="form-footer">
                     <p>Already have an account?</p>
-                    <a href="/login">Go back to Login!</a>
+                    <a href="/login">Go back to Login</a>
                 </div>
             )}
         </form>
