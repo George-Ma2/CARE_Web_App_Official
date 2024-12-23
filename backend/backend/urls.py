@@ -34,7 +34,3 @@ urlpatterns = [
     path('api/', include('api.urls')) # forward urls to urls from the api folder if it doesnt match any url from the backend url
     
 ]
-
-# Serve media files during development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

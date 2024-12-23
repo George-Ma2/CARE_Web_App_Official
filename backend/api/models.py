@@ -11,7 +11,7 @@ from django.utils.html import strip_tags
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    photo_id = models.ImageField(upload_to='photos/', null=True, blank=True)
+    photo_id = models.BinaryField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
@@ -65,3 +65,5 @@ def create_user_profile(sender, instance, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+

@@ -104,6 +104,8 @@ function BoxInformation() {
                   <div className="order-summary">
                   <h3 className="summary-header">Package Details:</h3>
                     <div className="summary-content">
+                    <div className="form-row">
+                    <div className="form-group">
                       <label htmlFor="packageDate">Package Date:</label>
                       <input
                         type="text"
@@ -113,6 +115,8 @@ function BoxInformation() {
                         value={""}
                         readOnly
                       />
+                      </div>
+                      <div className="form-group">
                       <label htmlFor="pickupLocation">Pick-up Location:</label>
                       <input
                         type="text"
@@ -122,7 +126,8 @@ function BoxInformation() {
                         value={""}
                         readOnly
                       />
-
+                      </div>
+                      </div>
                       <label htmlFor="packageContents">Package Contents:</label>
                       <input
                         type="text"

@@ -1,10 +1,7 @@
-import { jwtDecode } from "jwt-decode";
-
-import "../styles/StudentInfo.css";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api"; // Ensure this is correctly configured
-import { ACCESS_TOKEN } from "../constants";
+import "../styles/StudentInfo.css";
 
 function DisplayID() {
   const [userData, setUserData] = useState(null);
@@ -15,49 +12,19 @@ function DisplayID() {
     document.title = "Student Information";
   }, []);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem(ACCESS_TOKEN); // Retrieve the token
-        if (!token) {
-          console.error("No token found in localStorage");
-          navigate('/login');
-          return;
-        }
-
-        // Decode the token to get the user information (e.g., username or ID)
-        const decodedToken = jwtDecode(token);
-        console.log("Decoded Token:", decodedToken);
-
-        const user_id = decodedToken.user_id; // Assuming your token includes user_id
-        console.log("Logged-in User ID:", user_id);
-
-        // Fetch all users
-        const response = await api.get("api/profile/users/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log("All Users Data:", response.data);
-
-        // Find the currently logged-in user from the list
-        const currentUser = response.data.find(user => user.id === user_id);
-        if (!currentUser) {
-          console.error("Current user not found in the list of users");
-          return;
-        }
-
-        setUserData(currentUser);
+        // Fetch the current user's profile directly
+        const response = await api.get("api/profile");
+       
+        // Assuming response.data contains the logged-in user's information
+        console.log("Current User Data:", response.data);
+        setUserData(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error.response?.data || error.message);
         if (error.response?.status === 401) {
-          navigate('/login'); // Redirect on unauthorized
+          navigate("/login"); // Redirect on unauthorized
         }
       } finally {
         setLoading(false);
@@ -67,6 +34,11 @@ function DisplayID() {
     fetchUserData();
   }, [navigate]);
 
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -74,6 +46,9 @@ function DisplayID() {
   if (!userData) {
     return <p>No user data found.</p>;
   }
+
+  // Check if profile exists and has photo_id
+  const hasPhoto = userData.profile && userData.profile.photo_id;
 
   return (
     <div className="container">
@@ -123,18 +98,18 @@ function DisplayID() {
               <section className="box-section">
                 <h2>Student ID</h2>
                 <h1>Welcome, {userData.username}</h1>
-                  {userData.profile.photo_id ? (
+                {hasPhoto ? (
                   <img
-                    src={userData.profile.photo_id}
+                    src={`data:image/jpeg;base64,${userData.profile.photo_id}`}
                     alt="User Photo ID"
                     style={{
                       width: "500px",
                       height: "auto",
                       marginTop: "10px",
                       marginRight: "100px",
-                      borderRadius: "30px", // Increases rounding of the corners
-                      boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)", // Makes the shadow more noticeable
-                      border: "5px solid #004092" // Adds a thick blue border
+                      borderRadius: "30px",
+                      boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+                      border: "5px solid #004092",
                     }}
                   />
                 ) : (
@@ -150,8 +125,28 @@ function DisplayID() {
                   <div className="order-summary">
                     <h3 className="summary-header">Order History:</h3>
                     <div className="summary-content">
-                      <p className="package-info">1x CARE Weekly Box FREE</p>
-                      <p className="pickup-location">Pick-up @ IDEA Center</p>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label htmlFor="packageDate">Package Date:</label>
+                          <input
+                            type="text"
+                            id="packageDate"
+                            className="order-info"
+                            placeholder="12/21/2024"
+                            readOnly
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="orderPickUp">Order Picked Up:</label>
+                          <input
+                            type="text"
+                            id="orderPickUp"
+                            className="order-info"
+                            placeholder="Yes/No"
+                            readOnly
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </form>

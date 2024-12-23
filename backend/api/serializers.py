@@ -5,11 +5,23 @@ from .models import Profile, Note
 from rest_framework.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from io import BytesIO
+
 
 class ProfileSerializer(serializers.ModelSerializer):
+    photo_id = serializers.ImageField(required=False, write_only=True)
+   
     class Meta:
         model = Profile
         fields = ['photo_id']
+
+    def get_photo_id(self, obj):
+        if obj.photo_id:
+            import base64
+            return base64.b64encode(obj.photo_id.read()).decode('utf-8')  # Convert binary to Base64 string
+        return None
+
+
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(required=False)  # Include nested profile serializer
 
@@ -19,33 +31,19 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        print("Validated Data:", validated_data)
         profile_data = validated_data.pop('profile', None)
-        print("Profile Data:", profile_data)
 
         # Create the user
         user = User.objects.create_user(**validated_data)
 
-        # Handle profile creation or update with photo_id if it exists
+        # Handle profile creation with photo as binary data if it exists
         if profile_data and profile_data.get('photo_id'):
-            # Check if user already has a profile
-            if not hasattr(user, 'profile'):
-                # Ensure the file gets saved to the proper location
-                photo = profile_data['photo_id']
-                # Save the image file to the correct location
-                photo_path = default_storage.save('media/' + photo.name, ContentFile(photo.read()))
-                profile_data['photo_id'] = photo_path
-
-                # Create the profile
-                Profile.objects.create(user=user, **profile_data)
-            else:
-                # Optionally, you could update the existing profile if needed
-                profile = user.profile
-                profile.photo_id = profile_data['photo_id']
-                profile.save()
+            # Save the photo data directly in the Profile model
+            photo = profile_data['photo_id']
+            profile_data['photo_id'] = photo.read()  # Store the file data as binary
+            Profile.objects.create(user=user, **profile_data)
 
         return user
-
 
 
 class NoteSerializer(serializers.ModelSerializer):
