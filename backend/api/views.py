@@ -95,23 +95,6 @@ class NoteDelete(generics.DestroyAPIView):
         return Note.objects.filter(author=user)
 
 
-from django.shortcuts import render, redirect
-
-
-def upload_photo(request):
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            profile = form.save(commit=False)
-            # Read the image as binary data
-            profile.photo_data = request.FILES['photo_data'].read()
-            profile.save()
-            return redirect('success')
-    else:
-        form = ProfileForm()
-    return render(request, 'upload_photo.html', {'form': form})
-
-
 from rest_framework.decorators import api_view
 @api_view(['POST'])
 def register_user(request):

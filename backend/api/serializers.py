@@ -1,24 +1,45 @@
-
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Profile, Note
-from rest_framework.exceptions import ValidationError
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from io import BytesIO
-
+import base64
 
 class ProfileSerializer(serializers.ModelSerializer):
-    photo_id = serializers.ImageField(required=False, write_only=True)
-   
+    # The photo_id is handled as a Base64 string
+    photo_id = serializers.CharField(required=False, write_only=True)
+
     class Meta:
         model = Profile
         fields = ['photo_id']
 
+    def create(self, validated_data):
+        photo_id = validated_data.pop('photo_id', None)
+
+        # If a photo_id is provided as base64, decode it to binary and store in the database
+        profile = Profile.objects.create(**validated_data)
+
+        if photo_id:
+            profile.photo_id = base64.b64decode(photo_id)  # Convert from base64 to binary
+            profile.save()
+
+        return profile
+
+    def update(self, instance, validated_data):
+        photo_id = validated_data.pop('photo_id', None)
+
+        if photo_id:
+            instance.photo_id = base64.b64decode(photo_id)  # Convert from base64 to binary
+        
+        # Update other fields if necessary
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
     def get_photo_id(self, obj):
+        # Return the photo_id as a Base64 string for preview
         if obj.photo_id:
-            import base64
-            return base64.b64encode(obj.photo_id.read()).decode('utf-8')  # Convert binary to Base64 string
+            return base64.b64encode(obj.photo_id).decode('utf-8')
         return None
 
 
@@ -39,8 +60,8 @@ class UserSerializer(serializers.ModelSerializer):
         # Handle profile creation with photo as binary data if it exists
         if profile_data and profile_data.get('photo_id'):
             # Save the photo data directly in the Profile model
-            photo = profile_data['photo_id']
-            profile_data['photo_id'] = photo.read()  # Store the file data as binary
+            photo = profile_data['photo_id']  # Base64 data
+            profile_data['photo_id'] = base64.b64decode(photo)  # Decode Base64 to binary data
             Profile.objects.create(user=user, **profile_data)
 
         return user
@@ -51,6 +72,3 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = ["id", "title", "content", "created_at", "author"]
         extra_kwargs = {"author": {"read_only": True}}
-
-
-
