@@ -1,10 +1,17 @@
 import "../styles/BoxInformation.css";
 import "../styles/Box.css";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from "../api"; // Ensure this is correctly configured
 
 function BoxInformation() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [orderInfo, setOrderInfo] = useState({
+    packageDate: '',
+    pickupLocation: '',
+    packageContents: '',
+  });
 
   useEffect(() => {
     document.title = 'Box Information';
@@ -15,16 +22,46 @@ function BoxInformation() {
     navigate('/login');
   };
 
-  // Function to fetch order details from the database
-  const fetchOrderDetails = async () => {
-    // Example API endpoint - replace with your actual backend endpoint
-    const response = await fetch('/api/get-order-details');
-    const data = await response.json();
-    setOrderInfo({
-      packageName: data.packageName,
-      pickupLocation: data.pickupLocation,
-    });
+  const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
+
+  const openModal = () => {
+    setIsModalOpen(true); // Open the modal
   };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
+
+  function formatContents(contents) {
+    if (contents.length === 0) return ''; // Handle empty array
+    if (contents.length === 1) return contents[0]; // Single item
+    if (contents.length === 2) return contents.join(' and '); // Two items
+    return `${contents.slice(0, -1).join(', ')}, and ${contents[contents.length - 1]}`; // Three or more items
+  }
+  
+  const fetchOrderDetails = async () => {
+  
+    try {
+      const response = await api.get("api/package");
+      const { issue_date, pickup_location, contents } = response.data;
+      setOrderInfo({
+        packageDate: issue_date,
+        pickupLocation: pickup_location,
+        packageContents: formatContents(contents)
+      });
+    } catch (error) {
+      console.error("Error fetching package details:", error.response?.data || error.message);
+      setOrderInfo({
+        packageDate: 'Error',
+        pickupLocation: 'Error',
+        packageContents: 'Error',
+      });
+      if (error.response?.status === 401) {
+        navigate("/login");
+      }
+    } 
+  };
+
 
   return (
     <div className="container">
@@ -87,11 +124,9 @@ function BoxInformation() {
                     <div className="flap back"></div>
                     <div className="flap left"></div>
                     <div className="flap right"></div>
-
-                    {/* Update to use onClick for React */}
-                    <button className="box-button" onClick={fetchOrderDetails}>
-                      View Goodies!
-                    </button>
+                    <button onClick={openModal} className="box-button">
+                    View Goodies!
+                  </button>
                   </div>
                 </div>
               </section>
@@ -102,40 +137,38 @@ function BoxInformation() {
                 <div className="divider"></div>
                 <form className="order-form">
                   <div className="order-summary">
-                  <h3 className="summary-header">Package Details:</h3>
+                    <h3 className="summary-header">Package Details:</h3>
                     <div className="summary-content">
-                    <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="packageDate">Package Date:</label>
-                      <input
-                        type="text"
-                        id="packageDate"
-                        className="order-info"
-                        placeholder = "12/21/2024"
-                        value={""}
-                        readOnly
-                      />
-                      </div>
-                      <div className="form-group">
-                      <label htmlFor="pickupLocation">Pick-up Location:</label>
-                      <input
-                        type="text"
-                        id="pickupLocation"
-                        className="order-info"
-                        placeholder = "Oficina CARE"
-                        value={""}
-                        readOnly
-                      />
-                      </div>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label htmlFor="packageDate">Package Date:</label>
+                          <input
+                            type="text"
+                            id="packageDate"
+                            className="order-date-textarea"
+                            value={orderInfo.packageDate}
+                            readOnly
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="pickupLocation">Pick-up Location:</label>
+                          <input
+                            type="text"
+                            id="pickupLocation"
+                            className="pickup-location-textarea"
+                            value={orderInfo.pickupLocation}
+                            readOnly
+                          />
+                        </div>
                       </div>
                       <label htmlFor="packageContents">Package Contents:</label>
-                      <input
-                        type="text"
+                      <textarea
                         id="packageContents"
-                        className="order-info"
-                        placeholder = "A list of products included within the package."
-                        value={""}
+                        className="package-contents-textarea"
+                        value={orderInfo.packageContents}
                         readOnly
+                        rows={Math.max(3, orderInfo.packageContents.split(', ').length)} // Dynamically adjusts rows
+                        style={{ resize: "none" }} // Prevents manual resizing by the user
                       />
                     </div>
                   </div>
@@ -145,10 +178,18 @@ function BoxInformation() {
           </div>
         </main>
       </div>
+       
+      {/* Modal */}
+      <div className={`modal ${isModalOpen ? 'show' : ''}`}>
+        <div className="modal-content">
+          <h2>Package Details</h2>
+          <p><strong>Package Date:</strong> {orderInfo.packageDate}</p>
+          <p><strong>Pick-up Location:</strong> {orderInfo.pickupLocation}</p>
+          <p><strong>Package Contents:</strong> {orderInfo.packageContents}</p>
+          <button onClick={closeModal}>Close</button>
+        </div>
+      </div>
     </div>
   );
 }
-
-
 export default BoxInformation;
-

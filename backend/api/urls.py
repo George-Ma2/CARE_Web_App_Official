@@ -1,7 +1,7 @@
 from . import views
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, current_user_profile
+from .views import UserViewSet, current_user_profile, CreatePackageView, get_package_details
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
@@ -12,6 +12,8 @@ urlpatterns = [
     path('notes/delete/<int:pk>/', views.NoteDelete.as_view(), name='delete-note'),
     path('inventory/', views.InventoryListCreate.as_view(), name='inventory-list-create'),
     path('inventory/<int:pk>/', views.InventoryRetrieveUpdateDestroy.as_view(), name='inventory-detail'),
-    path('inventory/update_quantity/<int:pk>/', views.UpdateProductQuantity.as_view(), name='update-product-quantity')
+    path('inventory/update_quantity/<int:pk>/', views.UpdateProductQuantity.as_view(), name='update-product-quantity'),
+    path('create-package/', CreatePackageView.as_view(), name='create_package'),
+    path('package', get_package_details, name='get_package_details'),
 ]
 

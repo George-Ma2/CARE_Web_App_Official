@@ -6,10 +6,65 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
 from .serializers import UserSerializer, NoteSerializer, ProfileSerializer, InventorySerializer
-from .models import Note, Inventory
+from .models import Note, Inventory, Package
 import base64
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+class CreatePackageView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = request.data
+
+            # Extract data from the request
+            pickup_location = data.get("pickup_location")
+            contents = data.get("contents")
+
+            # Validate input
+            if not pickup_location or not contents:
+                return Response({"error": "Missing pickup_location or contents"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Create the package
+            package = Package.objects.create(
+                pickup_location=pickup_location,
+                contents=contents
+            )
+
+            # Return the created package's data
+            return Response({
+                "id": package.id,
+                "issue_date": package.issue_date,
+                "pickup_location": package.pickup_location,
+                "contents": package.contents,
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@csrf_exempt
+def get_package_details(request):
+    try:
+        if request.method == "GET":
+            # Get the package with the oldest issue date
+            oldest_package = Package.objects.order_by('issue_date').first()
+            
+            if oldest_package:
+                # Return the details of the oldest package
+                return JsonResponse({
+                    "id": oldest_package.id,
+                    "issue_date": oldest_package.issue_date,
+                    "pickup_location": oldest_package.pickup_location,
+                    "contents": oldest_package.contents,
+                }, status=200)
+            else:
+                return JsonResponse({"message": "No packages found"}, status=404)
+
+        return JsonResponse({"error": "Invalid HTTP method"}, status=405)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -86,6 +141,8 @@ class CreateUserView(generics.CreateAPIView):
         except Exception as e:
             # Return exception details as JSON
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
