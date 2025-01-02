@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api';
 import "../styles/PasswordResetRequestForm.css"
+import careLogo from "../assets/care.png";
 
 const PasswordResetRequest = () => {
     const [email, setEmail] = useState('');
@@ -37,6 +38,7 @@ const PasswordResetRequest = () => {
 
     return (
         <div className="form-container">
+              <img src={careLogo} alt="Logo" className="form-logo" />
             <h2>Password Reset Request</h2>
             <form onSubmit={handleFormSubmit}>
                 <div className="form-input-container">
