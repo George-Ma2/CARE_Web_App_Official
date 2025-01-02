@@ -4,9 +4,14 @@ from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
-from .serializers import UserSerializer, NoteSerializer, ProfileSerializer
-from .models import Note
+from .serializers import UserSerializer, NoteSerializer, ProfileSerializer, InventorySerializer
+from .models import Note, Inventory
 import base64
+
+
+
+from rest_framework.views import APIView
+from .permissions import IsStaffUser
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -124,6 +129,40 @@ class NoteDelete(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Note.objects.filter(author=self.request.user)
+             user = self.request.user
+        return Note.objects.filter(author=user)
+    
+class InventoryListCreate(generics.ListCreateAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = [IsStaffUser]
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print(serializer.errors)
+
+class InventoryRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = [IsStaffUser]
+
+
+class UpdateProductQuantity(APIView):
+    permission_classes = [IsStaffUser]
+    def patch(self, request, pk):
+        try:
+            product = Inventory.objects.get(pk=pk)
+        except Inventory.DoesNotExist:
+            return Response({"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update the quantity of the product
+        product.quantity = request.data.get('quantity', product.quantity)
+        product.save()
+
+        # Return the updated product
+        return Response(InventorySerializer(product).data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
