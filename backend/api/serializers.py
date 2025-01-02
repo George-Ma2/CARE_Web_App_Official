@@ -29,7 +29,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             return base64.b64encode(obj.photo_id).decode('utf-8')  # Binary -> Base64
         return None
 
-
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(required=False)  # Include nested profile serializer
 
@@ -54,6 +53,15 @@ class NoteSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "content", "created_at", "author"]
         extra_kwargs = {"author": {"read_only": True}}
 
+class InventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = ['id', 'name', 'category', 'quantity', 'expiration_date', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'created_at': {'read_only': True},
+            'updated_at': {'read_only': True},
+        }
 
 class InventorySerializer(serializers.ModelSerializer):
     class Meta:
