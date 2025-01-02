@@ -7,9 +7,6 @@ from rest_framework.decorators import action, api_view
 from .serializers import UserSerializer, NoteSerializer, ProfileSerializer, InventorySerializer
 from .models import Note, Inventory
 import base64
-
-
-
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
 
@@ -129,7 +126,7 @@ class NoteDelete(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Note.objects.filter(author=self.request.user)
-             user = self.request.user
+        user = self.request.user
         return Note.objects.filter(author=user)
     
 class InventoryListCreate(generics.ListCreateAPIView):

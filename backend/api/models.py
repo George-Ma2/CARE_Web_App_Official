@@ -9,6 +9,33 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
 
+class ProductCategory(models.TextChoices): # <constant_name> = '<database_value>', '<human_readable_value>'
+    RICE_AND_PASTA = 'Rice and Pasta', 'Rice and Pasta'
+    PROCESSED_PROTEINS = 'Processed Proteins', 'Processed Proteins'
+    CANNED_FOOD = 'Canned Food', 'Canned Food'
+    DRINKS_AND_DESSERTS = 'Drinks and Desserts', 'Drinks and Desserts'
+    MISCELLANEOUS = 'Miscellaneous', 'Miscellaneous'
+
+class Inventory(models.Model):
+    name = models.CharField(max_length=255)
+    quantity = models.PositiveIntegerField()
+    # quantity_delivered = models.PositiveIntegerField()
+    # quantity_on_change = models.IntegerField()
+    category = models.CharField(
+        max_length=50,
+        choices=ProductCategory.choices,
+        default=ProductCategory.MISCELLANEOUS
+    )
+    expiration_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.category}) - {self.quantity} in stock" # Check if necessary
+
+
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     photo_id = models.BinaryField(null=True, blank=True)
