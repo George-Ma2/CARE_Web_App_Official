@@ -3,14 +3,12 @@ from django.contrib.auth.models import User
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import action, api_view
 from .serializers import UserSerializer, NoteSerializer, ProfileSerializer
 from .models import Note
-from rest_framework.response import Response
-from rest_framework.decorators import action
+import base64
 
 
-
-# Create a User view
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
@@ -25,29 +23,67 @@ class CreateUserView(generics.CreateAPIView):
         photo_id = request.FILES.get("photo_id")  # Image file upload
 
         # Validate required fields
-        if not username or not password or not first_name or not last_name or not email:
+        if not all([username, password, first_name, last_name, email]):
             return Response({"error": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check for username duplication
         if User.objects.filter(username=username).exists():
             return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create user and profile
-        user = User.objects.create_user(
-            username=username,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-        )
+        try:
+            # Create user and profile
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+            )
 
-        # Update the profile with binary image data
-        profile = user.profile  # Assuming a OneToOne relation between User and Profile
-        if photo_id:
-            profile.photo_id = photo_id.read()  # Read binary data from uploaded image
-            profile.save()
+            # Ensure the profile is created
+            if not hasattr(user, 'profile'):
+                Profile.objects.create(user=user)
+            
+            profile = user.profile
 
-        return Response({"message": "User created successfully."}, status=status.HTTP_201_CREATED)
+            # Debugging: Return user and profile data for verification
+            user_data = {
+                "username": user.username,
+                "email": user.email,
+                "profile_exists": hasattr(user, 'profile'),
+                "profile_photo_id": profile.photo_id if profile else None
+            }
+            
+            if photo_id:
+                # File size limit check
+                if photo_id.size > 2 * 1024 * 1024:  # Limit file size to 2MB
+                    return Response({"error": "File size exceeds 2MB limit."}, status=status.HTTP_400_BAD_REQUEST)
+
+                # Ensure only image files are accepted
+                if not photo_id.content_type.startswith("image/"):
+                    return Response({"error": "Invalid file type. Only images are allowed."}, status=status.HTTP_400_BAD_REQUEST)
+
+                # Save the image as binary data
+                profile.photo_id = photo_id.read()  # Read binary data from uploaded image
+                profile.save()
+
+                # Return the debugging data in JSON response
+                return Response({
+                    "message": "User created successfully.",
+                    "user_data": user_data,
+                    "photo_uploaded": True
+                }, status=status.HTTP_201_CREATED)
+
+            # If no photo uploaded
+            return Response({
+                "message": "User created without photo.",
+                "user_data": user_data,
+                "photo_uploaded": False
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            # Return exception details as JSON
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
@@ -58,55 +94,40 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_user_data(self, request):
         user = request.user
 
-        user_data = {
-            "username": user.username,
-            "profile": {
-                # Optionally encode binary data as Base64 for preview
-                "photo_preview": None,
+        # Handle missing profile gracefully
+        try:
+            user_data = {
+                "username": user.username,
+                "profile": {
+                    "photo_base64": ProfileSerializer(user.profile).data.get("photo_base64"),
+                },
             }
-        }
-
-        if user.profile.photo_id:
-            import base64
-            user_data["profile"]["photo_preview"] = base64.b64encode(user.profile.photo_id).decode("utf-8")
-
-        return Response(user_data)
+            return Response(user_data)
+        except AttributeError:
+            return Response({"error": "Profile not found for the user."}, status=status.HTTP_404_NOT_FOUND)
 
 
-# View to handle the creation of notes
 class NoteListCreate(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
+        return Note.objects.filter(author=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-# View to handle deleting notes
+
 class NoteDelete(generics.DestroyAPIView):
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
+        return Note.objects.filter(author=self.request.user)
 
 
-from rest_framework.decorators import api_view
-@api_view(['POST'])
-def register_user(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        user = serializer.save()
-        return Response({'message': 'User registered successfully'}, status=201)
-    return Response(serializer.errors, status=400)
-    
-    
 @api_view(['GET'])
 def current_user_profile(request):
-    user = request.user  # Automatically fetched from the token
-    serialized_user = UserSerializer(user)  # Use your serializer
+    user = request.user
+    serialized_user = UserSerializer(user)
     return Response(serialized_user.data)

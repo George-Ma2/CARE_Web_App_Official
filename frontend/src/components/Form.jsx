@@ -30,7 +30,7 @@ function Form({ route, method }) {
             formData.append("first_name", firstName);
             formData.append("last_name", lastName);
             formData.append("email", email);
-            formData.append("profile.photo_id", photoId); // Match the backend field
+            formData.append("photo_id", photoId); // Match the backend field
             
         }
         try {
@@ -67,6 +67,8 @@ function Form({ route, method }) {
         if (file) {
             setPhotoId(file);
             setPreview(URL.createObjectURL(file));
+            console.log("photo_id", file);
+            
         }
     };
 
@@ -137,9 +139,11 @@ function Form({ route, method }) {
                         <div className="photo-preview">
                             <img
                                 src={preview}
+                                
                                 alt="Uploaded Photo Preview"
                                 style={{ width: "200px", height: "auto", marginTop: "10px" }}
                             />
+                            
                         </div>
                     )}
                 </>

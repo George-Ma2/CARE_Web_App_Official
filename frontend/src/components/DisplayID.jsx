@@ -48,7 +48,8 @@ function DisplayID() {
   }
 
   // Check if profile exists and has photo_id
-  const hasPhoto = userData.profile && userData.profile.photo_id;
+  const hasPhoto = userData.profile && userData.profile.photo_base64;
+
 
   return (
     <div className="container">
@@ -97,10 +98,10 @@ function DisplayID() {
             <div className="content-column">
               <section className="box-section">
                 <h2>Student ID</h2>
-                <h1>Welcome, {userData.username}</h1>
+                <h1>Welcome, {userData.first_name}</h1>
                 {hasPhoto ? (
                   <img
-                    src={`data:image/jpeg;base64,${userData.profile.photo_id}`}
+                    src={`data:image/jpeg;base64,${userData.profile.photo_base64}`}
                     alt="User Photo ID"
                     style={{
                       width: "500px",
