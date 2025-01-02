@@ -13,13 +13,24 @@ function Form({ route, method }) {
     const [email, setEmail] = useState("");
     const [photoId, setPhotoId] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const name = method === "login" ? "Login" : "Register";
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/; // password must contain at least 1 lower and upper case letter, 1 symbol and a minimum of 8 characters
+
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
+
+        if (!passwordRegex.test(password)) {
+            setError("Password must contain at least one uppercase letter, one lowercase letter, one special character and a minimum of 8 characters.");
+            setLoading(false);
+            return;
+        }
+
+        setError("");
 
         const formData = new FormData();
         formData.append("username", username);
@@ -43,10 +54,22 @@ function Form({ route, method }) {
                 navigate("/login")
             }
         } catch (error) {
-            alert(error)
+            if (method === "login") {
+                if (error.response && error.response.status === 401) {
+                    alert("User not found. Please check your username or register.");
+                } else {
+                    alert("An error occurred. Please try again")
+                }
+            } else {
+                alert("An error occurred. Please try again")
+            }
         } finally {
             setLoading(false)
         }
+    };
+
+    const handlePasswordClick = () => {
+        setError(""); // Reset error when the password field is clicked
     };
 
     return (
@@ -72,9 +95,12 @@ function Form({ route, method }) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onClick={handlePasswordClick}
                 placeholder="Password"
                 required
             />
+
+            {error && <p className="error-message">{error}</p>} {/* Show password error */}
 
             {method === "register" && (
                 <>
