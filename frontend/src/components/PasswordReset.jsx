@@ -20,11 +20,13 @@ const PasswordReset = () => {
         setConfirmPassword(e.target.value);
     };
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/; // password must contain at least 1 lower and upper case letter, 1 symbol and a minimum of 8 characters
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         
         if (!password || !confirmPassword) {
-            setErrorMessage('Please enter password address.');
+            setErrorMessage('Please enter both password');
             return;
         }
 
@@ -35,6 +37,13 @@ const PasswordReset = () => {
 
         setErrorMessage('');
         setSuccessMessage('');
+
+        if (!passwordRegex.test(password)) {
+            setErrorMessage("Password must contain at least one uppercase letter, one lowercase letter, one special character and a minimum of 8 characters.");
+            return;
+        }
+
+        setErrorMessage('');
 
         try {
             const response = await api.post('api/password_reset/confirm/', 
