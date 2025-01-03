@@ -34,8 +34,6 @@ class Inventory(models.Model):
         return f"{self.name} ({self.category}) - {self.quantity} in stock" # Check if necessary
 
 
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     photo_id = models.BinaryField(null=True, blank=True)
@@ -43,38 +41,12 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
-class Note(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notes")
-
-    def __str__(self):
-        return self.title
-
 class ProductCategory(models.TextChoices): # <constant_name> = '<database_value>', '<human_readable_value>'
     RICE_AND_PASTA = 'Rice and Pasta', 'Rice and Pasta'
     PROCESSED_PROTEINS = 'Processed Proteins', 'Processed Proteins'
     CANNED_FOOD = 'Canned Food', 'Canned Food'
     DRINKS_AND_DESSERTS = 'Drinks and Desserts', 'Drinks and Desserts'
     MISCELLANEOUS = 'Miscellaneous', 'Miscellaneous'
-
-class Inventory(models.Model):
-    name = models.CharField(max_length=255)
-    quantity = models.PositiveIntegerField()
-    # quantity_delivered = models.PositiveIntegerField()
-    # quantity_on_change = models.IntegerField()
-    category = models.CharField(
-        max_length=50,
-        choices=ProductCategory.choices,
-        default=ProductCategory.MISCELLANEOUS
-    )
-    expiration_date = models.DateField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.name} ({self.category}) - {self.quantity} in stock" # Check if necessary
 
 
 @receiver(reset_password_token_created)

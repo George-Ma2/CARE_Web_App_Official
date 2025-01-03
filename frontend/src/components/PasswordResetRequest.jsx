@@ -38,7 +38,7 @@ const PasswordResetRequest = () => {
 
     return (
         <div className="form-container">
-              <img src={careLogo} alt="Logo" className="form-logo" />
+            <img src={careLogo} alt="Logo" className="form-logo" />
             <h2>Password Reset Request</h2>
             <form onSubmit={handleFormSubmit}>
                 <div className="form-input-container">

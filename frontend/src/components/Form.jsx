@@ -14,14 +14,24 @@ function Form({ route, method }) {
     const [photoId, setPhotoId] = useState(null);
     const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const name = method === "login" ? "Login" : "Register";
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/; // password must contain at least 1 lower and upper case letter, 1 symbol and a minimum of 8 characters
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-    
+
+        if (!passwordRegex.test(password)) {
+            setError("Password must contain at least one uppercase letter, one lowercase letter, one special character and a minimum of 8 characters.");
+            setLoading(false);
+            return;
+        }
+
+        setError("");
+
         const formData = new FormData();
         formData.append("username", username);
         formData.append("password", password);
@@ -43,7 +53,6 @@ function Form({ route, method }) {
             } else if (method === "register") {
                 alert("Registration successful. Please log in.");
                 navigate("/login");
-             
             }
         } catch (error) {
             console.error("API Error:", error);
@@ -72,13 +81,16 @@ function Form({ route, method }) {
         }
     };
 
+    const handlePasswordClick = () => {
+        setError(""); // Reset error when the password field is clicked
+    };
+
     return (
         
         
         <form onSubmit={handleSubmit} className="form-container">
             
-                <img src={careLogo} alt="Logo" className="form-logo" />
-               
+            <img src={careLogo} alt="Logo" className="form-logo" />
             <h2>{name}</h2>
 
             <input
@@ -94,9 +106,12 @@ function Form({ route, method }) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onClick={handlePasswordClick}
                 placeholder="Password"
                 required
             />
+
+            {error && <p className="error-message">{error}</p>} {/* Show password error */}
 
             {method === "register" && (
                 <>
