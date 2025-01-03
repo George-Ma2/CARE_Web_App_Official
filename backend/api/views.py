@@ -5,8 +5,8 @@ from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
-from .serializers import UserSerializer, NoteSerializer, ProfileSerializer, InventorySerializer
-from .models import Note, Inventory
+from .serializers import UserSerializer, ProfileSerializer, InventorySerializer
+from .models import Inventory
 import base64
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
@@ -107,27 +107,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(user_data)
         except AttributeError:
             return Response({"error": "Profile not found for the user."}, status=status.HTTP_404_NOT_FOUND)
-
-
-class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Note.objects.filter(author=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-
-class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Note.objects.filter(author=self.request.user)
-        user = self.request.user
-        return Note.objects.filter(author=user)
     
 class InventoryListCreate(generics.ListCreateAPIView):
     queryset = Inventory.objects.all()
