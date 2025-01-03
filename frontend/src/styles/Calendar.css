@@ -34,14 +34,21 @@
 
 
 .navbar .form-inline {
+  padding: 10px;
   display: flex;
+  flex-wrap: wrap; /* Adjust layout when screen width is smaller */
+  justify-content: center;
+  align-items: center;
   gap: 20px;
+  
 }
 
+
 .navbar .btn {
-  border-radius: 5px;
-  font-weight: bold;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
   padding: 10px 15px;
+  font-weight: bold;
+  border-radius: 5px;
   transition: all 0.3s ease;
 }
 
@@ -67,6 +74,7 @@
 }
 
 .navbar .btn-logout-btn {
+  margin-left: 370px;
   background-color: #d90f13;
   border-color: #d90f13;
   color: white;
@@ -78,11 +86,7 @@
   color: black;
 }
 
-.left-content {
-  display: flex; /* Ensure proper layout for left-side content */
-  gap: 20px;
-  padding-right: 550px;
-}
+
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;

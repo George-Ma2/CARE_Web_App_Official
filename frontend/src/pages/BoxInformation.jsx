@@ -20,27 +20,15 @@ function BoxInformation() {
     document.title = 'Box Information';
   }, []);
 
-  const fetchOrderDetails = async () => {
-    try {
-      const response = await api.get("api/package"); // Fetch a single package detail
-      const { issue_date, pickup_location, contents } = response.data;
-      setOrderInfo({
-        packageDate: issue_date,
-        pickupLocation: pickup_location,
-        packageContents: formatContents(contents),
-      });
-      fetchAvailablePackages(issue_date); // Fetch packages with the same issue date
-    } catch (error) {
-      console.error("Error fetching package details:", error.response?.data || error.message);
-      setOrderInfo({
-        packageDate: 'Error',
-        pickupLocation: 'Error',
-        packageContents: 'Error',
-      });
-      if (error.response?.status === 401) {
-        navigate("/login");
-      }
-    }
+ 
+  
+  const openModal = () => {
+    setIsModalOpen(true); // Open the modal
+    fetchAvailablePackages(orderInfo.packageDate); // Pass the issue date to fetch available packages
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal
   };
 
   const fetchAvailablePackages = async (issueDate) => {
@@ -55,6 +43,7 @@ function BoxInformation() {
   const handlePackageSelect = (pkg) => {
     // Update the orderInfo with the selected package details
     console.log("Package details:", pkg);
+    setSelectedPackage(pkg);
     setOrderInfo({
       packageDate: pkg.issue_date, // Assuming the package has these fields
       pickupLocation: pkg.pickup_location,
@@ -70,13 +59,9 @@ function BoxInformation() {
     navigate('/login');
   };
 
-  const openModal = () => {
-    setIsModalOpen(true); // Open the modal
-    fetchAvailablePackages(orderInfo.packageDate); // Pass the issue date to fetch available packages
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false); // Close the modal
+  const handleReserve = () => {
+    console.log("Package reserved:", selectedPackage);
+    // Add your reservation logic here
   };
 
   function formatContents(contents) {
@@ -103,7 +88,7 @@ function BoxInformation() {
 
       <nav className="navbar">
         <form className="form-inline">
-          <div className="left-content">
+          
             <button
               className="btn btn-outline-secondary"
               type="button"
@@ -127,7 +112,14 @@ function BoxInformation() {
             >
               Student Info
             </button>
-          </div>
+            <button
+            className="btn btn-outline-secondary"
+            type="button"
+            onClick={() => navigate('/userdash/ordercart')}
+          >
+            View Cart
+          </button>
+        
           
           <button
             className="btn btn-logout-btn"
@@ -204,7 +196,13 @@ function BoxInformation() {
                       />
                     </div>
                   </div>
+                  {selectedPackage && (
+                  <button className="reserve-button" onClick={() => handleReserve()}>
+                    Reserve My Box
+                  </button>
+                )}
                 </form>
+                
               </div>
             </div>
           </div>
@@ -221,6 +219,7 @@ function BoxInformation() {
               </div>
               <div className="modal-body">
                 <p>Click on a button to select a box and see what it contains!</p>
+
                 <div className="package-list">
                   {availablePackages.map((pkg, index) => {
                     // Generate the letter (A, B, C, ...) based on the index
