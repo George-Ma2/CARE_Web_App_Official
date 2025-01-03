@@ -26,7 +26,7 @@ const PasswordReset = () => {
         e.preventDefault();
         
         if (!password || !confirmPassword) {
-            setErrorMessage('Please enter password address.');
+            setErrorMessage('Please enter both password');
             return;
         }
 
