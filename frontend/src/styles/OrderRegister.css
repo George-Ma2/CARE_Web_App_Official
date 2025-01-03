@@ -1,0 +1,140 @@
+
+/*HTML
+<div class="order-section">
+<div class="divider"></div>
+<form class="order-form">
+  <div class="order-summary">
+    <h3 class="summary-header">Order Summary:</h3>
+    <div class="summary-content">
+      <p class="package-info">1x CARE Weekly Box FREE</p>
+      <p class="pickup-location">Pick-up @ IDEA Center</p>
+      
+      <div class="checkbox-group">
+        <input type="checkbox" id="pickup-agreement" class="checkbox" required />
+        <label for="pickup-agreement" class="checkbox-label">
+          By clicking, I ensure I will pick up the package within the date established. If I do not send prior notice, I accept I may not receive my reserved box. Certain exceptions may be made with prior notice.
+        </label>
+      </div>
+      
+      <div class="checkbox-group">
+        <input type="checkbox" id="availability-agreement" class="checkbox" required />
+        <label for="availability-agreement" class="checkbox-label">
+          I also understand that donations are limited and boxes will be prepared on a rolling basis. Certain items may not be available for my personal box once the order is recieved.
+        </label>
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="submit-button">Register my order!</button>
+</form>
+</div>
+</div>
+</div>
+
+
+*/
+
+
+
+.order-section {
+    display: flex;
+    flex-grow: 1;
+    gap: 24px;
+    font: 700 16px Poppins, sans-serif;
+  }
+  
+  .divider {
+    align-self: start;
+    width: 4px;
+    height: 663px;
+    border: 1px solid #000;
+  }
+  
+  .order-form {
+    display: flex;
+    margin-top: 11px;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0;
+    width: fit-content;
+  }
+  
+  .order-summary {
+    background: #D9D9D9;
+    display: flex;
+    flex-direction: column;
+    padding: 2px 0 78px;
+  }
+  
+  .summary-header {
+    background: #C6302C;
+    font-size: 20px;
+    color: #fff;
+    text-align: center;
+    padding: 5px 22px 14px;
+  }
+  
+  .summary-content {
+    display: flex;
+    margin-top: 47px;
+    width: 100%;
+    flex-direction: column;
+    align-items: start;
+    font-size: 16px;
+    color: #000;
+    padding: 0 64px 0 20px;
+  }
+  
+  .package-info {
+    text-align: center;
+    margin-left: 30px;
+  }
+  
+  .pickup-location {
+    text-align: center;
+    margin: 64px 0 0 40px;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    margin-top: 60px;
+    gap: 17px;
+  }
+  
+  .checkbox {
+    background: #D9D9D9;
+    align-self: start;
+    width: 26px;
+    height: 26px;
+    border: 1px solid #000;
+  }
+  
+  .checkbox-label {
+    flex-basis: auto;
+    flex-grow: 1;
+  }
+  
+  .submit-button {
+    background: #F6C932;
+    border-radius: 50%;
+    align-self: center;
+    margin-top: 26px;
+    width: 191px;
+    max-width: 100%;
+    font-size: 16px;
+    color: #000;
+    text-align: center;
+    padding: 35px 21px;
+    cursor: pointer;
+  }
+  
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  

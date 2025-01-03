@@ -1,46 +1,59 @@
+
+
+:root {
+    --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 .form-container {
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 50px auto;
-    padding: 20px;
+    width: 120%; /* Adjusts based on screen size */
+    max-width: 600px; /* Restricts the maximum width */
+    background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 0 auto; /* Centers horizontally */
+}
+
+
+h2 {
+    font-family: 'Poppins', var(--default-font-family);
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    
 }
 
 .form-input {
-width: 90%;
-padding: 10px;
-margin: 10px 0;
-border: 1px solid #ccc;
-border-radius: 4px;
-box-sizing: border-box;
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    font-family: 'Poppins', var(--default-font-family);
+    background-color: #f8f8f8;
+    transition: border-color 0.3s ease;
 }
 
+.form-input:focus{
+    border-color: #004092;
+}
 .form-button {
-width: 95%;
-padding: 10px;
-margin: 20px 0;
-background-color: #007bff;
-color: white;
-border: none;
-border-radius: 4px;
-cursor: pointer;
-transition: background-color 0.2s ease-in-out;
+    width: 90%;
+    padding: 12px;
+    background-color: #004092;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    font-size: 16px;
+    font-family: 'Poppins', var(--default-font-family);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.form-footer {
-    display:block;
-    margin-top: 10px;
-    font-size: 14px;
-    text-align:left;
-    left: 0;
-    color: #333;
-}
 
 .form-button:hover {
 background-color: #0056b3;
@@ -50,16 +63,29 @@ background-color: #0056b3;
     text-decoration: underline; 
 }
 
-.form-footer a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-    margin-left: 5px;
+.form-footer a{
+    display: block; /* Makes <p> a block-level element */
+    text-align: center; /* Centers text inside the <p> */
+    font-size: 15px;
+    margin: 0 auto; /* Cente*/
+}
+
+.form-footer {
+    margin-top: 15px;
+    font-family: 'Poppins', var(--default-font-family);
+    font-size: 20px;
+    color: #333;
+    text-align: center; /* Ensures the content inside .form-footer is centered */
 }
 
 .form-footer p {
-    display: inline;
+    display: block; /* Makes <p> a block-level element */
+    text-align: center; /* Centers text inside the <p> */
+    font-size: 15px;
+    margin: 0 auto; /* Centers the <p> itself inside the container */
 }
+
+
 
 .form-file-upload {
     width: 100%;
@@ -71,7 +97,7 @@ background-color: #0056b3;
 }
 
 .form-file-upload label {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', var(--default-font-family);
     font-size: 14px;
     margin-bottom: 5px;
     color: #333;
@@ -92,3 +118,48 @@ background-color: #0056b3;
     font-size: 12px;
     margin-top: 5px;
 }
+
+.form-logo {
+    width: 220px; /* Adjust to your desired size */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Center horizontally */
+    margin: 0 auto 20px; /* Center within the container */
+    object-fit: contain; /* Ensure the image fits within its dimensions */
+}
+
+
+@media (max-width: 1024px) {
+    .form-logo {
+        width: 250px;
+    }
+    
+    .form-input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-logo {
+        width: 130px;
+    }
+
+    .form-input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-logo {
+        width: 125px;
+    }
+
+    .form-input {
+        width: 100%;
+    }
+}
+
+
+
+
+
+
