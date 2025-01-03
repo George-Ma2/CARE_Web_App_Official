@@ -194,7 +194,7 @@ function BoxInformation() {
                     </div>
                   </div>
                   {selectedPackage && (
-                  <button className="reserve-button" onClick={() => navigate('/userdash/cart')}
+                  <button className="reserve-button" onClick={() => navigate('/userdash/ordercart')}
                   >
                     Reserve My Box
                   </button>
