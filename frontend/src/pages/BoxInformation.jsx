@@ -12,20 +12,67 @@ function BoxInformation() {
     pickupLocation: '',
     packageContents: '',
   });
+  const [availablePackages, setAvailablePackages] = useState([]); // Store available packages
+  const [selectedPackage, setSelectedPackage] = useState(null); // Store the selected package
+  const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
 
   useEffect(() => {
     document.title = 'Box Information';
   }, []);
+
+  const fetchOrderDetails = async () => {
+    try {
+      const response = await api.get("api/package"); // Fetch a single package detail
+      const { issue_date, pickup_location, contents } = response.data;
+      setOrderInfo({
+        packageDate: issue_date,
+        pickupLocation: pickup_location,
+        packageContents: formatContents(contents),
+      });
+      fetchAvailablePackages(issue_date); // Fetch packages with the same issue date
+    } catch (error) {
+      console.error("Error fetching package details:", error.response?.data || error.message);
+      setOrderInfo({
+        packageDate: 'Error',
+        pickupLocation: 'Error',
+        packageContents: 'Error',
+      });
+      if (error.response?.status === 401) {
+        navigate("/login");
+      }
+    }
+  };
+
+  const fetchAvailablePackages = async (issueDate) => {
+    try {
+      const response = await api.get(`api/packages/same-issue-date/?issue_date=${issueDate}`); 
+      setAvailablePackages(response.data); // Set the available packages
+    } catch (error) {
+      console.error("Error fetching available packages:", error.response?.data || error.message);
+    }
+  };
+
+  const handlePackageSelect = (pkg) => {
+    // Update the orderInfo with the selected package details
+    console.log("Package details:", pkg);
+    setOrderInfo({
+      packageDate: pkg.issue_date, // Assuming the package has these fields
+      pickupLocation: pkg.pickup_location,
+      packageContents: formatContents(pkg.contents)
+    });
+
+    // Close the modal after selection
+    setIsModalOpen(false);
+  };
 
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
-
   const openModal = () => {
     setIsModalOpen(true); // Open the modal
+    fetchAvailablePackages(orderInfo.packageDate); // Pass the issue date to fetch available packages
   };
 
   const closeModal = () => {
@@ -38,30 +85,15 @@ function BoxInformation() {
     if (contents.length === 2) return contents.join(' and '); // Two items
     return `${contents.slice(0, -1).join(', ')}, and ${contents[contents.length - 1]}`; // Three or more items
   }
-  
-  const fetchOrderDetails = async () => {
-  
-    try {
-      const response = await api.get("api/package");
-      const { issue_date, pickup_location, contents } = response.data;
-      setOrderInfo({
-        packageDate: issue_date,
-        pickupLocation: pickup_location,
-        packageContents: formatContents(contents)
-      });
-    } catch (error) {
-      console.error("Error fetching package details:", error.response?.data || error.message);
-      setOrderInfo({
-        packageDate: 'Error',
-        pickupLocation: 'Error',
-        packageContents: 'Error',
-      });
-      if (error.response?.status === 401) {
-        navigate("/login");
-      }
-    } 
-  };
 
+  // Disable background scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden'; // Disable background scroll
+    } else {
+      document.body.style.overflow = 'auto'; // Re-enable background scroll
+    }
+  }, [isModalOpen]);
 
   return (
     <div className="container">
@@ -125,8 +157,8 @@ function BoxInformation() {
                     <div className="flap left"></div>
                     <div className="flap right"></div>
                     <button onClick={openModal} className="box-button">
-                    View Goodies!
-                  </button>
+                      View Goodies!
+                    </button>
                   </div>
                 </div>
               </section>
@@ -167,7 +199,7 @@ function BoxInformation() {
                         className="package-contents-textarea"
                         value={orderInfo.packageContents}
                         readOnly
-                        rows={Math.max(3, orderInfo.packageContents.split(', ').length)} // Dynamically adjusts rows
+                       // rows={Math.max(3, orderInfo.packageContents.split(', ').length)} // Dynamically adjusts rows
                         style={{ resize: "none" }} // Prevents manual resizing by the user
                       />
                     </div>
@@ -178,18 +210,51 @@ function BoxInformation() {
           </div>
         </main>
       </div>
-       
+
       {/* Modal */}
-      <div className={`modal ${isModalOpen ? 'show' : ''}`}>
-        <div className="modal-content">
-          <h2>Package Details</h2>
-          <p><strong>Package Date:</strong> {orderInfo.packageDate}</p>
-          <p><strong>Pick-up Location:</strong> {orderInfo.pickupLocation}</p>
-          <p><strong>Package Contents:</strong> {orderInfo.packageContents}</p>
-          <button onClick={closeModal}>Close</button>
+      {isModalOpen && (
+        <div className="modal fade show" id="exampleModalCenter" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLongTitle">Available Packages</h5>
+              </div>
+              <div className="modal-body">
+                <p>Click on a button to select a box and see what it contains!</p>
+                <div className="package-list">
+                  {availablePackages.map((pkg, index) => {
+                    // Generate the letter (A, B, C, ...) based on the index
+                    const boxLabel = String.fromCharCode(65 + index); // 65 is the ASCII code for 'A'
+
+                    // Define an array of colors to be used for the buttons
+                    const colors = ['#F6C932', '#174bda', '#d90f13', '#FFD700', '#8A2BE2']; // Example colors
+
+                    // Assign a color based on the index
+                    const buttonColor = colors[index % colors.length]; // Modulo ensures it loops through the colors if there are more boxes than colors
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handlePackageSelect(pkg)} // Close modal and update order info
+                        className="package-button"
+                        style={{ backgroundColor: buttonColor }}
+                      >
+                        <strong>Box {boxLabel}</strong>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
+
 export default BoxInformation;

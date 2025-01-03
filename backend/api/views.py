@@ -66,6 +66,43 @@ def get_package_details(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+
+
+@csrf_exempt
+def get_packages_with_same_issue_date(request):
+    try:
+        if request.method == "GET":
+            # Get the oldest package by issue date
+            oldest_package = Package.objects.order_by('issue_date').first()
+            
+            if not oldest_package:
+                return JsonResponse({"message": "No packages found"}, status=404)
+
+            # Get all packages that share the same issue date as the oldest package
+            same_issue_date_packages = Package.objects.filter(issue_date=oldest_package.issue_date)
+
+            # If no packages found with the same issue date
+            if not same_issue_date_packages:
+                return JsonResponse({"message": "No packages with the same issue date found."}, status=404)
+
+            # Create a list of the package details
+            packages_data = [
+                {
+                    "id": package.id,
+                    "issue_date": package.issue_date,
+                    "pickup_location": package.pickup_location,
+                    "contents": package.contents,
+                }
+                for package in same_issue_date_packages
+            ]
+
+            # Return the packages in the response
+            return JsonResponse(packages_data, safe=False, status=200)
+
+        return JsonResponse({"error": "Invalid HTTP method"}, status=405)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
