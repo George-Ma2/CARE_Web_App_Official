@@ -44,6 +44,7 @@ const PasswordReset = () => {
                 }
             );
 
+            
             if (response.status === 200) {
                 setSuccessMessage('Your Password was resetted successfully. Redirecting to Login.');
                 setTimeout(() => {
