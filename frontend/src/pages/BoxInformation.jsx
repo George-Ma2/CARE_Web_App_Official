@@ -59,10 +59,7 @@ function BoxInformation() {
     navigate('/login');
   };
 
-  const handleReserve = () => {
-    console.log("Package reserved:", selectedPackage);
-    // Add your reservation logic here
-  };
+ 
 
   function formatContents(contents) {
     if (contents.length === 0) return ''; // Handle empty array
@@ -197,7 +194,8 @@ function BoxInformation() {
                     </div>
                   </div>
                   {selectedPackage && (
-                  <button className="reserve-button" onClick={() => handleReserve()}>
+                  <button className="reserve-button" onClick={() => navigate('/userdash/cart')}
+                  >
                     Reserve My Box
                   </button>
                 )}
