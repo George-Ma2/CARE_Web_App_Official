@@ -47,9 +47,11 @@ function BoxInformation() {
     setOrderInfo({
       packageDate: pkg.issue_date, // Assuming the package has these fields
       pickupLocation: pkg.pickup_location,
-      packageContents: formatContents(pkg.contents)
+      packageContents: formatContents(pkg.contents || [])
+
     });
 
+   
     // Close the modal after selection
     setIsModalOpen(false);
   };

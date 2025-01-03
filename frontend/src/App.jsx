@@ -1,4 +1,4 @@
-import react from "react"
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
@@ -24,6 +24,10 @@ function RegisterAndLogout() {
 }
 
 function App() {
+
+   // Shared state for selected package
+   const [selectedPackage, setSelectedPackage] = useState(null);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -35,9 +39,9 @@ function App() {
         <Route path="/password_reset/:token" element={<PasswordReset />} />
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/userdash/calendar" element={<ProtectedRoute> <Calendar /> </ProtectedRoute>}/>
-        <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
+        <Route path="/userdash/boxinfo" element={<ProtectedRoute>  <BoxInfo setSelectedPackage={setSelectedPackage} /> </ProtectedRoute>}/>
         <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
-        <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
+        <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart selectedPackage={selectedPackage} /> </ProtectedRoute>}/>
         <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/>
         
       </Routes>

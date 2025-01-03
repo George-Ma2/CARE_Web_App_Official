@@ -121,7 +121,7 @@ function DisplayID() {
                     }}
                   />
                 ) : (
-                  <p>No photo uploaded.</p>
+                  <h4>No photo uploaded.</h4>
                 )}
               </section>
             </div>

@@ -12,6 +12,15 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+.student-dashboard h4 {
+  font-family: 'Segoe UI', var(--default-font-family);
+  font-size: 30px; 
+  font-weight: 700;
+  color: #040404;
+  margin-right: 70px; /* Slightly shift to the left */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .student-dashboard {
   background: #fff;
   display: flex;
@@ -27,6 +36,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
 }
+
 
 .navbar {
   background-color: #f8f9fa;
