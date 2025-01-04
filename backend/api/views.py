@@ -146,3 +146,25 @@ def current_user_profile(request):
     user = request.user
     serialized_user = UserSerializer(user)
     return Response(serialized_user.data)
+
+
+@api_view(['PATCH'])
+def update_product(request, pk):
+    try:
+        product = Inventory.objects.get(pk=pk)
+    except Inventory.DoesNotExist:
+        return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Update the fields
+    serializer_product = InventorySerializer(product, data=request.data, partial=True)
+    if serializer_product.is_valid():
+        updated_product = serializer_product.save()
+
+        # If quantity goes to zero, delete the product
+        if updated_product.quantity == 0:
+            updated_product.delete()
+            return Response({'message': 'Product deleted due to quantity being 0'}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response(serializer_product.data, status=status.HTTP_200_OK)
+
+    return Response(serializer_product.errors, status=status.HTTP_400_BAD_REQUEST)
