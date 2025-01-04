@@ -5,11 +5,16 @@ import careLogo from "../assets/care.png";
 
 const PasswordResetRequest = () => {
     const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
+    };
+
+    const handleUsernameChange = (e) => {
+        setUsername(e.target.value);
     };
 
     const handleFormSubmit = async (e) => {
@@ -20,11 +25,16 @@ const PasswordResetRequest = () => {
             return;
         }
 
+        if (!username) {
+            setErrorMessage('Please enter your username.');
+            return;
+        }
+
         setErrorMessage('');
         setSuccessMessage('');
 
         try {
-            const response = await api.post('api/password_reset/', { email });
+            const response = await api.post('api/password_reset/', { email, username });
 
             if (response.status === 200) {
                 setSuccessMessage('Password reset email sent successfully. Please check your inbox.');
@@ -34,6 +44,7 @@ const PasswordResetRequest = () => {
         }
 
         setEmail('');
+        setUsername('');
     };
 
     return (
@@ -51,6 +62,20 @@ const PasswordResetRequest = () => {
                         onChange={handleEmailChange}
                         className="form-input"
                         placeholder="Your email address"
+                        required
+                    />
+                </div>
+
+                <div className="form-input-container">
+                    <label htmlFor="username">Enter your username:</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value={username}
+                        onChange={handleUsernameChange}
+                        className="form-input"
+                        placeholder="Your username"
                         required
                     />
                 </div>
