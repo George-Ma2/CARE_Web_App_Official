@@ -41,13 +41,6 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s Profile"
 
-class ProductCategory(models.TextChoices): # <constant_name> = '<database_value>', '<human_readable_value>'
-    RICE_AND_PASTA = 'Rice and Pasta', 'Rice and Pasta'
-    PROCESSED_PROTEINS = 'Processed Proteins', 'Processed Proteins'
-    CANNED_FOOD = 'Canned Food', 'Canned Food'
-    DRINKS_AND_DESSERTS = 'Drinks and Desserts', 'Drinks and Desserts'
-    MISCELLANEOUS = 'Miscellaneous', 'Miscellaneous'
-
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(reset_password_token, *args, **kwargs):
