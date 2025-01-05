@@ -25,7 +25,8 @@ const PasswordResetRequest = () => {
 
         try {
             const response = await api.post('api/password_reset/', { email });
-
+            
+            console.log("Email:", response.data);
             if (response.status === 200) {
                 setSuccessMessage('Password reset email sent successfully. Please check your inbox.');
             }
@@ -34,6 +35,7 @@ const PasswordResetRequest = () => {
         }
 
         setEmail('');
+        setUsername('');
     };
 
     return (

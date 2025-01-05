@@ -1,0 +1,103 @@
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: whitesmoke;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 300px;
+    max-width: 30%;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(0.9);
+    animation: scaleIn 0.3s forwards;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scale-in animation for modal */
+@keyframes scaleIn {
+    0% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Close button inside modal */
+.modal-content .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    margin-left: auto;
+}
+
+/* Form labels and inputs inside modal */
+.modal-content label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: bold;
+    color: #333;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content input[type="date"],
+.modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Buttons inside modal */
+.modal-content button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    margin-top: 10px;
+    width: 48%;
+}
+
+.modal-content button:hover {
+    background-color: #0056b3;
+}
+
+/* Close button style (secondary button) */
+.modal-content button[type="button"]:last-child {
+    background-color: #C0C0C0;
+    color: #333;
+}
+
+.modal-content button[type="button"]:last-child:hover {
+    background-color: #A9A9A9;
+}
+
+/* Modal Footer (space between buttons) */
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}

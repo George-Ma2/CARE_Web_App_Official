@@ -32,16 +32,18 @@ function Form({ route, method }) {
 
         setError("");
 
+        const normalizedEmail = email.toLowerCase();
+
         const formData = new FormData();
-        formData.append("username", username);
+        formData.append("username", normalizedEmail);
         formData.append("password", password);
     
         if (method === "register") {
             formData.append("first_name", firstName);
             formData.append("last_name", lastName);
-            formData.append("email", email);
+            formData.append("email", normalizedEmail);
             formData.append("photo_id", photoId); // Match the backend field
-            
+
         }
         try {
             const res = await api.post(route, formData);
@@ -95,12 +97,13 @@ function Form({ route, method }) {
 
             <input
                 className="form-input"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
                 required
             />
+
             <input
                 className="form-input"
                 type="password"
@@ -129,14 +132,6 @@ function Form({ route, method }) {
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Last Name"
-                        required
-                    />
-                    <input
-                        className="form-input"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Email"
                         required
                     />
 

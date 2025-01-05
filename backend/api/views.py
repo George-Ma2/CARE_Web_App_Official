@@ -112,10 +112,12 @@ class CreateUserView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         # Extracting user fields
         username = request.data.get("username")
+        username = username.lower()
         password = request.data.get("password")
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
         email = request.data.get("email")
+        email = email.lower()
         photo_id = request.FILES.get("photo_id")  # Image file upload
 
         # Validate required fields
@@ -123,8 +125,8 @@ class CreateUserView(generics.CreateAPIView):
             return Response({"error": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check for username duplication
-        if User.objects.filter(username=username).exists():
-            return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(username__iexact=username).exists():
+            return Response({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             # Create user and profile
@@ -242,3 +244,26 @@ def current_user_profile(request):
     user = request.user
     serialized_user = UserSerializer(user)
     return Response(serialized_user.data)
+
+
+@api_view(['PATCH'])
+def update_product(request, pk):
+    try:
+        product = Inventory.objects.get(pk=pk)
+    except Inventory.DoesNotExist:
+        return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Update the fields
+    serializer_product = InventorySerializer(product, data=request.data, partial=True)
+    if serializer_product.is_valid():
+        updated_product = serializer_product.save()
+
+        # If quantity goes to zero, delete the product
+        if updated_product.quantity == 0:
+            updated_product.delete()
+            return Response({'message': 'Product deleted due to quantity being 0'}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response(serializer_product.data, status=status.HTTP_200_OK)
+
+    return Response(serializer_product.errors, status=status.HTTP_400_BAD_REQUEST)
+

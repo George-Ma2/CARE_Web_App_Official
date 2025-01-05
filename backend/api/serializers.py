@@ -39,6 +39,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         profile_data = validated_data.pop('profile', None)
+        email = validated_data.get('email').lower()
+        validated_data['email'] = email
         user = User.objects.create_user(**validated_data)
 
         if profile_data:
