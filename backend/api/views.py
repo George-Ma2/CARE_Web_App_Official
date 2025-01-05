@@ -10,9 +10,6 @@ from .models import Inventory
 import base64
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
-from django_rest_passwordreset.signals import reset_password_token_created
-from django.utils.http import urlsafe_base64_encode
-from django.contrib.auth.tokens import default_token_generator
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
