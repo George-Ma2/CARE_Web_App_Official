@@ -10,6 +10,9 @@ from .models import Inventory
 import base64
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -168,3 +171,29 @@ def update_product(request, pk):
         return Response(serializer_product.data, status=status.HTTP_200_OK)
 
     return Response(serializer_product.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetRequestWithUsername(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        username = request.data.get('username')
+
+        if not email or not username:
+            return Response({'error': 'Email and Username are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Check if the provided username matches the email
+            user = User.objects.get(email=email, username=username)
+        except User.DoesNotExist:
+            return Response({'error': 'No user found with the provided email and username combination.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Generate the password reset token using the default_token_generator
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(str(user.pk).encode('utf-8'))
+
+        # Manually trigger the signal to send the reset email
+        reset_password_token_created.send(sender=self.__class__, user=user)
+
+        # If username and email match, the token will be generated and the signal will be triggered
+        reset_password_token_created.send(sender=self.__class__, user=user)
+
+        return Response({'success': 'Password reset email sent successfully.'}, status=status.HTTP_200_OK)
