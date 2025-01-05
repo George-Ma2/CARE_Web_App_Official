@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import ProductForm from '../components/ProductForm';
-import { addProduct, deleteProduct, updateProductQuantity } from '../components/ProductService';
-import DeleteConfirmationModal from '../components/DeleteConfirmationModal'
+import { addProduct, deleteProduct,updateProduct, updateProductQuantity } from '../components/ProductService';
+import UpdateProductModal from '../components/UpdateProductModal';
 import api from '../api';
 import "../styles/Inventory.css"
 
 const Inventory = () => {
     const [products, setProducts] = useState([]);
-    // const [showModal, setShowModal] = useState(false);
-    // const [selectedProductId, setSelectedProductId] = useState(null);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
         try {
-        // Use your custom API instance to fetch products
         const response = await api.get('api/inventory/');
         setProducts(response.data);
         } catch (error) {
@@ -60,23 +59,33 @@ const Inventory = () => {
         try {
         await deleteProduct(id); // Delete the product from the backend
         setProducts(products.filter((product) => product.id !== id)); // Remove the product from the list
-        // setShowModal(false);
         } catch (error) {
         console.error('Error deleting product:', error);
         }
     };
 
-    // Show delete confirmation modal
-    // const handleShowModal = (id) => {
-    //     setSelectedProductId(id);
-    //     setShowModal(true);
-    // };
+    const handleUpdateProduct = async (updatedProduct) => {
+        try {
+            const response = await updateProduct(updatedProduct.id, updatedProduct);
+            console.log(response.data)
+            setProducts(products.map((product) =>
+                product.id === updatedProduct.id ? response.data : product
+            ));
+            setShowUpdateModal(false);
+        } catch (error) {
+            console.error('Error updating product:', error);
+        }
+    };
 
-    // // Close delete confirmation modal
-    // const handleCloseModal = () => {
-    //     setShowModal(false);
-    //     setSelectedProductId(null);
-    // };
+    const openUpdateModal = (product) => {
+        setSelectedProduct(product);
+        setShowUpdateModal(true);
+    };
+
+    const closeUpdateModal = () => {
+        setSelectedProduct(null);
+        setShowUpdateModal(false);
+    };
 
     return (
         <div>
@@ -101,20 +110,21 @@ const Inventory = () => {
                             <td>{product.category}</td>
                             <td>{product.expiration_date}</td>
                             <td>
-                                {/* <button onClick={() => handleShowModal(product.id)}>Delete</button> */}
-                                <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+                                <button className="update-btn" onClick={() => openUpdateModal(product)}>Update</button>
+                                <button className="delete-btn" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            {/* {showModal && (
-                <DeleteConfirmationModal
-                    onDelete={handleDeleteProduct}
-                    onCancel={handleCloseModal}
-                    productId={selectedProductId}
+
+            {showUpdateModal && (
+                <UpdateProductModal
+                    product={selectedProduct}
+                    onClose={closeUpdateModal}
+                    onSave={handleUpdateProduct}
                 />
-            )} */}
+            )}
         </div>        
     );
 };
