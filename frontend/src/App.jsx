@@ -6,6 +6,7 @@ import NotFound from "./pages/NotFound"
 import Calendar from "./pages/Calendar"
 import BoxInfo from "./pages/BoxInformation"
 import StudentInfo from "./pages/StudentInfo"
+import Cart from "./pages/Cart"
 import Inventory from "./pages/Inventory"
 import ProtectedRoute from "./components/ProtectedRoute"
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -36,7 +37,9 @@ function App() {
         <Route path="/userdash/calendar" element={<ProtectedRoute> <Calendar /> </ProtectedRoute>}/>
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
+        <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
         <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/>
+        
       </Routes>
     </BrowserRouter>
   )

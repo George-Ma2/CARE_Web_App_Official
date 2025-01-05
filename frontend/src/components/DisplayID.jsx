@@ -59,7 +59,7 @@ function DisplayID() {
 
       <nav className="navbar">
         <form className="form-inline">
-          <div className="left-content">
+          
             <button
               className="btn btn-outline-secondary"
               type="button"
@@ -81,7 +81,14 @@ function DisplayID() {
             >
               Student Info
             </button>
-          </div>
+            <button
+            className="btn btn-outline-secondary"
+            type="button"
+            onClick={() => navigate('/userdash/ordercart')}
+          >
+            View Cart
+          </button>
+         
           <button
             className="btn btn-logout-btn"
             type="button"

@@ -43,19 +43,21 @@
   position: relative;
 }
 
+
 .navbar .form-inline {
   padding: 10px;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Adjust layout when screen width is smaller */
   justify-content: center;
   align-items: center;
   gap: 20px;
+  
 }
-
 .navbar .btn {
-  border-radius: 5px;
-  font-weight: bold;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
   padding: 10px 15px;
+  font-weight: bold;
+  border-radius: 5px;
   transition: all 0.3s ease;
 }
 
@@ -81,6 +83,7 @@
 }
 
 .navbar .btn-logout-btn {
+  margin-left: 370px;
   background-color: #d90f13;
   border-color: #d90f13;
   color: white;
@@ -92,11 +95,7 @@
   color: black;
 }
 
-.left-content {
-  display: flex;
-  gap: 20px;
-  padding-right: 550px;
-}
+
 
 .top-left-img {
   width: 100px;
@@ -184,10 +183,8 @@
   text-align: center;
 }
 
-.order-info {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 100%;
+.package-contents-textarea {
+  width: 100%; /* Full width of the order-summary section */
   padding: 12px 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -195,14 +192,41 @@
   color: #333;
   background-color: #f9f9f9;
   box-sizing: border-box;
-  transition: all 0.3s ease;
+  resize: none; /* Prevent manual resizing */
+  margin-top: 10px;
+
 }
 
-.order-info:focus {
-  outline: none;
-  border-color: #174bda;
-  box-shadow: 0 0 5px rgba(23, 75, 218, 0.4);
+.pickup-location-textarea {
+  width: 100%; /* Full width of the order-summary section */
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  resize: none; /* Prevent manual resizing */
+  margin-top: 10px;
+  margin-right: 50px
 }
+
+
+.order-date-textarea {
+  width: 70%; /* Full width of the order-summary section */
+  padding: 10px 0px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  resize: none; /* Prevent manual resizing */
+  margin-top: 10px;
+  text-align: center;
+
+}
+
 
 
 .form-row {
@@ -216,6 +240,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px; /* Adjust spacing between label and input */
+  margin-bottom: 20px;
 }
 
 
@@ -243,6 +268,66 @@
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+/* Modal container styles */
+.modal {
+  display: block !important; /* Added to ensure visibility from Bootstrap JS */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding-top: 60px;
+}
+
+/* Modal content */
+.modal-content {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Package list */
+.package-list {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap; /* Allows items to wrap into multiple rows if necessary */
+  gap: 20px; /* Adds space between items */
+}
+
+/* Close button styling */
+.modal-content button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #d90f13;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.modal-content button:hover {
+  background-color: #e53935;
+}
+
+.reserve-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: green; /* Change to desired color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reserve-button:hover {
+  background-color: darkgreen; /* Darker shade on hover */
+}
+
 
 @media (max-width: 991px) {
   .header-container {
