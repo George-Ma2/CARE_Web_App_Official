@@ -18,10 +18,12 @@ class CreateUserView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         # Extracting user fields
         username = request.data.get("username")
+        username = username.lower()
         password = request.data.get("password")
         first_name = request.data.get("first_name")
         last_name = request.data.get("last_name")
         email = request.data.get("email")
+        email = email.lower()
         photo_id = request.FILES.get("photo_id")  # Image file upload
 
         # Validate required fields
@@ -29,8 +31,8 @@ class CreateUserView(generics.CreateAPIView):
             return Response({"error": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check for username duplication
-        if User.objects.filter(username=username).exists():
-            return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(username__iexact=username).exists():
+            return Response({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             # Create user and profile
