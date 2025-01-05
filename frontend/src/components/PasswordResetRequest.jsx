@@ -3,21 +3,13 @@ import api from '../api';
 import "../styles/PasswordResetRequestForm.css"
 import careLogo from "../assets/care.png";
 
-
-
-
 const PasswordResetRequest = () => {
     const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-   
+
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
-    };
-
-    const handleUsernameChange = (e) => {
-        setUsername(e.target.value);
     };
 
     const handleFormSubmit = async (e) => {
@@ -25,11 +17,6 @@ const PasswordResetRequest = () => {
         
         if (!email) {
             setErrorMessage('Please enter your email address.');
-            return;
-        }
-
-        if (!username) {
-            setErrorMessage('Please enter your username.');
             return;
         }
 
@@ -66,20 +53,6 @@ const PasswordResetRequest = () => {
                         onChange={handleEmailChange}
                         className="form-input"
                         placeholder="Your email address"
-                        required
-                    />
-                </div>
-
-                <div className="form-input-container">
-                    <label htmlFor="username">Enter your username:</label>
-                    <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={username}
-                        onChange={handleUsernameChange}
-                        className="form-input"
-                        placeholder="Your username"
                         required
                     />
                 </div>
