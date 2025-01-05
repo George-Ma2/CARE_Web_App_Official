@@ -16,7 +16,20 @@
     font-weight: bold;
 }
 
-.product-table td button {
+.product-table td .update-btn {
+    padding: 5px 10px;
+    background-color: green;
+    margin-right: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.product-table td .update-btn:hover {
+    background-color: darkgreen; 
+}
+
+.product-table td .delete-btn {
     padding: 5px 10px;
     background-color: red;
     color: white;
@@ -24,6 +37,6 @@
     cursor: pointer;
 }
 
-.product-table td button:hover {
+.product-table td .delete-btn:hover {
     background-color: darkred;
 }
