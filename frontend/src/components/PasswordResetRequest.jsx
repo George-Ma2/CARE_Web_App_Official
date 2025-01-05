@@ -3,12 +3,15 @@ import api from '../api';
 import "../styles/PasswordResetRequestForm.css"
 import careLogo from "../assets/care.png";
 
+
+
+
 const PasswordResetRequest = () => {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-
+   
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
     };
@@ -35,7 +38,8 @@ const PasswordResetRequest = () => {
 
         try {
             const response = await api.post('api/password_reset/', { email, username });
-
+            
+            console.log("Email:", response.data);
             if (response.status === 200) {
                 setSuccessMessage('Password reset email sent successfully. Please check your inbox.');
             }
