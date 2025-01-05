@@ -37,7 +37,7 @@ const PasswordResetRequest = () => {
         setSuccessMessage('');
 
         try {
-            const response = await api.post('api/password_reset/', { email, username });
+            const response = await api.post('api/password_reset/', { email });
             
             console.log("Email:", response.data);
             if (response.status === 200) {
