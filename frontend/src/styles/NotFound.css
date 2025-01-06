@@ -1,6 +1,5 @@
-/* NotFound.css */
 
-.container {
+.container-not-found {
     display: flex;
     flex-direction: column;
     align-items: center;  /* Horizontally center */
@@ -11,7 +10,7 @@
     color: #333;  /* Text color */
 }
 
-.header {
+.header-not-found {
     margin-bottom: 20px;  /* Space between the image and text */
 }
 

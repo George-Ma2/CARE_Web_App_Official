@@ -1,5 +1,5 @@
 /* Modal Overlay */
-.modal-overlay {
+.modal-overlay-update {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,7 +13,7 @@
 }
 
 /* Modal Content */
-.modal-content {
+.modal-content-update {
     background-color: white;
     border-radius: 8px;
     width: 300px;
@@ -37,7 +37,7 @@
 }
 
 /* Close button inside modal */
-.modal-content .close-btn {
+.modal-content-update .close-btn {
     background: none;
     border: none;
     font-size: 24px;
@@ -47,17 +47,17 @@
 }
 
 /* Form labels and inputs inside modal */
-.modal-content label {
+.modal-content-update label {
     display: block;
     margin-bottom: 12px;
     font-weight: bold;
     color: #333;
 }
 
-.modal-content input[type="text"],
-.modal-content input[type="number"],
-.modal-content input[type="date"],
-.modal-content select {
+.modal-content-update input[type="text"],
+.modal-content-update input[type="number"],
+.modal-content-update input[type="date"],
+.modal-content-update select {
     width: 100%;
     padding: 10px;
     margin-top: 5px;
@@ -67,36 +67,39 @@
     font-size: 16px;
     color: #333;
 }
-
-/* Buttons inside modal */
-.modal-content button {
+/* General button styles */
+.modal-content-update button {
     padding: 10px 20px;
     font-size: 16px;
     border-radius: 4px;
     cursor: pointer;
     border: none;
-    background-color: #007bff;
-    color: white;
     margin-top: 10px;
-    width: 48%;
+    width: 100%; /* Full width for their respective categories */
 }
 
-.modal-content button:hover {
+/* Update Button Styles */
+.save-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.save-button:hover {
     background-color: #0056b3;
 }
 
-/* Close button style (secondary button) */
-.modal-content button[type="button"]:last-child {
+/* Close Button Styles */
+.close-button {
     background-color: #C0C0C0;
     color: #333;
 }
 
-.modal-content button[type="button"]:last-child:hover {
+.close-button:hover {
     background-color: #A9A9A9;
 }
 
 /* Modal Footer (space between buttons) */
-.modal-footer {
+.modal-footer-update {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;

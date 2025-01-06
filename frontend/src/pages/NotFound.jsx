@@ -2,8 +2,8 @@ import "../styles/NotFound.css";
 
 function NotFound() {
     return (
-        <div className="container">
-            <header className="header">
+        <div className="container-not-found">
+            <header className="header-not-found">
                 <img src="/care.png" alt="Care logo" />
             </header>
             <h1>404 Not Found</h1>

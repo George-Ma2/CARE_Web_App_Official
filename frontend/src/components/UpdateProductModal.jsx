@@ -31,8 +31,8 @@ const UpdateProductModal = ({ product, onClose, onSave }) => {
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className="modal-overlay-update">
+            <div className="modal-content-update">
                 <h2>Update Product</h2>
                 <form>
                     <label>
@@ -78,8 +78,9 @@ const UpdateProductModal = ({ product, onClose, onSave }) => {
                         />
                     </label>
                     <div>
-                        <button type="button" onClick={handleSave}>Save Changes</button>
-                        <button type="button" onClick={onClose}>Close</button>
+
+                        <button class="save-button" onClick={handleSave}>Save Changes</button>
+                        <button type="button" class = "close-button" onClick={onClose}>Close</button>
                     </div>
                 </form>
             </div>
