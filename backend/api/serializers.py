@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Inventory
+from .models import Profile, Inventory, CarePackage, CarePackageItem
 import base64
 
 
@@ -59,12 +59,67 @@ class InventorySerializer(serializers.ModelSerializer):
             'updated_at': {'read_only': True},
         }
 
-class InventorySerializer(serializers.ModelSerializer):
+
+class CarePackageItemSerializer(serializers.ModelSerializer):
+    product = InventorySerializer()  # Nested InventorySerializer to represent the product details
+
     class Meta:
-        model = Inventory
-        fields = ['id', 'name', 'category', 'quantity', 'expiration_date', 'created_at', 'updated_at']
+        model = CarePackageItem
+        fields = ['id', 'product', 'quantity']
+
+    def create(self, validated_data):
+        product_data = validated_data.pop('product')
+        product = Inventory.objects.get(id=product_data['id'])  # Assuming you're passing the product's ID
+        return CarePackageItem.objects.create(product=product, **validated_data)
+
+    def update(self, instance, validated_data):
+        product_data = validated_data.pop('product')
+        instance.product = Inventory.objects.get(id=product_data['id'])
+        instance.quantity = validated_data.get('quantity', instance.quantity)
+        instance.save()
+        return instance
+    
+
+class CarePackageSerializer(serializers.ModelSerializer):
+    items = CarePackageItemSerializer(many=True)  # Nested CarePackageItemSerializer to represent items
+
+    class Meta:
+        model = CarePackage
+        fields = ['id', 'name', 'description', 'items', 'status', 'created_at', 'updated_at']
         extra_kwargs = {
             'id': {'read_only': True},
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
         }
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('items')
+        care_package = CarePackage.objects.create(**validated_data)
+
+        # Create CarePackageItems
+        for item_data in items_data:
+            product_data = item_data.pop('product')
+            product = Inventory.objects.get(id=product_data['id'])  # Fetching product by ID
+            CarePackageItem.objects.create(care_package=care_package, product=product, **item_data)
+
+        return care_package
+
+    def update(self, instance, validated_data):
+        items_data = validated_data.pop('items', None)
+
+        # Update CarePackage details
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+
+        # Update CarePackageItems
+        if items_data:
+            # Delete old items first (you can also implement partial update)
+            instance.care_package_items.all().delete()
+            for item_data in items_data:
+                product_data = item_data.pop('product')
+                product = Inventory.objects.get(id=product_data['id'])
+                CarePackageItem.objects.create(care_package=instance, product=product, **item_data)
+
+        return instance
