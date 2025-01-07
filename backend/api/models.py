@@ -47,6 +47,14 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.category}) - {self.quantity} in stock" # Check if necessary
+    
+    # def reduce_stock(self, quantity):
+    #     """Reduces stock by the given quantity, preventing negative quantities."""
+    #     if self.quantity >= quantity:
+    #         self.quantity -= quantity
+    #         self.save()
+    #     else:
+    #         raise ValueError(f"Not enough stock for {self.name}")
 
 
 class Profile(models.Model):
@@ -97,4 +105,54 @@ def create_user_profile(sender, instance, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
+class CarePackageStatus(models.TextChoices): # <constant_name> = '<database_value>', '<human_readable_value>'
+    CREATED = 'Created', 'Created',
+    PICKED_UP = 'Picked Up', 'Picked Up',
+    CANCELLED = 'Cancelled', 'Cancelled'
+
+class CarePackage(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    items = models.ManyToManyField(Inventory, through='CarePackageItem')
+    status = models.CharField(
+        max_length=50,
+        choices=CarePackageStatus.choices,
+        default=CarePackageStatus.CREATED
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Care Package: {self.name}"
+
+
+class CarePackageItem(models.Model):
+    care_package = models.ForeignKey(CarePackage, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Inventory, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.product.name} x {self.quantity}"
+
+
+# class CarePackagePickup(models.Model):
+#     care_package = models.ForeignKey(CarePackage, related_name='pickups', on_delete=models.CASCADE)
+#     user = models.ForeignKey(User, related_name='pickups', on_delete=models.SET_NULL, null=True)
+#     picked_up_at = models.DateTimeField(auto_now_add=True)
+#     picked_up_location = models.CharField(max_length=255, blank=True, null=True)
+#     status = models.CharField(max_length=50, choices=[('PICKED_UP', 'Picked Up'), ('CANCELLED', 'Cancelled')], default='PICKED_UP')
+
+#     def cancel_pickup(self):
+#         """Handles the cancellation of a pickup and replenishes inventory."""
+#         if self.status == 'PICKED_UP':
+#             self.status = 'CANCELLED'
+#             self.save()
+
+#             # Replenish inventory
+#             for item in self.care_package.items.all():
+#                 item.product.quantity += item.quantity
+#                 item.product.save()
+
+#     def __str__(self):
+#         return f"Care Package {self.care_package.name} picked up by {self.user.username if self.user else 'Unknown'}"
 
