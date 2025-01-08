@@ -67,9 +67,25 @@ class CarePackageItemSerializer(serializers.ModelSerializer):
         model = CarePackageItem
         fields = ['id', 'product', 'quantity']
 
+    def validate_quantity(self, quantity):
+        """Ensure the quantity is available in stock before adding to care package."""
+        # product = self.initial_data.get('product')  # Get product from data
+        # product_instance = Inventory.objects.get(id=product)
+        product_instance = self.validated_data['product']
+        inventory_instance = Inventory.objects.get(id=product_instance['id']) # Check
+
+        if quantity > inventory_instance.quantity:
+            raise serializers.ValidationError(
+                f"Not enough stock for {product_instance.name}. Available: {product_instance.quantity}, Requested: {quantity}."
+            )
+        return quantity
+
+
     def create(self, validated_data):
         product_data = validated_data.pop('product')
-        product = Inventory.objects.get(id=product_data['id'])  # Assuming you're passing the product's ID
+        product = Inventory.objects.get(id=product_data['id'])
+        quantity = validated_data['quantity']
+        product.reserve_stock(quantity)
         return CarePackageItem.objects.create(product=product, **validated_data)
 
     def update(self, instance, validated_data):
@@ -91,6 +107,20 @@ class CarePackageSerializer(serializers.ModelSerializer):
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
         }
+
+    def validate_items(self, package):
+        """Check that all items have sufficient stock before creating the care package."""
+        # Iterate over each item and validate the stock
+        for item in package:
+            product = item['product']
+            quantity = item['quantity']
+            product_instance = Inventory.objects.get(id=product)
+
+            if quantity > product_instance.quantity:
+                raise serializers.ValidationError(
+                    f"Not enough stock for {product_instance.name}. Available: {product_instance.quantity}, Requested: {quantity}."
+                )
+        return package
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
