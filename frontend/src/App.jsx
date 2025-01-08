@@ -8,6 +8,7 @@ import BoxInfo from "./pages/BoxInformation"
 import StudentInfo from "./pages/StudentInfo"
 import Inventory from "./pages/Inventory"
 import ProtectedRoute from "./components/ProtectedRoute"
+import Layout from "./components/Layout"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PasswordResetRequest from "./components/PasswordResetRequest"
 import PasswordReset from "./components/PasswordReset"
@@ -35,8 +36,10 @@ function App() {
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/userdash/calendar" element={<ProtectedRoute> <Calendar /> </ProtectedRoute>}/>
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
-        <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
-        <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/>
+        <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>\
+        <Route path="/admin/inventory" element={<ProtectedRoute> <Layout> <Inventory /> </Layout> </ProtectedRoute>}/>
+        <Route path="/admin/dashboard" element={<ProtectedRoute> <Layout> <Inventory /> </Layout> </ProtectedRoute>}/>
+        <Route path="/admin/boxcreation" element={<ProtectedRoute> <Layout> <Inventory /> </Layout> </ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>
   )
