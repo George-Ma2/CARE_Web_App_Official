@@ -48,13 +48,17 @@ class Inventory(models.Model):
     def __str__(self):
         return f"{self.name} ({self.category}) - {self.quantity} in stock" # Check if necessary
     
-    # def reduce_stock(self, quantity):
-    #     """Reduces stock by the given quantity, preventing negative quantities."""
-    #     if self.quantity >= quantity:
-    #         self.quantity -= quantity
-    #         self.save()
-    #     else:
-    #         raise ValueError(f"Not enough stock for {self.name}")
+    def reserve_stock(self, quantity):
+        """Reserve stock by decreasing the available quantity."""
+        if quantity > self.quantity:
+            raise ValueError("Not enough stock to reserve.")
+        self.quantity -= quantity
+        self.save()
+
+    def return_stock(self, quantity):
+        """Return stock to inventory if a care package is cancelled."""
+        self.quantity += quantity
+        self.save()
 
 
 class Profile(models.Model):
