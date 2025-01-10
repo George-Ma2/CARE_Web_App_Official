@@ -8,4 +8,5 @@ urlpatterns = [
     path('inventory/', views.InventoryListCreate.as_view(), name='inventory-list-create'),
     path('inventory/<int:pk>/', views.InventoryRetrieveUpdateDestroy.as_view(), name='inventory-detail'),
     path('inventory/update_quantity/<int:pk>/', views.UpdateProductQuantity.as_view(), name='update-product-quantity'),
+    path('dashboard/', views.InventoryCategorySummary.as_view(), name='inventory-category-summary'),
 ]
