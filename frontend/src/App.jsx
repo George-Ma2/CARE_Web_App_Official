@@ -7,6 +7,8 @@ import Calendar from "./pages/Calendar"
 import BoxInfo from "./pages/BoxInformation"
 import StudentInfo from "./pages/StudentInfo"
 import Inventory from "./pages/Inventory"
+import Dashboard from "./pages/Dashboard"
+import BoxCreation from "./pages/Dashboard"
 import ProtectedRoute from "./components/ProtectedRoute"
 import Layout from "./components/Layout"
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -38,7 +40,7 @@ function App() {
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>\
         <Route path="/admin/inventory" element={<ProtectedRoute> <Layout> <Inventory /> </Layout> </ProtectedRoute>}/>
-        <Route path="/admin/dashboard" element={<ProtectedRoute> <Layout> <Inventory /> </Layout> </ProtectedRoute>}/>
+        <Route path="/admin/dashboard" element={<ProtectedRoute> <Layout> <Dashboard /> </Layout> </ProtectedRoute>}/>
         <Route path="/admin/boxcreation" element={<ProtectedRoute> <Layout> <Inventory /> </Layout> </ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>
