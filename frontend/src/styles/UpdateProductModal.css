@@ -1,0 +1,106 @@
+/* Modal Overlay */
+.modal-overlay-update {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: whitesmoke;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Modal Content */
+.modal-content-update {
+    background-color: white;
+    border-radius: 8px;
+    width: 300px;
+    max-width: 30%;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(0.9);
+    animation: scaleIn 0.3s forwards;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scale-in animation for modal */
+@keyframes scaleIn {
+    0% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Close button inside modal */
+.modal-content-update .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    margin-left: auto;
+}
+
+/* Form labels and inputs inside modal */
+.modal-content-update label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: bold;
+    color: #333;
+}
+
+.modal-content-update input[type="text"],
+.modal-content-update input[type="number"],
+.modal-content-update input[type="date"],
+.modal-content-update select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+}
+/* General button styles */
+.modal-content-update button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    margin-top: 10px;
+    width: 100%; /* Full width for their respective categories */
+}
+
+/* Update Button Styles */
+.save-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.save-button:hover {
+    background-color: #0056b3;
+}
+
+/* Close Button Styles */
+.close-button {
+    background-color: #C0C0C0;
+    color: #333;
+}
+
+.close-button:hover {
+    background-color: #A9A9A9;
+}
+
+/* Modal Footer (space between buttons) */
+.modal-footer-update {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}

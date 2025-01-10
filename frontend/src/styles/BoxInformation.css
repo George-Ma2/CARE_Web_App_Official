@@ -1,4 +1,18 @@
+:root {
+  --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
+.student-dashboard h2 {
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 50px; 
+  font-weight: 700;
+  color: black;
+  background-color: #F6C932;
+  margin-bottom: 20px;
+  margin-right: 70px; 
+  border-radius: 5px;
+
+}
 .student-dashboard {
   background: #fff;
   display: flex;
@@ -20,7 +34,7 @@
   border-bottom: 1px solid #eaeaea;
   padding: 10px 20px;
   display: flex;
-  flex-wrap: wrap; /* Allows the content to wrap on smaller screens */
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin: 0;
@@ -29,6 +43,7 @@
   position: relative;
 }
 
+
 .navbar .form-inline {
   padding: 10px;
   display: flex;
@@ -36,12 +51,13 @@
   justify-content: center;
   align-items: center;
   gap: 20px;
+  
 }
-
 .navbar .btn {
-  border-radius: 5px;
-  font-weight: bold;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
   padding: 10px 15px;
+  font-weight: bold;
+  border-radius: 5px;
   transition: all 0.3s ease;
 }
 
@@ -67,6 +83,7 @@
 }
 
 .navbar .btn-logout-btn {
+  margin-left: 370px;
   background-color: #d90f13;
   border-color: #d90f13;
   color: white;
@@ -78,20 +95,12 @@
   color: black;
 }
 
-.left-content {
-  display: flex; /* Ensure proper layout for left-side content */
-  gap: 20px;
-  padding-right: 550px;
-}
+
 
 .top-left-img {
-  position: relative;
-  top: 0;
-  left: 0; /* Ensures proper alignment */
   width: 100px;
   height: auto;
 }
-
 
 .main-content {
   align-self: center;
@@ -108,7 +117,6 @@
 .content-column {
   display: flex;
   flex-direction: column;
-  line-height: normal;
   width: 50%;
 }
 
@@ -116,16 +124,9 @@
   display: flex;
   margin-top: 19px;
   flex-direction: column;
-  color: #000;
+  color: black;
   text-align: center;
   font: 700 32px Poppins, sans-serif;
-}
-
-.box-preview {
-  background: #AD8468;
-  display: flex;
-  margin-top: 89px;
-  height: 428px;
 }
 
 .order-section {
@@ -147,7 +148,6 @@
   margin-top: 11px;
   flex-direction: column;
   flex-grow: 1;
-  flex-basis: 0;
   width: fit-content;
 }
 
@@ -159,11 +159,12 @@
 }
 
 .summary-header {
-  background: #C6302C;
+  background: #d90f13;
   font-size: 20px;
   color: #fff;
   text-align: center;
   padding: 5px 22px 14px;
+  font: 700 16px Poppins, sans-serif;
 }
 
 .summary-content {
@@ -177,34 +178,71 @@
   padding: 0 64px 0 20px;
 }
 
-.package-info {
-  text-align: center;
-  margin-left: 30px;
-}
-
+.package-info,
 .pickup-location {
   text-align: center;
-  margin: 64px 0 0 40px;
 }
 
-.checkbox-group {
+.package-contents-textarea {
+  width: 100%; /* Full width of the order-summary section */
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  resize: none; /* Prevent manual resizing */
+  margin-top: 10px;
+
+}
+
+.pickup-location-textarea {
+  width: 100%; /* Full width of the order-summary section */
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  resize: none; /* Prevent manual resizing */
+  margin-top: 10px;
+  margin-right: 50px
+}
+
+
+.order-date-textarea {
+  width: 70%; /* Full width of the order-summary section */
+  padding: 10px 0px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  resize: none; /* Prevent manual resizing */
+  margin-top: 10px;
+  text-align: center;
+
+}
+
+
+
+.form-row {
   display: flex;
-  margin-top: 60px;
-  gap: 17px;
+  gap: 20px; /* Adjust spacing between the groups */
+  align-items: center; /* Align items vertically */
+  justify-content: center;
 }
 
-.checkbox {
-  background: #D9D9D9;
-  align-self: start;
-  width: 26px;
-  height: 26px;
-  border: 1px solid #000;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Adjust spacing between label and input */
+  margin-bottom: 20px;
 }
 
-.checkbox-label {
-  flex-basis: auto;
-  flex-grow: 1;
-}
 
 .submit-button {
   background: #F6C932;
@@ -231,73 +269,159 @@
   border: 0;
 }
 
+/* Modal container styles */
+.modal {
+  display: block !important; /* Added to ensure visibility from Bootstrap JS */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding-top: 60px;
+}
+
+/* Modal content */
+.modal-content {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Package list */
+.package-list {
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap; /* Allows items to wrap into multiple rows if necessary */
+  gap: 20px; /* Adds space between items */
+}
+
+/* Close button styling */
+.modal-content button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #d90f13;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.modal-content button:hover {
+  background-color: #e53935;
+}
+
+.reserve-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: green; /* Change to desired color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reserve-button:hover {
+  background-color: darkgreen; /* Darker shade on hover */
+}
 
 
 @media (max-width: 991px) {
   .header-container {
     max-width: 100%;
   }
-  
-  .nav-menu {
-    max-width: 100%;
-  }
-  
-  .nav-item {
-    padding: 0 20px;
-  }
-  
+
   .main-content {
     max-width: 100%;
     margin-top: 40px;
   }
-  
+
   .content-grid {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
   }
-  
+
   .content-column {
     width: 100%;
   }
-  
-  .box-section {
-    margin-top: 40px;
-  }
-  
-  .box-preview {
-    margin-top: 40px;
-  }
-  
+
   .order-section {
     margin-top: 40px;
   }
-  
+
   .order-summary,
   .summary-header,
   .summary-content {
     max-width: 100%;
   }
-  
+
   .summary-content {
     padding-right: 20px;
     margin-top: 40px;
   }
-  
+
   .package-info,
   .pickup-location {
     margin-left: 10px;
   }
-  
+
   .pickup-location {
     margin-top: 40px;
   }
-  
+
   .checkbox-group {
     margin-top: 40px;
   }
-  
+
   .submit-button {
     padding-left: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .header-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navbar {
+    padding: 8px 15px;
+  }
+
+  .navbar .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .main-content {
+    margin-top: 20px;
+    padding: 0 15px;
+  }
+
+  .content-grid {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .order-section {
+    margin-top: 20px;
+  }
+
+  .order-summary,
+  .summary-header,
+  .summary-content {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  .submit-button {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 20px;
+    width: auto;
   }
 }

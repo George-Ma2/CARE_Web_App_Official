@@ -9,6 +9,10 @@ const ProductForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (quantity <= 0) {
+      alert('Enter a quantity more than 1');
+      return;
+  }
     const newProduct = {
       name,
       quantity,
@@ -40,6 +44,8 @@ const ProductForm = ({ onSubmit }) => {
           value={quantity}
           onChange={(e) => setQuantity(e.target.value)}
           required
+          min="1"
+
         />
       </label>
       <label>

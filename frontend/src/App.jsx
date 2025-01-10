@@ -6,6 +6,7 @@ import NotFound from "./pages/NotFound"
 import Calendar from "./pages/Calendar"
 import BoxInfo from "./pages/BoxInformation"
 import StudentInfo from "./pages/StudentInfo"
+import Cart from "./pages/Cart"
 import Inventory from "./pages/Inventory"
 import Dashboard from "./pages/Dashboard"
 import BoxCreation from "./pages/Dashboard"
@@ -38,10 +39,13 @@ function App() {
         <Route path="*" element={<NotFound />}></Route>
         <Route path="/userdash/calendar" element={<ProtectedRoute> <Calendar /> </ProtectedRoute>}/>
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
-        <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>\
+        <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
+        <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
         <Route path="/admin/inventory" element={<ProtectedRoute> <Layout> <Inventory /> </Layout> </ProtectedRoute>}/>
         <Route path="/admin/dashboard" element={<ProtectedRoute> <Layout> <Dashboard /> </Layout> </ProtectedRoute>}/>
         <Route path="/admin/boxcreation" element={<ProtectedRoute> <Layout> <Inventory /> </Layout> </ProtectedRoute>}/>
+        
+        
       </Routes>
     </BrowserRouter>
   )

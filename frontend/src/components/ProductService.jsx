@@ -29,3 +29,15 @@ export const deleteProduct = async (id) => {
         throw error;
     }
 };
+
+// Update product details
+export const updateProduct = async (id, updatedProduct) => {
+    try {
+        const response = await api.patch(`api/inventory/update/${id}/`, updatedProduct);
+        console.log(response.data)
+        return response;
+    } catch (error) {
+        console.error('Error updating product:', error);
+        throw error;
+    }
+};
