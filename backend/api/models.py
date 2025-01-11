@@ -46,7 +46,7 @@ class Inventory(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name} ({self.category}) - {self.quantity} in stock" # Check if necessary
+        return f"{self.name} ({self.category}) - {self.quantity} in stock"
     
     def reserve_stock(self, quantity):
         """Reserve stock by decreasing the available quantity."""
@@ -118,6 +118,7 @@ class CarePackage(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     items = models.ManyToManyField(Inventory, through='CarePackageItem')
+    quantity = models.IntegerField(default=1)
     status = models.CharField(
         max_length=50,
         choices=CarePackageStatus.choices,
