@@ -5,6 +5,8 @@ from .views import UserViewSet, current_user_profile, CreatePackageView, get_pac
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet, basename='user')
+router.register(r'care-packages', views.CarePackageViewSet, basename='care-package')
+
 
 urlpatterns = [
     path('profile/', views.current_user_profile, name='current_user_profile'),
@@ -14,6 +16,9 @@ urlpatterns = [
     path('inventory/update/<int:pk>/', views.update_product, name='update_product'),
     path('create-package/', CreatePackageView.as_view(), name='create_package'),
     path('package', get_package_details, name='get_package_details'),
-    path('packages/same-issue-date/', views.get_packages_with_same_issue_date, name='packages_same_issue_date')
+    path('packages/same-issue-date/', views.get_packages_with_same_issue_date, name='packages_same_issue_date'),
+    path('care-package', views.get_packages_with_same_issue_date, name='packages_same_issue_date'),
+    # path('create-care-package/', views.CarePackageViewSet.as_view(), name='create-care-package'),
+    path('', include(router.urls)),
 ]
 
