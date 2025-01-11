@@ -12,6 +12,8 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PasswordResetRequest from "./components/PasswordResetRequest"
 import PasswordReset from "./components/PasswordReset"
+import CarePackage from "./pages/CarePackage";
+import CarePackagePage from "./pages/CarePackagePage";
 
 function Logout() {
   localStorage.clear()
@@ -39,7 +41,7 @@ function App() {
         <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
         <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/>
-        
+        <Route path="/admin/care-package" element={<ProtectedRoute> <CarePackagePage /> </ProtectedRoute>}/>
       </Routes>
     </BrowserRouter>
   )
