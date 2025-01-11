@@ -61,39 +61,24 @@ class InventorySerializer(serializers.ModelSerializer):
 
 
 class CarePackageItemSerializer(serializers.ModelSerializer):
-    product = InventorySerializer()  # Nested InventorySerializer to represent the product details
+    product = serializers.PrimaryKeyRelatedField(queryset=Inventory.objects.all())
 
     class Meta:
         model = CarePackageItem
-        fields = ['id', 'product', 'quantity']
-
-    def validate_quantity(self, quantity):
-        """Ensure the quantity is available in stock before adding to care package."""
-        # product = self.initial_data.get('product')  # Get product from data
-        # product_instance = Inventory.objects.get(id=product)
-        product_instance = self.validated_data['product']
-        inventory_instance = Inventory.objects.get(id=product_instance['id']) # Check
-
-        if quantity > inventory_instance.quantity:
-            raise serializers.ValidationError(
-                f"Not enough stock for {product_instance.name}. Available: {product_instance.quantity}, Requested: {quantity}."
-            )
-        return quantity
-
+        fields = ['product', 'quantity']
 
     def create(self, validated_data):
-        product_data = validated_data.pop('product')
-        product = Inventory.objects.get(id=product_data['id'])
+        product = validated_data.pop('product')
         quantity = validated_data['quantity']
         product.reserve_stock(quantity)
         return CarePackageItem.objects.create(product=product, **validated_data)
 
-    def update(self, instance, validated_data):
-        product_data = validated_data.pop('product')
-        instance.product = Inventory.objects.get(id=product_data['id'])
-        instance.quantity = validated_data.get('quantity', instance.quantity)
-        instance.save()
-        return instance
+    # def update(self, instance, validated_data):
+    #     product_data = validated_data.pop('product')
+    #     instance.product = Inventory.objects.get(id=product_data['id'])
+    #     instance.quantity = validated_data.get('quantity', instance.quantity)
+    #     instance.save()
+    #     return instance
     
 
 class CarePackageSerializer(serializers.ModelSerializer):
@@ -101,7 +86,7 @@ class CarePackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CarePackage
-        fields = ['id', 'name', 'description', 'items', 'status', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'description', 'items', 'quantity', 'status', 'created_at', 'updated_at']
         extra_kwargs = {
             'id': {'read_only': True},
             'created_at': {'read_only': True},
@@ -114,11 +99,10 @@ class CarePackageSerializer(serializers.ModelSerializer):
         for item in package:
             product = item['product']
             quantity = item['quantity']
-            product_instance = Inventory.objects.get(id=product)
 
-            if quantity > product_instance.quantity:
+            if quantity > product.quantity:
                 raise serializers.ValidationError(
-                    f"Not enough stock for {product_instance.name}. Available: {product_instance.quantity}, Requested: {quantity}."
+                    f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {quantity}."
                 )
         return package
 
@@ -128,28 +112,29 @@ class CarePackageSerializer(serializers.ModelSerializer):
 
         # Create CarePackageItems
         for item_data in items_data:
-            product_data = item_data.pop('product')
-            product = Inventory.objects.get(id=product_data['id'])  # Fetching product by ID
+            product_id = item_data.pop('product')
+            product = Inventory.objects.get(id=product_id)
             CarePackageItem.objects.create(care_package=care_package, product=product, **item_data)
 
         return care_package
 
-    def update(self, instance, validated_data):
-        items_data = validated_data.pop('items', None)
+    # def update(self, instance, validated_data):
+    #     items_data = validated_data.pop('items', None)
 
-        # Update CarePackage details
-        instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
-        instance.status = validated_data.get('status', instance.status)
-        instance.save()
+    #     # Update CarePackage details
+    #     instance.name = validated_data.get('name', instance.name)
+    #     instance.description = validated_data.get('description', instance.description)
+    #     instance.status = validated_data.get('status', instance.status)
+    #     instance.quantity = validated_data.get('quantity', instance.quantity)
+    #     instance.save()
 
-        # Update CarePackageItems
-        if items_data:
-            # Delete old items first (you can also implement partial update)
-            instance.care_package_items.all().delete()
-            for item_data in items_data:
-                product_data = item_data.pop('product')
-                product = Inventory.objects.get(id=product_data['id'])
-                CarePackageItem.objects.create(care_package=instance, product=product, **item_data)
+    #     # Update CarePackageItems
+    #     if items_data:
+    #         # Delete old items first (you can also implement partial update)
+    #         instance.care_package_items.all().delete()
+    #         for item_data in items_data:
+    #             product_data = item_data.pop('product')
+    #             product = Inventory.objects.get(id=product_data['id'])
+    #             CarePackageItem.objects.create(care_package=instance, product=product, **item_data)
 
-        return instance
+    #     return instance
