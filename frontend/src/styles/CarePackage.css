@@ -86,6 +86,7 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    margin-bottom: 40px; /* Added spacing beneath the table */
 }
 
 .product-table-cp th,

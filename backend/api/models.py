@@ -10,18 +10,7 @@ from django.utils.html import strip_tags
 from django.db import models
 import json
 
-class Package(models.Model):
-    # Column for the issue date
-    issue_date = models.DateField(auto_now_add=True, help_text="The date the package was created.")
-    
-    # Column for the pickup location
-    pickup_location = models.CharField(max_length=255, help_text="The location where the package can be picked up.")
-    
-    # Column for contents (list of products)
-    contents = models.JSONField(help_text="A list of products the package will contain.")
 
-    def __str__(self):
-        return f"Package created on {self.issue_date} at {self.pickup_location}"
 
 
 class ProductCategory(models.TextChoices): # <constant_name> = '<database_value>', '<human_readable_value>'
@@ -32,6 +21,7 @@ class ProductCategory(models.TextChoices): # <constant_name> = '<database_value>
     MISCELLANEOUS = 'Miscellaneous', 'Miscellaneous'
 
 class Inventory(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField()
     # quantity_delivered = models.PositiveIntegerField()

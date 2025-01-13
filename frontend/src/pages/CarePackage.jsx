@@ -9,24 +9,41 @@ const CarePackagePage = () => {
     const [numPackages, setNumPackages] = useState(1);
     const [carePackageName, setCarePackageName] = useState('');
     const [selectedItems, setSelectedItems] = useState([]);
+    const [selectedCarePackage, setSelectedCarePackage] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
 
     // Fetch inventory items when component mounts
-    useEffect(() => {
-        const fetchInventory = async () => {
-            try {
-                const response = await api.get('api/inventory/');
-                setInventoryItems(response.data);
-            } catch (error) {
-                console.error('Error fetching inventory items:', error);
-            }
-        };
+    const fetchInventory = async () => {
+        try {
+            const response = await api.get('/api/inventory/');
+            setInventoryItems(response.data);
+        } catch (error) {
+            console.error('Error fetching inventory items:', error);
+        }
+    };
 
+    // Fetch care packages when component mounts
+    const fetchCarePackages = async () => {
+        try {
+            const response = await api.get('/api/care-packages/');
+            setCarePackages(response.data);
+        } catch (error) {
+            console.error('Error fetching care packages:', error);
+        }
+    };
+
+    useEffect(() => {
         fetchInventory();
+        fetchCarePackages();
     }, []);
 
     // Handle item selection with quantity for each care package
     const handleAddItem = (itemId, quantity) => {
+        const item = inventoryItems.find(item => item.id === itemId);
+        if (quantity > item.quantity) {
+            alert(`Requested quantity exceeds available stock for ${item.name}`);
+            return;
+        }
         setSelectedItems(prevItems => {
             const existingItemIndex = prevItems.findIndex(item => item.inventory_item_id === itemId);
             if (existingItemIndex >= 0) {
@@ -39,7 +56,7 @@ const CarePackagePage = () => {
         });
     };
 
-    // Handle care package creation with multiple items
+    // Handle care package creation
     const handleCreateCarePackages = async () => {
         try {
             const response = await api.post('/api/care-packages/', {
@@ -47,29 +64,61 @@ const CarePackagePage = () => {
                 description: carePackageDescription,
                 quantity: numPackages,
                 items: selectedItems.map(item => ({
-                    product: item.inventory_item_id,
+                    product_id: item.inventory_item_id,
                     quantity: item.quantity
                 }))
             });
-            setCarePackages(response.data);
+            setCarePackages(prevPackages => [...prevPackages, response.data]);
             alert(`${numPackages} care packages created successfully!`);
+            setSelectedItems([]);
+            setCarePackageName('');
+            setCarePackageDescription('');
+            setNumPackages(1);
+            fetchInventory();
             setShowCreateModal(false);
         } catch (error) {
             console.error('Error creating care packages:', error);
-            alert('Error creating care packages.');
+            alert('Failed to create care packages.');
+        }
+    };
+
+    // Handle care package update
+    const handleUpdateCarePackage = async () => {
+        if (!selectedCarePackage) return;
+
+        try {
+            const response = await api.patch(`/api/care-packages/${selectedCarePackage.id}/`, {
+                name: carePackageName,
+                description: carePackageDescription,
+                items: selectedItems.map(item => ({
+                    product_id: item.inventory_item_id,
+                    quantity: item.quantity
+                }))
+            });
+            setCarePackages(prevPackages => prevPackages.map(pkg => 
+                pkg.id === selectedCarePackage.id ? response.data : pkg
+            ));
+            alert(`Care package '${response.data.name}' updated successfully!`);
+            setSelectedCarePackage(null);
+            setSelectedItems([]);
+            setCarePackageName('');
+            setCarePackageDescription('');
+        } catch (error) {
+            console.error('Error updating care package:', error);
+            alert('Failed to update care package.');
         }
     };
 
     return (
         <div>
-            <h1>Create Multiple Care Packages</h1>
-            <button className="button-cp primary" onClick={() => setShowCreateModal(true)}>Create Care Packages</button>
+            <h1>Manage Care Packages</h1>
 
-            {/* Modal for creating care packages */}
+            <button className="button-cp primary" onClick={() => setShowCreateModal(true)}>Create Care Package</button>
+
             {showCreateModal && (
                 <div className="modal-overlay-cp">
                     <div className="modal-cp">
-                        <h2>Create Care Packages</h2>
+                        <h2>{selectedCarePackage ? 'Update Care Package' : 'Create Care Package'}</h2>
                         <form onSubmit={(e) => e.preventDefault()}>
                             <div className="form-group-cp">
                                 <label htmlFor="carePackageName">Care Package Name</label>
@@ -83,36 +132,29 @@ const CarePackagePage = () => {
                             </div>
 
                             <div className="form-group-cp">
-                                <label htmlFor="carePackageDescription">Care Package Description</label> {/* Added description field */}
+                                <label htmlFor="carePackageDescription">Care Package Description</label>
                                 <textarea
                                     id="carePackageDescription"
                                     placeholder="Enter care package description"
                                     value={carePackageDescription}
-                                    onChange={(e) => setCarePackageDescription(e.target.value)}  // Handle description input
-                                />
-                            </div>
-
-                            <div className="form-group-cp">
-                                <label htmlFor="numPackages">Number of Care Packages</label>
-                                <input
-                                    type="number"
-                                    id="numPackages"
-                                    min="1"
-                                    value={numPackages}
-                                    onChange={(e) => setNumPackages(Number(e.target.value))}
+                                    onChange={(e) => setCarePackageDescription(e.target.value)}
                                 />
                             </div>
 
                             <h3>Select Products and Quantities</h3>
                             {inventoryItems.map((item) => (
-                                <div key={item.id} className="form-group-cp">
-                                    <label htmlFor={`item-${item.id}`}>{item.name}</label>
+                                <div key={item.id} className={`form-group-cp ${item.quantity === 0 ? 'out-of-stock' : ''}`}>
+                                    <label htmlFor={`item-${item.id}`}>
+                                        {item.name} ({item.quantity} available)
+                                    </label>
                                     <input
                                         type="number"
                                         id={`item-${item.id}`}
                                         placeholder="Quantity"
                                         min="1"
-                                        onChange={(e) => handleAddItem(item.id, e.target.value)}
+                                        max={item.quantity}
+                                        disabled={item.quantity === 0}
+                                        onChange={(e) => handleAddItem(item.id, Number(e.target.value))}
                                     />
                                 </div>
                             ))}
@@ -121,9 +163,9 @@ const CarePackagePage = () => {
                                 <button className="button-cp cancel" onClick={() => setShowCreateModal(false)}>Cancel</button>
                                 <button
                                     className="button-cp primary"
-                                    onClick={handleCreateCarePackages}
+                                    onClick={selectedCarePackage ? handleUpdateCarePackage : handleCreateCarePackages}
                                 >
-                                    Create Care Packages
+                                    {selectedCarePackage ? 'Update Care Package' : 'Create Care Package'}
                                 </button>
                             </div>
                         </form>
@@ -131,12 +173,12 @@ const CarePackagePage = () => {
                 </div>
             )}
 
-            {/* Display created care packages */}
-            <h2>Created Care Packages</h2>
+            <h2>Existing Care Packages</h2>
             <table className="product-table-cp">
                 <thead>
                     <tr>
                         <th>Care Package Name</th>
+                        <th>Description</th>
                         <th>Created At</th>
                         <th>Actions</th>
                     </tr>
@@ -145,10 +187,20 @@ const CarePackagePage = () => {
                     {carePackages.map((carePackage) => (
                         <tr key={carePackage.id}>
                             <td>{carePackage.name}</td>
+                            <td>{carePackage.description}</td>
                             <td>{new Date(carePackage.created_at).toLocaleString()}</td>
                             <td>
-                                <button className="button-cp danger" onClick={() => console.log("Delete action")}>
-                                    Delete
+                                <button 
+                                    className="button-cp edit" 
+                                    onClick={() => {
+                                        setSelectedCarePackage(carePackage);
+                                        setCarePackageName(carePackage.name);
+                                        setCarePackageDescription(carePackage.description);
+                                        setSelectedItems(carePackage.items);
+                                        setShowCreateModal(true);
+                                    }}
+                                >
+                                    Edit
                                 </button>
                             </td>
                         </tr>
