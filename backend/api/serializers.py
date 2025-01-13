@@ -69,12 +69,20 @@ class CarePackageItemSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        product = attrs.get('product')
+        # Get the product instance from attrs
+        product = attrs.get('product')  # This is resolved from `source='product'` in the serializer.
         quantity = attrs.get('quantity')
 
+        # If product is None, try resolving it using product_id
+        if not product:
+            raise ValidationError("Product does not exist or is not provided.")
+
+        # Check if there is enough stock
         if product.quantity < quantity:
             raise ValidationError(f"Not enough stock for product {product.name}. Available: {product.quantity}.")
+        
         return attrs
+
 
     def create(self, validated_data):
         product = validated_data.get('product')
