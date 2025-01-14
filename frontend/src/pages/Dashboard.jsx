@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import ReactECharts from 'echarts-for-react';
+import "../styles/Dashboard.css";
 
 const InventoryDashboard = () => {
     const [products, setProducts] = useState([]);
+    const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
     const fetchProducts = async () => {
         try {
@@ -54,15 +56,40 @@ const InventoryDashboard = () => {
     };
 
     return (
-        <div>
-            <h2>Inventory Dashboard</h2>
-            {error && <p>Error: {error}</p>}
-            {products.length > 0 ? (
-                <ReactECharts option={getChartOptions()} style={{ height: 400, width: 400 }} />
-            ) : (
-                <p>No data available</p>
-            )}
+        <div className="container mt-4">
+    <h2>Inventory Dashboard</h2>
+    <div className="row">
+        {/* Chart Section */}
+        <div className="col-md-6 mb-3">
+            <div className="chart-container p-3 border rounded">
+                {products.length > 0 ? (
+                    <ReactECharts option={getChartOptions()} style={{ height: 300, width: '100%' }} />
+                ) : (
+                    <p>No data available</p>
+                )}
+            </div>
         </div>
+
+        {/* Student List */}
+        <div className="col-md-6 mb-3">
+            <div className="students-card p-3 border rounded">
+                <h3>Students Handout Box</h3>
+                {students.length > 0 ? (
+                    <ul className="list-unstyled">
+                        {students.map((student) => (
+                            <li key={student.id}>
+                                {student.name} - {student.package_name}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No students assigned to packages</p>
+                )}
+            </div>
+        </div>
+    </div>
+</div>
     );
 };
+
 export default InventoryDashboard;

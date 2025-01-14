@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserSerializer, NoteSerializer, InventorySerializer
-from .models import Note, Inventory
+from .serializers import UserSerializer, InventorySerializer
+from .models import Inventory
 from .permissions import IsStaffUser
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
