@@ -34,11 +34,11 @@ const CarePackagePage = () => {
         fetchCarePackages();
     }, []);
 
-    // Handle care package creation or update
+
     const handleSaveCarePackage = async (packageData) => {
         try {
             if (selectedCarePackage) {
-                // Update existing care package
+                // Update existing care package!!! Falta crear este url y su funcionalidad!
                 const response = await api.patch(`/api/care-packages/${selectedCarePackage.id}/`, packageData);
                 setCarePackages(prevPackages =>
                     prevPackages.map(pkg => (pkg.id === selectedCarePackage.id ? response.data : pkg))
@@ -106,7 +106,7 @@ const CarePackagePage = () => {
             {showCreateModal && (
                 <CreatePackageModal
                     inventoryItems={inventoryItems}
-                    carePackage={selectedCarePackage}
+                    carePackage={selectedCarePackage} // Pass selected package for editing
                     onClose={() => setShowCreateModal(false)}
                     onSave={handleSaveCarePackage}
                 />

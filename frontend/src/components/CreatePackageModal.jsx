@@ -5,24 +5,28 @@ const CreatePackageModal = ({
     inventoryItems = [], // Default to empty array if undefined
     onClose,
     onSave,
-    initialName = '',
-    initialDescription = '',
-    initialQuantity = 1,
-    initialSelectedItems = [],
+    carePackage = null, // Receiving carePackage prop for editing
 }) => {
-    // Initialize state directly from props
-    const [carePackageName, setCarePackageName] = useState(initialName);
-    const [carePackageDescription, setCarePackageDescription] = useState(initialDescription);
-    const [numPackages, setNumPackages] = useState(initialQuantity);
-    const [selectedItems, setSelectedItems] = useState(initialSelectedItems);
+    // Initialize state for care package creation or update
+    const [carePackageName, setCarePackageName] = useState('');
+    const [carePackageDescription, setCarePackageDescription] = useState('');
+    const [numPackages, setNumPackages] = useState(1);
+    const [selectedItems, setSelectedItems] = useState([]);
 
-    // Optional: Only update state when props change
+    // If carePackage prop is provided (i.e., editing mode), populate fields
     useEffect(() => {
-        if (initialName) setCarePackageName(initialName);
-        if (initialDescription) setCarePackageDescription(initialDescription);
-        //if (initialQuantity) setNumPackages(initialQuantity);
-        //if (initialSelectedItems.length > 0) setSelectedItems(initialSelectedItems);
-    }, [initialName, initialDescription]);
+        if (carePackage) {
+            setCarePackageName(carePackage.name);
+            setCarePackageDescription(carePackage.description);
+            setNumPackages(carePackage.quantity);
+            setSelectedItems(carePackage.items || []);
+        } else {
+            setCarePackageName('');
+            setCarePackageDescription('');
+            setNumPackages(1);
+            setSelectedItems([]);
+        }
+    }, [carePackage]);
 
     const handleSave = () => {
         if (!carePackageName.trim()) {
@@ -30,7 +34,6 @@ const CreatePackageModal = ({
             return;
         }
         if (!selectedItems.length) {
-           
             alert('Please add at least one item to the care package.');
             return;
         }
@@ -45,17 +48,18 @@ const CreatePackageModal = ({
             })),
         });
     };
+
     const handleAddItem = (itemId, quantity) => {
-        const item = inventoryItems.find(item => item.id === itemId);
+        const item = inventoryItems.find((item) => item.id === itemId);
         const totalRequestedQuantity = quantity * numPackages;
-    
+
         if (totalRequestedQuantity > item.quantity) {
             alert(`Requested quantity for all packages exceeds available stock for ${item.name}`);
             return;
         }
-    
-        setSelectedItems(prevItems => {
-            const existingItemIndex = prevItems.findIndex(item => item.inventory_item_id === itemId);
+
+        setSelectedItems((prevItems) => {
+            const existingItemIndex = prevItems.findIndex((item) => item.inventory_item_id === itemId);
             if (existingItemIndex >= 0) {
                 const updatedItems = [...prevItems];
                 updatedItems[existingItemIndex].quantity = totalRequestedQuantity;
@@ -65,11 +69,11 @@ const CreatePackageModal = ({
             }
         });
     };
-    
+
     return (
         <div className="modal-overlay-create">
             <div className="modal-content-create">
-                <h2>Create Care Package</h2>
+                <h2>{carePackage ? 'Update' : 'Create'} Care Package</h2>
                 <form onSubmit={(e) => e.preventDefault()}>
                     <label>
                         Care Package Name:
@@ -93,12 +97,11 @@ const CreatePackageModal = ({
                         <input
                             type="number"
                             value={numPackages}
-                            onChange={(e) => setNumPackages(Math.max(Number(e.target.value), 1))} // Ensure it doesn't drop below 1
+                            onChange={(e) => setNumPackages(Math.max(Number(e.target.value), 1))}
                             min="1"
                             required
                         />
                     </label>
-             
 
                     <h3>Select Products and Quantities</h3>
                     {inventoryItems.map((item) => (
@@ -132,83 +135,3 @@ const CreatePackageModal = ({
 };
 
 export default CreatePackageModal;
-
-
-
-// {showCreateModal && (
-//     <div className="modal-overlay-cp">
-//         <div className="modal-cp">
-//             <h2>{selectedCarePackage ? 'Update Care Package' : 'Create Care Package'}</h2>
-//             <form onSubmit={(e) => e.preventDefault()}>
-//                 <div className="form-group-cp">
-//                     <label htmlFor="carePackageName">Care Package Name</label>
-//                     <input
-//                         type="text"
-//                         id="carePackageName"
-//                         placeholder="Enter care package name"
-//                         value={carePackageName}
-//                         onChange={(e) => setCarePackageName(e.target.value)}
-//                     />
-//                 </div>
-
-//                 <div className="form-group-cp">
-//                     <label htmlFor="carePackageDescription">Care Package Description</label>
-//                     <textarea
-//                         id="carePackageDescription"
-//                         placeholder="Enter care package description"
-//                         value={carePackageDescription}
-//                         onChange={(e) => setCarePackageDescription(e.target.value)}
-//                     />
-//                 </div>
-
-//                 <div className="form-group-cp">
-//                     <label htmlFor="numPackages">Number of Care Packages</label>
-//                     <input
-//                         type="number"
-//                         id="numPackages"
-//                         placeholder="Enter number of care packages"
-//                         min="1"
-//                         value={numPackages}
-//                         onChange={(e) => setNumPackages(Number(e.target.value))}
-//                     />
-//                 </div>
-
-//                 <h3>Select Products and Quantities</h3>
-//                 {inventoryItems.map((item) => (
-//                     <div
-//                         key={item.id}
-//                         className={`form-group-cp ${item.quantity === 0 ? 'out-of-stock' : ''}`}
-//                     >
-//                         <label htmlFor={`item-${item.id}`}>
-//                             {item.name} ({item.quantity} available)
-//                         </label>
-//                         <input
-//                             type="number"
-//                             id={`item-${item.id}`}
-//                             placeholder="Quantity"
-//                             min="1"
-//                             max={item.quantity}
-//                             disabled={item.quantity === 0}
-//                             onChange={(e) => handleAddItem(item.id, Number(e.target.value))}
-//                         />
-//                     </div>
-//                 ))}
-
-//                 <div className="form-buttons-cp">
-//                     <button
-//                         className="button-cp cancel"
-//                         onClick={() => setShowCreateModal(false)}
-//                     >
-//                         Cancel
-//                     </button>
-//                     <button
-//                         className="button-cp primary"
-//                         onClick={selectedCarePackage ? handleUpdateCarePackage : handleCreateCarePackages}
-//                     >
-//                         {selectedCarePackage ? 'Update Care Package' : 'Create Care Package'}
-//                     </button>
-//                 </div>
-//             </form>
-//         </div>
-//     </div>
-// )}
