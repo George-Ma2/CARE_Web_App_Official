@@ -1,48 +1,20 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.db import transaction
 
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
 
-from .serializers import UserSerializer, ProfileSerializer, InventorySerializer
-from .models import Inventory, Package
-
+from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, CarePackageItemSerializer
+from .models import Inventory, CarePackage, CarePackageItem
+from rest_framework.exceptions import ValidationError
 import base64
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-
-class CreatePackageView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            data = request.data
-
-            # Extract data from the request
-            pickup_location = data.get("pickup_location")
-            contents = data.get("contents")
-
-            # Validate input
-            if not pickup_location or not contents:
-                return Response({"error": "Missing pickup_location or contents"}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Create the package
-            package = Package.objects.create(
-                pickup_location=pickup_location,
-                contents=contents
-            )
-
-            # Return the created package's data
-            return Response({
-                "id": package.id,
-                "issue_date": package.issue_date,
-                "pickup_location": package.pickup_location,
-                "contents": package.contents,
-            }, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -267,3 +239,159 @@ def update_product(request, pk):
 
     return Response(serializer_product.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+from rest_framework import serializers
+
+class CarePackageViewSet(viewsets.ModelViewSet):
+    queryset = CarePackage.objects.all()
+    serializer_class = CarePackageSerializer
+    permission_classes = [IsStaffUser]
+
+    def update(self, request, *args, **kwargs):
+        """
+        Update a care package and adjust stock quantities (reserve more or return stock).
+        """
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        # Transaction to ensure atomicity of stock adjustments
+        with transaction.atomic():
+            # Return stock for removed or reduced items
+            for old_item in instance.care_package_items():
+                new_quantity = next(
+                    (item['quantity'] for item in request.data.get('items', []) if item['product_id'] == old_item.product.id), 
+                    None
+                )
+                if new_quantity is None:
+                    # Item removed, return stock
+                    old_item.product.quantity += old_item.quantity
+                    old_item.product.save()
+                    old_item.delete()
+                elif new_quantity < old_item.quantity:
+                    # Quantity reduced, return excess stock
+                    old_item.product.quantity += (old_item.quantity - new_quantity)
+                    old_item.product.save()
+                    old_item.quantity = new_quantity
+                    old_item.save()
+
+            # Reserve stock for new or increased items
+            for item_data in request.data.get('items', []):
+                product_id = item_data['product_id']
+                quantity = item_data['quantity']
+                try:
+                    product = Inventory.objects.get(id=product_id)
+                except Inventory.DoesNotExist:
+                    raise serializers.ValidationError(f"Product with ID {product_id} does not exist.")
+
+                existing_item = instance.carepackageitem_set.filter(product_id=product_id).first()
+                if existing_item:
+                    # Adjust stock for increased quantity
+                    if quantity > existing_item.quantity:
+                        additional_stock = quantity - existing_item.quantity
+                        if product.quantity < additional_stock:
+                            raise serializers.ValidationError(
+                                f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {additional_stock}."
+                            )
+                        product.quantity -= additional_stock
+                        product.save()
+                        existing_item.quantity = quantity
+                        existing_item.save()
+                else:
+                    # New item, reserve stock
+                    if product.quantity < quantity:
+                        raise serializers.ValidationError(
+                            f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {quantity}."
+                        )
+                    product.quantity -= quantity
+                    product.save()
+                    CarePackageItem.objects.create(
+                        care_package=instance,
+                        product=product,
+                        quantity=quantity,
+                    )
+
+            # Update care package details
+            self.perform_update(serializer)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    # def update(self, request, *args, **kwargs):
+    #     """
+    #     Update a care package and update stock quantities (reserve more or return stock).
+    #     """
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance, data=request.data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
+
+    #     # Transaction to ensure atomicity of stock reservation or return
+    #     with transaction.atomic():
+    #         # Before updating, return stock for items that are no longer in the care package
+    #         for old_item in instance.care_package_items.all():
+    #             new_quantity = next(
+    #                 (item['quantity'] for item in request.data['items'] if item['product']['id'] == old_item.product.id), 
+    #                 None
+    #             )
+    #             if new_quantity is None:
+    #                 # If item is removed, return stock
+    #                 old_item.product.return_stock(old_item.quantity)
+    #             elif new_quantity != old_item.quantity:
+    #                 # If quantity changed, adjust stock
+    #                 if new_quantity < old_item.quantity:
+    #                     old_item.product.return_stock(old_item.quantity - new_quantity)
+    #                 elif new_quantity > old_item.quantity:
+    #                     # Reserve additional stock
+    #                     old_item.product.reserve_stock(new_quantity - old_item.quantity)
+
+    #         # Now update the care package itself
+    #         self.perform_update(serializer)
+
+    #         # Update or create CarePackageItems based on the new data
+    #         new_items = {item['product']['id']: item for item in request.data['items']}
+    #         for old_item in instance.care_package_items.all():
+    #             if old_item.product.id in new_items:
+    #                 # Update existing items
+    #                 old_item.quantity = new_items[old_item.product.id]['quantity']
+    #                 old_item.save()
+    #                 new_items.pop(old_item.product.id)
+    #             else:
+    #                 # Remove the item (already handled above by returning stock)
+    #                 old_item.delete()
+
+    #         # Create any new items
+    #         for new_item in new_items.values():
+    #             product = Inventory.objects.get(id=new_item['product']['id'])
+    #             product.reserve_stock(new_item['quantity'])
+    #             CarePackageItem.objects.create(
+    #                 care_package=instance,
+    #                 product=product,
+    #                 quantity=new_item['quantity']
+    #             )
+
+    #     return Response(serializer.data)
+
+    # def perform_destroy(self, instance):
+    #     """
+    #     Delete a care package and return the reserved stock.
+    #     """
+    #     with transaction.atomic():
+    #         # Return all reserved stock for this care package
+    #         for item in instance.care_package_items.all():
+    #             item.product.return_stock(item.quantity)
+    #         instance.delete()
+
+    # @action(detail=True, methods=['get'])
+    # def return_stock(self, request, pk=None):
+    #     """
+    #     Custom action to return stock to the inventory if a care package is cancelled.
+    #     """
+    #     care_package = self.get_object()
+    #     if care_package.status != 'Cancelled':
+    #         return Response({"detail": "Care package is not cancelled."}, status=status.HTTP_400_BAD_REQUEST)
+        
+    #     # Return stock for all items in the care package
+    #     for item in care_package.care_package_items.all():
+    #         item.product.return_stock(item.quantity)
+
+    #     return Response({"detail": "Stock successfully returned."}, status=status.HTTP_200_OK)
