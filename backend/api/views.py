@@ -395,4 +395,3 @@ class CarePackageViewSet(viewsets.ModelViewSet):
     #         item.product.return_stock(item.quantity)
 
     #     return Response({"detail": "Stock successfully returned."}, status=status.HTTP_200_OK)
-

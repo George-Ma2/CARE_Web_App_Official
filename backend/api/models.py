@@ -11,8 +11,6 @@ from django.db import models
 import json
 
 
-
-
 class ProductCategory(models.TextChoices): # <constant_name> = '<database_value>', '<human_readable_value>'
     RICE_AND_PASTA = 'Rice and Pasta', 'Rice and Pasta'
     PROCESSED_PROTEINS = 'Processed Proteins', 'Processed Proteins'

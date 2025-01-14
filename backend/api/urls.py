@@ -20,4 +20,3 @@ urlpatterns = [
     # path('create-care-package/', views.CarePackageViewSet.as_view(), name='create-care-package'),
     path('', include(router.urls)),
 ]
-
