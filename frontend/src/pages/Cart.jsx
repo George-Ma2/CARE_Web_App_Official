@@ -33,7 +33,7 @@ function Cart() {
   };
 
   const handleCompleteOrder = async () => {
-    if (!isTermsAccepted1 || !isTermsAccepted2 || isSubmitting) return;
+    if (!isTermsAccepted1 || !isTermsAccepted2) return;
     
     try {
       setIsSubmitting(true);
