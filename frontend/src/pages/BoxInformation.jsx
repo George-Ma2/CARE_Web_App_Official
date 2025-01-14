@@ -3,21 +3,22 @@ import "../styles/Box.css";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from "../api"; // Ensure this is correctly configured
+import { useAppContext } from '../AppContext';
+
 
 function BoxInformation() {
+  const { setSelectedPackage } = useAppContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [orderInfo, setOrderInfo] = useState({
-    packageDate: '',
-    pickupLocation: '',
-    packageContents: '',
+    pickupLocation: "",
+    packageContents: "",
   });
-  const [availablePackages, setAvailablePackages] = useState([]); // Store available packages
-  const [selectedPackage, setSelectedPackage] = useState(null); // Store the selected package
-  const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
+  const [availablePackages, setAvailablePackages] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    document.title = 'Box Information';
+    document.title = "Box Information";
   }, []);
 
  
@@ -47,9 +48,11 @@ function BoxInformation() {
     setOrderInfo({
       packageDate: pkg.issue_date, // Assuming the package has these fields
       pickupLocation: pkg.pickup_location,
-      packageContents: formatContents(pkg.contents)
+      packageContents: formatContents(pkg.contents || [])
+
     });
 
+   
     // Close the modal after selection
     setIsModalOpen(false);
   };
@@ -152,25 +155,14 @@ function BoxInformation() {
                 </div>
               </section>
             </div>
-
-            <div className="content-column">
+            
               <div className="order-section">
-                <div className="divider"></div>
+             
                 <form className="order-form">
                   <div className="order-summary">
                     <h3 className="summary-header">Package Details:</h3>
                     <div className="summary-content">
                       <div className="form-row">
-                        <div className="form-group">
-                          <label htmlFor="packageDate">Package Date:</label>
-                          <input
-                            type="text"
-                            id="packageDate"
-                            className="order-date-textarea"
-                            value={orderInfo.packageDate}
-                            readOnly
-                          />
-                        </div>
                         <div className="form-group">
                           <label htmlFor="pickupLocation">Pick-up Location:</label>
                           <input
@@ -193,19 +185,19 @@ function BoxInformation() {
                       />
                     </div>
                   </div>
-                  {selectedPackage && (
-                  <button className="reserve-button" onClick={() => navigate('/userdash/ordercart')}
-                  >
+                  
+                  <button className="reserve-button" onClick={() => navigate('/userdash/ordercart')}>
                     Reserve My Box
                   </button>
-                )}
                 </form>
-                
               </div>
-            </div>
+           
           </div>
         </main>
+
       </div>
+
+   
 
       {/* Modal */}
       {isModalOpen && (
@@ -250,7 +242,35 @@ function BoxInformation() {
           </div>
         </div>
       )}
+        <div class="footer">
+  <div class="footer-content">
+  
+    <div class="footer-column">
+      <img src="/care.png" alt="Care logo" class="care-logo" />
+      <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" class="university-logo" />
+      <p>© {new Date().getFullYear()} CARE</p>
+      <p>Founded by Polytechnic University of Puerto Rico students</p>
     </div>
+
+    <div class="footer-column">
+      <p class="highlight">A non-profit student organization providing support to students in need.</p>
+      <p>To learn more about our initiatives or ask any questions, please visit our social media pages!</p>
+    </div>
+ 
+    <div class="footer-column">
+      <h2>Follow Us</h2>
+      <ul class="social-links">
+        
+        <li><a href="https://www.instagram.com/care_pupr/profilecard/?igsh=d3pqdXZra3cwcmEz" target="_blank">Instagram</a></li>
+        <li><a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/?viewAsMember=true" target="_blank">LinkedIn</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+    </div>
+
+
+
   );
 }
 

@@ -103,7 +103,7 @@ function DisplayID() {
         <main className="main-content">
           <div className="content-grid">
             <div className="content-column">
-              <section className="box-section">
+              <section className="id-section">
                 <h2>Student ID</h2>
                 <h1>Welcome, {userData.first_name}</h1>
                 {hasPhoto ? (
@@ -111,7 +111,7 @@ function DisplayID() {
                     src={`data:image/jpeg;base64,${userData.profile.photo_base64}`}
                     alt="User Photo ID"
                     style={{
-                      width: "500px",
+                      width: "450px",
                       height: "auto",
                       marginTop: "10px",
                       marginRight: "100px",
@@ -121,14 +121,14 @@ function DisplayID() {
                     }}
                   />
                 ) : (
-                  <p>No photo uploaded.</p>
+                  <h4>No photo uploaded.</h4>
                 )}
               </section>
             </div>
 
             <div className="content-column">
               <div className="order-section">
-                <div className="divider"></div>
+                
                 <form className="order-form">
                   <div className="order-summary">
                     <h3 className="summary-header">Order History:</h3>
@@ -163,7 +163,34 @@ function DisplayID() {
           </div>
         </main>
       </div>
+      <div class="footer">
+  <div class="footer-content">
+  
+    <div class="footer-column">
+      <img src="/care.png" alt="Care logo" class="care-logo" />
+      <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" class="university-logo" />
+      <p>© {new Date().getFullYear()} CARE</p>
+      <p>Founded by Polytechnic University of Puerto Rico students</p>
     </div>
+
+    <div class="footer-column">
+      <p class="highlight">A non-profit student organization providing support to students in need.</p>
+      <p>To learn more about our initiatives or ask any questions, please visit our social media pages!</p>
+    </div>
+ 
+    <div class="footer-column">
+      <h2>Follow Us</h2>
+      <ul class="social-links">
+        
+        <li><a href="https://www.instagram.com/care_pupr/" target="_blank">Instagram</a></li>
+        <li><a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/?viewAsMember=true" target="_blank">LinkedIn</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    </div>
+    
   );
 }
 
