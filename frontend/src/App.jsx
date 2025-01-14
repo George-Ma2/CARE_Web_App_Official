@@ -15,6 +15,7 @@ import PasswordReset from "./components/PasswordReset"
 import CarePackage from "./pages/CarePackage";
 import CarePackagePage from "./pages/CarePackage";
 import { AppProvider } from './AppContext';
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 function Logout() {
   localStorage.clear()
@@ -45,6 +46,7 @@ function App() {
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
+        <Route path="/orderconfirmation" element={<ProtectedRoute> <OrderConfirmation /> </ProtectedRoute>}/>
         <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/>
         <Route path="/admin/care-package" element={<ProtectedRoute> <CarePackage /> </ProtectedRoute>}/>
       </Routes>

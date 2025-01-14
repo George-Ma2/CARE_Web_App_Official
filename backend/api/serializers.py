@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Inventory, CarePackage, CarePackageItem
+from .models import Profile, Inventory, CarePackage, CarePackageItem, OrderHistory
 import base64
 
 
@@ -193,3 +193,29 @@ class CarePackageSerializer(serializers.ModelSerializer):
             instance.save()
 
             return instance
+
+
+
+class OrderHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderHistory
+        fields = ['id', 'user', 'package', 'order_date', 'status']
+
+    def create(self, validated_data):
+        # Get the associated package
+        package = validated_data.get('package')
+        items = package.items.all()  # CarePackage has a ManyToMany relation with Inventory through CarePackageItem
+
+        # Decrement the inventory for each item in the package
+        for item in items:
+            inventory_item = item.product  # Access the Inventory instance via the 'product' field in CarePackageItem
+            if inventory_item.quantity < item.quantity:
+                raise serializers.ValidationError({
+                    "detail": f"Not enough stock for {inventory_item.name}. Available: {inventory_item.quantity}, Requested: {item.quantity}."
+                })
+            inventory_item.quantity -= item.quantity
+            inventory_item.save()
+
+        # Create the order
+        order = OrderHistory.objects.create(**validated_data)
+        return order

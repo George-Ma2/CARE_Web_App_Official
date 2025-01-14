@@ -11,6 +11,7 @@ function BoxInformation() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [orderInfo, setOrderInfo] = useState({
+    packageDate: "", // Initialize packageDate
     pickupLocation: "",
     packageContents: "",
   });
@@ -32,31 +33,45 @@ function BoxInformation() {
     setIsModalOpen(false); // Close the modal
   };
 
-  const fetchAvailablePackages = async (issueDate) => {
+  const fetchAvailablePackages = async (createDate) => {
     try {
-      const response = await api.get(`api/packages/same-issue-date/?issue_date=${issueDate}`); 
-      setAvailablePackages(response.data); // Set the available packages
+        console.log("Create date: ", createDate);
+        // If createDate is not provided, fetch the oldest package date from the backend
+        if (!createDate) {
+            const dateResponse = await api.get("/api/care-packages/oldest-package-date/");
+            createDate = dateResponse.data.oldest_date;
+        }
+
+        if (!createDate) {
+            console.error("No valid create date found.");
+            return; // Stop execution if no date is available
+        }
+
+        // Fetch available packages for the given date
+        const response = await api.get(`/api/care-packages/same-create-date/?create_date=${createDate}`);
+        setAvailablePackages(response.data); // Update state with the response data
     } catch (error) {
-      console.error("Error fetching available packages:", error.response?.data || error.message);
+        console.error("Error fetching available packages:", error.response?.data || error.message);
     }
-  };
+};
 
-  const handlePackageSelect = (pkg) => {
-    // Update the orderInfo with the selected package details
-    console.log("Package details:", pkg);
-    setSelectedPackage(pkg);
-    setOrderInfo({
-      packageDate: pkg.issue_date, // Assuming the package has these fields
-      pickupLocation: pkg.pickup_location,
-      packageContents: formatContents(pkg.contents || [])
 
-    });
+const handlePackageSelect = (pkg) => {
+  setSelectedPackage(pkg);
+  console.log("Package INFO:", pkg);
+
+  setOrderInfo({
+    packageDate: pkg.created_at,
+    pickupLocation: pkg.pickup_location,
+    packageContents: formatContents(pkg.contents || [])
+  });
+  console.log("Order:", orderInfo);
+  setIsModalOpen(false);
+};
+
+
 
    
-    // Close the modal after selection
-    setIsModalOpen(false);
-  };
-
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
@@ -66,10 +81,9 @@ function BoxInformation() {
 
   function formatContents(contents) {
     if (contents.length === 0) return ''; // Handle empty array
-    if (contents.length === 1) return contents[0]; // Single item
-    if (contents.length === 2) return contents.join(' and '); // Two items
-    return `${contents.slice(0, -1).join(', ')}, and ${contents[contents.length - 1]}`; // Three or more items
+    return contents.map(item => `${item.item_name}: ${item.quantity}`).join(', '); // Join item names and quantities
   }
+  
 
   // Disable background scroll when modal is open
   useEffect(() => {

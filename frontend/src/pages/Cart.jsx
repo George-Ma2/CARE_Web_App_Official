@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Cart.css";
 import { useAppContext } from '../AppContext';
+import api from "../api"; // Ensure this is correctly configured
 
 function Cart() {
   const { selectedPackage } = useAppContext();
@@ -9,6 +10,7 @@ function Cart() {
   const [isTermsAccepted1, setIsTermsAccepted1] = useState(false);
   const [isTermsAccepted2, setIsTermsAccepted2] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
   useEffect(() => {
     document.title = "Cart";
@@ -28,6 +30,32 @@ function Cart() {
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
+  };
+
+  const handleCompleteOrder = async () => {
+    if (!isTermsAccepted1 || !isTermsAccepted2 || isSubmitting) return;
+    
+    try {
+      setIsSubmitting(true);
+
+      // Prepare the order data
+      const orderData = {
+        package_id: selectedPackage.id, // Assuming `id` exists in selectedPackage
+        user: localStorage.getItem('user_id'), // Replace with the actual user identifier
+        status: 'ORDERED', // Default status
+      };
+
+      // Make the API request to create the order
+      const response = await api.post('/api/order-history/create/', orderData);
+
+      // Redirect to order confirmation page
+      navigate("/orderconfirmation");
+    } catch (error) {
+      console.error("Error completing order:", error);
+      alert("Failed to complete the order. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isOrderComplete = isTermsAccepted1 && isTermsAccepted2;
@@ -89,14 +117,16 @@ function Cart() {
               <th>Quantity</th>
             </tr>
           </thead>
-          <tbody>
+           <tbody>
             {cartItems.map((item, index) => (
               <tr key={index}>
                 <td>{item.name}</td>
                 <td>
                   <ul>
                     {item.contents.map((content, idx) => (
-                      <li key={idx}>{content}</li>
+                      <li key={idx}>
+                        {content.item_name} - Quantity: {content.quantity}
+                      </li>
                     ))}
                   </ul>
                 </td>
@@ -104,6 +134,7 @@ function Cart() {
               </tr>
             ))}
           </tbody>
+
         </table>
 
         <div className="terms-section">
@@ -130,7 +161,7 @@ function Cart() {
           <button
             className="btn btn-secondary"
             type="button"
-            onClick={() => navigate("/userdash")}
+            onClick={() => navigate("/userdash/boxinfo")}
           >
             Continue Shopping
           </button>
@@ -138,7 +169,7 @@ function Cart() {
             className="btn btn-primary"
             type="button"
             disabled={!isOrderComplete}
-            onClick={() => alert("Order completed!")}
+            onClick={handleCompleteOrder}
           >
             Complete Order
           </button>

@@ -69,6 +69,8 @@ body {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding-bottom: 30px;
+  margin-bottom:80px;
 }
 
 .page-title {
@@ -182,7 +184,7 @@ body {
   padding: 10px 0;
   box-sizing: border-box; /* Include padding in the width calculation */
   margin-left: -50px;
-  margin-top: 50px;
+  margin-top: 20px;
   padding-top: 20px;
 }
 
@@ -191,6 +193,7 @@ body {
   justify-content: space-around; /* Space out columns evenly */
   flex-wrap: wrap; /* Ensure columns wrap on smaller screens */
   text-align: left; /* Align text to the left within each column */
+
 }
 
 .footer .footer-column {
