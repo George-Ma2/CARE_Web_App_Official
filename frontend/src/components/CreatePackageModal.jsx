@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import '../styles/CreatePackageModal.css';
 
 const CreatePackageModal = ({
-    inventoryItems = [], // Default to empty array if undefined
+    inventoryItems = [],
     onClose,
     onSave,
-    carePackage = null, // Receiving carePackage prop for editing
+    carePackage = null,
 }) => {
     // Initialize state for care package creation or update
     const [carePackageName, setCarePackageName] = useState('');
@@ -33,39 +33,61 @@ const CreatePackageModal = ({
             alert('Care Package Name is required.');
             return;
         }
+
+        if (!carePackageDescription.trim()) {
+            alert('Care Package Description is required.');
+            return;
+        }
+
         if (!selectedItems.length) {
             alert('Please add at least one item to the care package.');
             return;
         }
 
-        onSave({
+        if (numPackages < 1) {
+            alert('Care package quantity must be at least 1.');
+            return;
+        }
+
+        for (const item of selectedItems) {
+            const inventoryItem = inventoryItems.find((inv) => inv.id === item.inventory_item_id);
+
+            if (item.quantity < 0) {
+                alert(`Quantity for ${inventoryItem.name} cannot be negative.`);
+                return;
+            }
+
+            if ((item.quantity * numPackages) > inventoryItem.quantity) {
+                alert(`Requested quantity for ${inventoryItem.name} exceeds available stock. Available: ${inventoryItem.quantity}, Requested: ${item.quantity * numPackages}.`)
+                return;
+            }
+        }
+
+        const carePackageData = {
             name: carePackageName,
             description: carePackageDescription,
             quantity: numPackages,
             items: selectedItems.map((item) => ({
                 product_id: item.inventory_item_id,
-                quantity: item.quantity,
+                quantity: item.quantity * numPackages,
             })),
-        });
+        };
+
+        onSave(carePackageData);
+        console.log ('care package data:', carePackageData)
     };
 
     const handleAddItem = (itemId, quantity) => {
-        const item = inventoryItems.find((item) => item.id === itemId);
-        const totalRequestedQuantity = quantity * numPackages;
-
-        if (totalRequestedQuantity > item.quantity) {
-            alert(`Requested quantity for all packages exceeds available stock for ${item.name}`);
-            return;
-        }
 
         setSelectedItems((prevItems) => {
             const existingItemIndex = prevItems.findIndex((item) => item.inventory_item_id === itemId);
             if (existingItemIndex >= 0) {
                 const updatedItems = [...prevItems];
-                updatedItems[existingItemIndex].quantity = totalRequestedQuantity;
+                updatedItems[existingItemIndex].quantity = quantity
                 return updatedItems;
             } else {
-                return [...prevItems, { inventory_item_id: itemId, quantity: totalRequestedQuantity }];
+                const newItem = { inventory_item_id: itemId, quantity: quantity }
+                return [...prevItems, newItem];
             }
         });
     };
@@ -97,7 +119,7 @@ const CreatePackageModal = ({
                         <input
                             type="number"
                             value={numPackages}
-                            onChange={(e) => setNumPackages(Math.max(Number(e.target.value), 1))}
+                            onChange={(e) => setNumPackages(Number(e.target.value))}
                             min="1"
                             required
                         />
