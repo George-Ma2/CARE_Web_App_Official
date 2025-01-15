@@ -50,6 +50,9 @@ const CarePackagePage = () => {
                 setCarePackages(prevPackages => [...prevPackages, response.data]);
                 alert(`${packageData.quantity} care package(s) created successfully!`);
             }
+
+            await fetchInventory();
+            
             setShowCreateModal(false);
             setSelectedCarePackage(null);
         } catch (error) {
