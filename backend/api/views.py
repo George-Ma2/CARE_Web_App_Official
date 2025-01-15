@@ -1,12 +1,19 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.db import transaction
-
+from django.db.models import Sum
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import UserSerializer, InventorySerializer
+from .models import Inventory
+from .permissions import IsStaffUser
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
-
 from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, CarePackageItemSerializer
 from .models import Inventory, CarePackage, CarePackageItem
 from rest_framework.exceptions import ValidationError
@@ -193,6 +200,19 @@ class InventoryRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Inventory.objects.all()
     serializer_class = InventorySerializer
     permission_classes = [IsStaffUser]
+
+class InventoryCategorySummary(generics.GenericAPIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # Aggregate inventory quantity by category
+        category_summary = (
+            Inventory.objects
+            .values('category')
+            .annotate(total_quantity=Sum('quantity'))
+            .order_by('category')
+        )
+        return Response(category_summary)
 
 
 class UpdateProductQuantity(APIView):

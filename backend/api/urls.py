@@ -13,6 +13,7 @@ urlpatterns = [
     path('inventory/', views.InventoryListCreate.as_view(), name='inventory-list-create'),
     path('inventory/<int:pk>/', views.InventoryRetrieveUpdateDestroy.as_view(), name='inventory-detail'),
     path('inventory/update_quantity/<int:pk>/', views.UpdateProductQuantity.as_view(), name='update-product-quantity'),
+    path('dashboard/', views.InventoryCategorySummary.as_view(), name='inventory-category-summary'),
     path('inventory/update/<int:pk>/', views.update_product, name='update_product'),
     path('package', get_package_details, name='get_package_details'),
     path('packages/same-issue-date/', views.get_packages_with_same_issue_date, name='packages_same_issue_date'),

@@ -8,12 +8,15 @@ import BoxInfo from "./pages/BoxInformation"
 import StudentInfo from "./pages/StudentInfo"
 import Cart from "./pages/Cart"
 import Inventory from "./pages/Inventory"
+import Dashboard from "./pages/Dashboard"
+import BoxCreation from "./pages/Dashboard"
 import ProtectedRoute from "./components/ProtectedRoute"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import PasswordResetRequest from "./components/PasswordResetRequest"
 import PasswordReset from "./components/PasswordReset"
 import CarePackage from "./pages/CarePackage";
-import CarePackagePage from "./pages/CarePackage";
+// import CarePackagePage from "./pages/CarePackage";
+import AdminNavbar from "./components/Layout"
 
 function Logout() {
   localStorage.clear()
@@ -40,8 +43,13 @@ function App() {
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
-        <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/>
+
+        {/* <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/> */}
         <Route path="/admin/care-package" element={<ProtectedRoute> <CarePackage /> </ProtectedRoute>}/>
+        <Route path="/admin/dashboard" element={<ProtectedRoute> <AdminNavbar> <Dashboard /> </AdminNavbar> </ProtectedRoute>}/>
+        <Route path="/admin/inventory" element={<ProtectedRoute> <AdminNavbar> <Inventory /> </AdminNavbar> </ProtectedRoute>}/>
+        {/* <Route path="/admin/boxcreation" element={<ProtectedRoute> <AdminNavbar> <Inventory /> </AdminNavbar> </ProtectedRoute>}/> */}
+        
       </Routes>
     </BrowserRouter>
   )

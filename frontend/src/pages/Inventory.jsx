@@ -88,36 +88,49 @@ const Inventory = () => {
     };
 
     return (
-        <div>
-            <h1>Inventory Management</h1>
-            <ProductForm onSubmit={handleAddProduct} />
-            <h2>Product List</h2>
-            <table className="product-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Quantity</th>
-                        <th>Category</th>
-                        <th>Expiration Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map((product) => (
-                        <tr key={product.id}>
-                            <td>{product.name}</td>
-                            <td>{product.quantity}</td>
-                            <td>{product.category}</td>
-                            <td>{product.expiration_date}</td>
-                            <td>
-                                <button className="update-btn" onClick={() => openUpdateModal(product)}>Update</button>
-                                <button className="delete-btn" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
-                            </td>
+        <div className="container mt-4">
+            <h1 className="mb-4"> Inventory Management</h1>
+            <div className="mb-4">
+                <ProductForm onSubmit={handleAddProduct} />
+            </div>
+            <h2 className="mb-4">Product List</h2>
+            <div className="table-responsive">
+                <table className="table table-striped table-hover">
+                    <thead className="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Category</th>
+                            <th>Expiration Date</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-
+                    </thead>
+                    <tbody>
+                        {products.map((product) => (
+                            <tr key={product.id}>
+                                <td>{product.name}</td>
+                                <td>{product.quantity}</td>
+                                <td>{product.category}</td>
+                                <td>{product.expiration_date}</td>
+                                <td>
+                                    <button
+                                        className="btn btn-primary btn-sm me-2"
+                                        onClick={() => openUpdateModal(product)}
+                                    >
+                                        Update
+                                    </button>
+                                    <button
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => handleDeleteProduct(product.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             {showUpdateModal && (
                 <UpdateProductModal
                     product={selectedProduct}
@@ -125,7 +138,7 @@ const Inventory = () => {
                     onSave={handleUpdateProduct}
                 />
             )}
-        </div>        
+        </div>
     );
 };
 
