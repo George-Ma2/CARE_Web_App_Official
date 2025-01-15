@@ -17,7 +17,7 @@
 }
 
 .students-card {
-    flex: 1; /* Allow equal space for both sections */
+    flex: 1; 
     max-width: none;
 }
 
