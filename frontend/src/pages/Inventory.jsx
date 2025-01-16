@@ -92,7 +92,7 @@ const Inventory = () => {
             <h1>Inventory Management</h1>
             <ProductForm onSubmit={handleAddProduct} />
             <h2>Product List</h2>
-            <table className="product-table">
+            <table className="product-table-inv">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -110,8 +110,8 @@ const Inventory = () => {
                             <td>{product.category}</td>
                             <td>{product.expiration_date}</td>
                             <td>
-                                <button className="update-btn" onClick={() => openUpdateModal(product)}>Update</button>
-                                <button className="delete-btn" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+                                <button className="update-btn-inv" onClick={() => openUpdateModal(product)}>Update</button>
+                                <button className="delete-btn-inv" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
