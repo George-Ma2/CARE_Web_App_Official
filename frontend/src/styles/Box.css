@@ -16,6 +16,7 @@ body {
     place-items: center;
     height: 100vh;
     margin: 0; /* Ensure there's no margin on body */
+   
 }
 
 #logo {
@@ -40,6 +41,8 @@ body {
     font-size: 2.5rem;
     text-align: center;
     transition: 0.75s;
+    margin-right: 400px;
+    margin-bottom: 140px;
 }
 
 .box > * {
@@ -140,12 +143,11 @@ body {
     }
 }
 
-/* Make the button hidden by default */
 .box-button {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 40%;  /* Center the button vertically */
+    left: 50%; /* Center the button horizontally */
+    transform: translate(5%, -50%); /* Adjust the position to truly center it */
     padding: 1rem 2rem;
     background-color: #174bda;
     color: white;
@@ -156,13 +158,14 @@ body {
     border-radius: 0.5rem;
     cursor: pointer;
     opacity: 0; /* Hide the button initially */
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease; /* Only transition opacity */
 }
 
 /* Show the button when hovering over the #logo */
 #logo:hover .box-button {
     opacity: 1; /* Make the button visible */
 }
+
 
 #logo:hover .box {
     transform: translateZ(-30rem) rotatex(-40deg) rotatey(15deg);

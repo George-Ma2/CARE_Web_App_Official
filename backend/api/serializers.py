@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Inventory, CarePackage, CarePackageItem
+from .models import Profile, Inventory, CarePackage, CarePackageItem, OrderHistory
 import base64
 
 
@@ -111,5 +111,3 @@ class CarePackageSerializer(serializers.ModelSerializer):
                     product=product,
                     quantity=quantity
                 )
-                
-        return care_package

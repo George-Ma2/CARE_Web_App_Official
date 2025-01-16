@@ -6,73 +6,75 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
 
-from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer
-from .models import Inventory, CarePackage
+from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, CarePackageItemSerializer, OrderHistorySerializer
+from .models import Inventory, CarePackage, CarePackageItem
+from rest_framework.exceptions import ValidationError
+import base64
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 
-
-@csrf_exempt
-def get_package_details(request):
+def get_oldest_package_date(request):
+    """
+    View to fetch the oldest package's creation date.
+    """
     try:
-        if request.method == "GET":
-            # Get the package with the oldest issue date
-            oldest_package = Package.objects.order_by('issue_date').first()
-            
-            if oldest_package:
-                # Return the details of the oldest package
-                return JsonResponse({
-                    "id": oldest_package.id,
-                    "issue_date": oldest_package.issue_date,
-                    "pickup_location": oldest_package.pickup_location,
-                    "contents": oldest_package.contents,
-                }, status=200)
-            else:
-                return JsonResponse({"message": "No packages found"}, status=404)
-
-        return JsonResponse({"error": "Invalid HTTP method"}, status=405)
+        # Query the oldest package based on the `create_date`
+        oldest_package = CarePackage.objects.order_by('created_at').first()
+        
+        if oldest_package:
+            # Return the date in ISO format
+            return JsonResponse({'oldest_date': oldest_package.created_at.isoformat()})
+        else:
+            # Handle the case where no packages are found
+            return JsonResponse({'oldest_date': None, 'message': 'No packages found'}, status=404)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
+        # Handle unexpected errors
+        return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt
-def get_packages_with_same_issue_date(request):
+def get_packages_with_same_create_date(request):
+    """
+    Get all packages with the same creation date as the oldest package.
+    """
     try:
         if request.method == "GET":
-            # Get the oldest package by issue date
-            oldest_package = Package.objects.order_by('issue_date').first()
-            
+            # Get the package with the earliest creation date
+            oldest_package = CarePackage.objects.order_by('created_at').first()
+
             if not oldest_package:
-                return JsonResponse({"message": "No packages found"}, status=404)
+                return JsonResponse({"message": "No packages found."}, status=404)
 
-            # Get all packages that share the same issue date as the oldest package
-            same_issue_date_packages = Package.objects.filter(issue_date=oldest_package.issue_date)
-
-            # If no packages found with the same issue date
-            if not same_issue_date_packages:
-                return JsonResponse({"message": "No packages with the same issue date found."}, status=404)
-
-            # Create a list of the package details
+            # Find all packages created on the same date
+            same_date_packages = CarePackage.objects.filter(
+                created_at__date=oldest_package.created_at.date()
+            )
+            
+            # Prepare the response data
             packages_data = [
                 {
                     "id": package.id,
-                    "issue_date": package.issue_date,
-                    "pickup_location": package.pickup_location,
-                    "contents": package.contents,
+                    "created_at": package.created_at.isoformat(),
+                    "pickup_location": package.description,
+                    "contents": [
+                        {
+                            "item_name": item.product.name,
+                            "quantity": item.quantity,
+                        }
+                         for item in package.care_package_items.all()
+                    ],
                 }
-                for package in same_issue_date_packages
+                for package in same_date_packages
             ]
-
-            # Return the packages in the response
             return JsonResponse(packages_data, safe=False, status=200)
 
-        return JsonResponse({"error": "Invalid HTTP method"}, status=405)
+        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -325,9 +327,21 @@ class CarePackageDeleteView(APIView):
     #         # Update care package details
     #         self.perform_update(serializer)
 
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+
+class OrderHistoryCreateView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = OrderHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)  # Automatically assign the logged-in user
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        
     # def update(self, request, *args, **kwargs):
     #     """
     #     Update a care package and update stock quantities (reserve more or return stock).

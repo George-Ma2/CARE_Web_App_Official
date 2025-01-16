@@ -1,4 +1,4 @@
-import react from "react"
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
@@ -14,6 +14,8 @@ import PasswordResetRequest from "./components/PasswordResetRequest"
 import PasswordReset from "./components/PasswordReset"
 import CarePackage from "./pages/CarePackage";
 import CarePackagePage from "./pages/CarePackage";
+import { AppProvider } from './AppContext';
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 function Logout() {
   localStorage.clear()
@@ -26,7 +28,11 @@ function RegisterAndLogout() {
 }
 
 function App() {
+  // Shared state for selected package
+  const [selectedPackage, setSelectedPackage] = useState(null);
+
   return (
+    <AppProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
@@ -40,10 +46,12 @@ function App() {
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
+        <Route path="/orderconfirmation" element={<ProtectedRoute> <OrderConfirmation /> </ProtectedRoute>}/>
         <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/>
         <Route path="/admin/care-package" element={<ProtectedRoute> <CarePackage /> </ProtectedRoute>}/>
       </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AppProvider>
   )
 }
 
