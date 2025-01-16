@@ -17,7 +17,7 @@ urlpatterns = [
     path('inventory/update/<int:pk>/', views.update_product, name='update_product'),
     path('package', get_package_details, name='get_package_details'),
     path('packages/same-issue-date/', views.get_packages_with_same_issue_date, name='packages_same_issue_date'),
-   # path('care-package', views.get_packages_with_same_issue_date, name='packages_same_issue_date'),
+    # path('care-package', views.get_packages_with_same_issue_date, name='packages_same_issue_date'),
     # path('create-care-package/', views.CarePackageViewSet.as_view(), name='create-care-package'),
     path('', include(router.urls)),
 ]

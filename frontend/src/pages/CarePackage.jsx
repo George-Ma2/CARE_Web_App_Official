@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import api from '../api';
 import "../styles/CarePackage.css";
 import CreatePackageModal from '../components/CreatePackageModal';
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
 
 const CarePackagePage = () => {
     const [inventoryItems, setInventoryItems] = useState([]);
@@ -104,13 +106,39 @@ const CarePackagePage = () => {
             </table>
 
             {showCreateModal && (
-                <CreatePackageModal
-                    inventoryItems={inventoryItems}
-                    carePackage={selectedCarePackage} // Pass selected package for editing
-                    onClose={() => setShowCreateModal(false)}
-                    onSave={handleSaveCarePackage}
-                />
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <CreatePackageModal
+                            inventoryItems={inventoryItems}
+                            carePackage={selectedCarePackage} // Pass selected package for editing
+                            onClose={() => setShowCreateModal(false)}
+                            onSave={handleSaveCarePackage}
+                        />
+                    </div>
+                </div>
             )}
+
+            <div className="mt-5">
+                <h2>Delivery Calendar</h2>
+                <FullCalendar
+                    plugins={[dayGridPlugin]}
+                    initialView="dayGridMonth"
+                    //events={events}
+                    //dateClick={handleDateClick} // Allow user to click and assign a delivery date
+                    height="auto"
+                    headerToolbar={{
+                        left: "prev,next today",
+                        center: "title",
+                        right: "dayGridMonth,dayGridWeek,dayGridDay",
+                    }}
+                    buttonText={{
+                        today: "Today",
+                        month: "Month",
+                        week: "Week",
+                        day: "Day",
+                    }}
+                />
+            </div>
         </div>
     );
 };
