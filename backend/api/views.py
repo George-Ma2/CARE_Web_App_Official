@@ -1,20 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.db import transaction
-from django.db.models import Sum
-from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import api_view
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .serializers import UserSerializer, InventorySerializer
-from .models import Inventory
-from .permissions import IsStaffUser
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
-from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, CarePackageItemSerializer
+from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, CarePackageItemSerializer, OrderHistorySerializer
 from .models import Inventory, CarePackage, CarePackageItem
 from rest_framework.exceptions import ValidationError
 import base64
@@ -24,63 +14,92 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 
-
-@csrf_exempt
-def get_package_details(request):
+def get_oldest_package_date(request):
+    """
+    View to fetch the oldest package's creation date.
+    """
     try:
-        if request.method == "GET":
-            # Get the package with the oldest issue date
-            oldest_package = Package.objects.order_by('issue_date').first()
-            
-            if oldest_package:
-                # Return the details of the oldest package
-                return JsonResponse({
-                    "id": oldest_package.id,
-                    "issue_date": oldest_package.issue_date,
-                    "pickup_location": oldest_package.pickup_location,
-                    "contents": oldest_package.contents,
-                }, status=200)
-            else:
-                return JsonResponse({"message": "No packages found"}, status=404)
-
-        return JsonResponse({"error": "Invalid HTTP method"}, status=405)
+        # Query the oldest package based on the `create_date`
+        oldest_package = CarePackage.objects.order_by('created_at').first()
+        
+        if oldest_package:
+            # Return the date in ISO format
+            return JsonResponse({'oldest_date': oldest_package.created_at.isoformat()})
+        else:
+            # Handle the case where no packages are found
+            return JsonResponse({'oldest_date': None, 'message': 'No packages found'}, status=404)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
+        # Handle unexpected errors
+        return JsonResponse({'error': str(e)}, status=500)
 
 @csrf_exempt
-def get_packages_with_same_issue_date(request):
+def get_packages_with_same_create_date(request):
+    """
+    Get all packages with the same creation date as the oldest package.
+    """
     try:
         if request.method == "GET":
-            # Get the oldest package by issue date
-            oldest_package = Package.objects.order_by('issue_date').first()
-            
+            # Get the package with the earliest creation date
+            oldest_package = CarePackage.objects.order_by('created_at').first()
+
             if not oldest_package:
-                return JsonResponse({"message": "No packages found"}, status=404)
+                return JsonResponse({"message": "No packages found."}, status=404)
 
-            # Get all packages that share the same issue date as the oldest package
-            same_issue_date_packages = Package.objects.filter(issue_date=oldest_package.issue_date)
-
-            # If no packages found with the same issue date
-            if not same_issue_date_packages:
-                return JsonResponse({"message": "No packages with the same issue date found."}, status=404)
-
-            # Create a list of the package details
+            # Find all packages created on the same date
+            same_date_packages = CarePackage.objects.filter(
+                created_at__date=oldest_package.created_at.date()
+            )
+            
+            # Prepare the response data
             packages_data = [
                 {
                     "id": package.id,
-                    "issue_date": package.issue_date,
-                    "pickup_location": package.pickup_location,
-                    "contents": package.contents,
+                    "created_at": package.created_at.isoformat(),
+                    "pickup_location": package.description,
+                    "contents": [
+                        {
+                            "item_name": item.product.name,
+                            "quantity": item.quantity,
+                        }
+                        for item in package.care_package_items.all()
+                    ],
                 }
-                for package in same_issue_date_packages
+                for package in same_date_packages
             ]
-
-            # Return the packages in the response
             return JsonResponse(packages_data, safe=False, status=200)
 
-        return JsonResponse({"error": "Invalid HTTP method"}, status=405)
+        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def get_packages_details(request):
+    """
+    Get all packages with the same creation date as the oldest package.
+    """
+    try:
+        if request.method == "GET":
+            all_packages = CarePackage.objects.all()
+            # Prepare the response data
+            packages_data = [
+                {
+                    "id": package.id,
+                    "created_at": package.created_at.isoformat(),
+                    "delivery_date": package.delivery_date,
+                    "pickup_location": package.description,
+                    "contents": [
+                        {
+                            "item_name": item.product.name,
+                            "quantity": item.quantity,
+                        }
+                        for item in package.care_package_items.all()
+                    ],
+                }
+                for package in all_packages
+            ]
+            return JsonResponse(packages_data, safe=False, status=200)
+
+        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
@@ -273,81 +292,107 @@ def update_product(request, pk):
     return Response(serializer_product.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-from rest_framework import serializers
-
 class CarePackageViewSet(viewsets.ModelViewSet):
     queryset = CarePackage.objects.all()
     serializer_class = CarePackageSerializer
     permission_classes = [IsStaffUser]
 
-    def update(self, request, *args, **kwargs):
-        """
-        Update a care package and adjust stock quantities (reserve more or return stock).
-        """
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
 
-        # Transaction to ensure atomicity of stock adjustments
-        with transaction.atomic():
-            # Return stock for removed or reduced items
-            for old_item in instance.care_package_items():
-                new_quantity = next(
-                    (item['quantity'] for item in request.data.get('items', []) if item['product_id'] == old_item.product.id), 
-                    None
-                )
-                if new_quantity is None:
-                    # Item removed, return stock
-                    old_item.product.quantity += old_item.quantity
-                    old_item.product.save()
-                    old_item.delete()
-                elif new_quantity < old_item.quantity:
-                    # Quantity reduced, return excess stock
-                    old_item.product.quantity += (old_item.quantity - new_quantity)
-                    old_item.product.save()
-                    old_item.quantity = new_quantity
-                    old_item.save()
+class CarePackageDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            care_package = CarePackage.objects.get(pk=pk)
+            # Iterate through each item in the care package and return stock to the inventory
+            for item in care_package.care_package_items.all():
+                item.product.return_stock(item.quantity)
+            # Delete the care package and its items
+            care_package.delete()
 
-            # Reserve stock for new or increased items
-            for item_data in request.data.get('items', []):
-                product_id = item_data['product_id']
-                quantity = item_data['quantity']
-                try:
-                    product = Inventory.objects.get(id=product_id)
-                except Inventory.DoesNotExist:
-                    raise serializers.ValidationError(f"Product with ID {product_id} does not exist.")
+            return Response({"detail": "Care package deleted and stock returned."}, status=status.HTTP_204_NO_CONTENT)
+        
+        except CarePackage.DoesNotExist:
+            return Response({"detail": "Care package not found."}, status=status.HTTP_404_NOT_FOUND)
 
-                existing_item = instance.carepackageitem_set.filter(product_id=product_id).first()
-                if existing_item:
-                    # Adjust stock for increased quantity
-                    if quantity > existing_item.quantity:
-                        additional_stock = quantity - existing_item.quantity
-                        if product.quantity < additional_stock:
-                            raise serializers.ValidationError(
-                                f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {additional_stock}."
-                            )
-                        product.quantity -= additional_stock
-                        product.save()
-                        existing_item.quantity = quantity
-                        existing_item.save()
-                else:
-                    # New item, reserve stock
-                    if product.quantity < quantity:
-                        raise serializers.ValidationError(
-                            f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {quantity}."
-                        )
-                    product.quantity -= quantity
-                    product.save()
-                    CarePackageItem.objects.create(
-                        care_package=instance,
-                        product=product,
-                        quantity=quantity,
-                    )
 
-            # Update care package details
-            self.perform_update(serializer)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class OrderHistoryCreateView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = OrderHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)  # Automatically assign the logged-in user
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    # def update(self, request, *args, **kwargs):
+    #     """
+    #     Update a care package and adjust stock quantities (reserve more or return stock).
+    #     """
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance, data=request.data, partial=True)
+    #     serializer.is_valid(raise_exception=True)
+
+    #     # Transaction to ensure atomicity of stock adjustments
+    #     with transaction.atomic():
+    #         # Return stock for removed or reduced items
+    #         for old_item in instance.care_package_items():
+    #             new_quantity = next(
+    #                 (item['quantity'] for item in request.data.get('items', []) if item['product_id'] == old_item.product.id), 
+    #                 None
+    #             )
+    #             if new_quantity is None:
+    #                 # Item removed, return stock
+    #                 old_item.product.quantity += old_item.quantity
+    #                 old_item.product.save()
+    #                 old_item.delete()
+    #             elif new_quantity < old_item.quantity:
+    #                 # Quantity reduced, return excess stock
+    #                 old_item.product.quantity += (old_item.quantity - new_quantity)
+    #                 old_item.product.save()
+    #                 old_item.quantity = new_quantity
+    #                 old_item.save()
+
+    #         # Reserve stock for new or increased items
+    #         for item_data in request.data.get('items', []):
+    #             product_id = item_data['product_id']
+    #             quantity = item_data['quantity']
+    #             try:
+    #                 product = Inventory.objects.get(id=product_id)
+    #             except Inventory.DoesNotExist:
+    #                 raise serializers.ValidationError(f"Product with ID {product_id} does not exist.")
+
+    #             existing_item = instance.carepackageitem_set.filter(product_id=product_id).first()
+    #             if existing_item:
+    #                 # Adjust stock for increased quantity
+    #                 if quantity > existing_item.quantity:
+    #                     additional_stock = quantity - existing_item.quantity
+    #                     if product.quantity < additional_stock:
+    #                         raise serializers.ValidationError(
+    #                             f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {additional_stock}."
+    #                         )
+    #                     product.quantity -= additional_stock
+    #                     product.save()
+    #                     existing_item.quantity = quantity
+    #                     existing_item.save()
+    #             else:
+    #                 # New item, reserve stock
+    #                 if product.quantity < quantity:
+    #                     raise serializers.ValidationError(
+    #                         f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {quantity}."
+    #                     )
+    #                 product.quantity -= quantity
+    #                 product.save()
+    #                 CarePackageItem.objects.create(
+    #                     care_package=instance,
+    #                     product=product,
+    #                     quantity=quantity,
+    #                 )
+
+    #         # Update care package details
+    #         self.perform_update(serializer)
+
+     #   return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     # def update(self, request, *args, **kwargs):
@@ -403,28 +448,3 @@ class CarePackageViewSet(viewsets.ModelViewSet):
     #             )
 
     #     return Response(serializer.data)
-
-    # def perform_destroy(self, instance):
-    #     """
-    #     Delete a care package and return the reserved stock.
-    #     """
-    #     with transaction.atomic():
-    #         # Return all reserved stock for this care package
-    #         for item in instance.care_package_items.all():
-    #             item.product.return_stock(item.quantity)
-    #         instance.delete()
-
-    # @action(detail=True, methods=['get'])
-    # def return_stock(self, request, pk=None):
-    #     """
-    #     Custom action to return stock to the inventory if a care package is cancelled.
-    #     """
-    #     care_package = self.get_object()
-    #     if care_package.status != 'Cancelled':
-    #         return Response({"detail": "Care package is not cancelled."}, status=status.HTTP_400_BAD_REQUEST)
-        
-    #     # Return stock for all items in the care package
-    #     for item in care_package.care_package_items.all():
-    #         item.product.return_stock(item.quantity)
-
-    #     return Response({"detail": "Stock successfully returned."}, status=status.HTTP_200_OK)

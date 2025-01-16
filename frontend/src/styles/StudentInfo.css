@@ -1,4 +1,3 @@
-
 :root {
   --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -10,14 +9,32 @@
   color: #174bda;
   margin-right: 70px; /* Slightly shift to the left */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-left:60px;
+  margin-top: 2px;
+}
+.id-section h2 {
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 50px;
+  font-weight: 700;
+  color: black;
+  background-color: #F6C932;
+  margin-bottom: 20px;
+  padding-left: 5px;
+  margin-right: 90px;
+  border-radius: 5px;
+  text-align: center;
+  margin-left: 80px;
+  padding-right: 5px;
 }
 
 .student-dashboard {
   background: #fff;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; /* Avoids extra scrolling on the dashboard */
   padding: 7px 17px 57px;
+  height: 100vh; /* Make dashboard height span full viewport */
+  box-sizing: border-box; /* Ensures padding is included in height */
 }
 
 .header-container {
@@ -33,14 +50,13 @@
   border-bottom: 1px solid #eaeaea;
   padding: 10px 20px;
   display: flex;
-  flex-wrap: wrap; /* Allows the content to wrap on smaller screens */
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin: 0;
   width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
-  gap: 10px;
 }
 
 .navbar .form-inline {
@@ -52,8 +68,6 @@
   gap: 20px;
   
 }
-
-
 .navbar .btn {
   flex-shrink: 0; /* Prevent buttons from shrinking */
   padding: 10px 15px;
@@ -61,6 +75,7 @@
   border-radius: 5px;
   transition: all 0.3s ease;
 }
+
 .navbar .btn-outline-success {
   background-color: #174bda;
   color: white;
@@ -96,62 +111,50 @@
 }
 
 
+
 .top-left-img {
-  position: relative;
-  top: 0;
-  left: 0; /* Ensures proper alignment */
   width: 100px;
   height: auto;
 }
 
-
 .main-content {
+  background: #a4d7f0;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   align-self: center;
-  margin-top: 108px;
+  margin: 20px auto;
   width: 100%;
   max-width: 1016px;
+  max-height: 90vh; /* Prevents excessive height on larger screens */
+  overflow:hidden;
 }
-
 .content-grid {
-  gap: 20px;
+  gap: 100px;
   display: flex;
 }
 
 .content-column {
   display: flex;
   flex-direction: column;
-  line-height: normal;
   width: 50%;
 }
 
-.box-section {
+.id-section {
   display: flex;
   margin-top: 19px;
   flex-direction: column;
-  color: #000;
-  text-align: center;
-  font: 700 32px Poppins, sans-serif;
-}
-
-.box-preview {
-  background: #AD8468;
-  display: flex;
-  margin-top: 89px;
-  height: 428px;
-}
+  margin-right: 45px;
+  margin-bottom: 55px;
+ }
 
 .order-section {
   display: flex;
   flex-grow: 1;
-  gap: 24px;
+  gap: 10px; /* Reduced gap */
   font: 700 16px Poppins, sans-serif;
-}
-
-.divider {
-  align-self: start;
-  width: 4px;
-  height: 663px;
-  border: 1px solid #000;
+  margin-top: 10px; /* Reduced margin-top */
+ 
 }
 
 .order-form {
@@ -161,7 +164,6 @@
   flex-grow: 1;
   flex-basis: 0;
   width: fit-content;
-  
 }
 
 .order-summary {
@@ -181,7 +183,7 @@
 
 .summary-content {
   display: flex;
-  margin-top: 47px;
+  margin-top: 40px; /* Reduced margin-top */
   width: 100%;
   flex-direction: column;
   align-items: start;
@@ -199,7 +201,6 @@
   text-align: center;
   margin: 64px 0 0 40px;
 }
-
 
 .submit-button {
   background: #F6C932;
@@ -245,7 +246,108 @@
   border-radius: 5px; /* Rounded corners */
   font-size: 14px;
   width: 120px;
- 
+}
+
+
+.footer {
+  position: relative; /* Ensure the footer is part of the normal document flow */
+  left: 0;
+  bottom: 0;
+  background-color: rgb(3, 3, 3);
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  width: 98.7vw; /* Use 100% instead of 100vw to prevent overflow on mobile devices */
+  padding: 10px 0;
+  box-sizing: border-box; /* Include padding in the width calculation */
+  margin-left: -50px;
+  margin-top: 50px;
+  padding-top: 20px;
+}
+
+.footer .footer-content {
+  display: flex; /* Use flexbox for creating columns */
+  justify-content: space-around; /* Space out columns evenly */
+  flex-wrap: wrap; /* Ensure columns wrap on smaller screens */
+  text-align: left; /* Align text to the left within each column */
+}
+
+.footer .footer-column {
+  flex: 1; /* Equal width for all columns */
+  margin: 0 10px; /* Add spacing between columns */
+  min-width: 150px; /* Prevent columns from shrinking too much */
+  max-width: 300px; /* Restrict the width for better text wrapping */
+  word-wrap: break-word; /* Force long words to wrap */
+  overflow-wrap: break-word; /* Ensure consistent wrapping in modern browsers */
+}
+
+
+.footer p {
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 16px; /* Slightly smaller for better readability */
+  font-weight: 600; /* Slightly lighter for a modern look */
+  color: #fcf9f9; /* Softer black for less harshness */
+  margin: 10px auto; /* Center align and reduce excessive spacing */
+  text-align: justify;
+  line-height: 25px;
+  max-width: 600px; /* Prevent it from stretching too wide */
+  text-align: center;
+  
+}
+
+/* Center-align text in the second column */
+.footer-column:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Highlight style for the first paragraph in the second column */
+.footer-column:nth-child(2) .highlight {
+  font-size: 18px; /* Larger font size */
+  font-weight: bold; /* Bold text */
+  color: #F6C932; /* Highlighted color */
+  margin-bottom: 10px; /* Add spacing below */
+}
+/* Footer column styles */
+.footer-column:nth-child(3) {
+  display: flex;
+  flex-direction: column; /* Arrange items vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  text-align: center; /* Ensure text is centered */
+}
+
+/* "Follow Us" heading */
+.footer-column:nth-child(3) h2 {
+  font-size: 24px; /* Larger font size */
+  color: #a4d7f0; /* Highlight color */
+  margin-top: 30px; /* Larger top margin */
+  margin-bottom: 15px; /* Add spacing below the heading */
+}
+
+/* Social media links list */
+.footer-column:nth-child(3) ul.social-links {
+  list-style: none; /* Remove default list styling */
+  padding: 0;
+  margin: 0;
+}
+
+/* Social media links */
+.footer-column:nth-child(3) ul.social-links li {
+  margin-bottom: 10px; /* Add spacing between links */
+}
+
+.footer-column:nth-child(3) ul.social-links li a {
+  color: #F6C932; /* Set link color to match highlight */
+  text-decoration: none; /* Remove underline */
+  font-size: 18px; /* Increase font size */
+}
+
+.footer-column:nth-child(3) ul.social-links li a:hover {
+  color: white; /* Change color on hover */
+  text-decoration: underline; /* Underline on hover */
 }
 
 

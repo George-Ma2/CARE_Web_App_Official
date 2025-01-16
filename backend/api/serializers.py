@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile, Inventory, CarePackage, CarePackageItem
+from .models import Profile, Inventory, CarePackage, CarePackageItem, OrderHistory
 import base64
 
 
@@ -52,7 +52,6 @@ class InventorySerializer(serializers.ModelSerializer):
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
         }
-from rest_framework.exceptions import ValidationError
 
 class CarePackageItemSerializer(serializers.ModelSerializer):
     product_id = serializers.PrimaryKeyRelatedField(
@@ -67,35 +66,6 @@ class CarePackageItemSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
             'care_package': {'read_only': True},
         }
-
-    def validate(self, attrs):
-        # Get the product instance from attrs
-        product = attrs.get('product')  # This is resolved from `source='product'` in the serializer.
-        quantity = attrs.get('quantity')
-
-        # If product is None, try resolving it using product_id
-        if not product:
-            raise ValidationError("Product does not exist or is not provided.")
-
-        # Check if there is enough stock
-        if product.quantity < quantity:
-            raise ValidationError(f"Not enough stock for product {product.name}. Available: {product.quantity}.")
-        
-        return attrs
-
-
-    def create(self, validated_data):
-        product = validated_data.get('product')
-        quantity = validated_data.get('quantity')
-
-        # Reserve stock for the product
-        product.reserve_stock(quantity)
-        return super().create(validated_data)
-
-import logging
-
-logger = logging.getLogger(__name__)
-from django.db import transaction
 
 class CarePackageSerializer(serializers.ModelSerializer):
     items = CarePackageItemSerializer(many=True)
@@ -127,7 +97,7 @@ class CarePackageSerializer(serializers.ModelSerializer):
 
             # Ensure stock is sufficient
             if product.quantity < quantity:
-                raise ValidationError(f"Not enough stock for product {product.name}. Available: {product.quantity}.")
+                raise serializers.ValidationError(f"Not enough stock for product {product.name}. Available: {product.quantity}, Requested: {quantity}.")
 
             # Reserve stock for the product
             product.reserve_stock(quantity)
@@ -141,55 +111,29 @@ class CarePackageSerializer(serializers.ModelSerializer):
                     product=product,
                     quantity=quantity
                 )
-            else:
-                logger.debug(f"Product {product.name} already added to this care package, skipping duplication.")
-
+                
         return care_package
 
+class OrderHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderHistory
+        fields = ['id', 'user', 'package', 'order_date', 'status']
 
-    def update(self, instance, validated_data):
-        # Extract nested items data
-        items_data = validated_data.pop('items', [])
+    def create(self, validated_data):
+        # Get the associated package
+        package = validated_data.get('package')
+        items = package.items.all()  # CarePackage has a ManyToMany relation with Inventory through CarePackageItem
 
-        # Dictionary of existing CarePackageItem objects, keyed by product_id
-        existing_items = {item.product.id: item for item in instance.items.all()}  # Key by product.id
+        # Decrement the inventory for each item in the package
+        for item in items:
+            inventory_item = item.product  # Access the Inventory instance via the 'product' field in CarePackageItem
+            if inventory_item.quantity < item.quantity:
+                raise serializers.ValidationError({
+                    "detail": f"Not enough stock for {inventory_item.name}. Available: {inventory_item.quantity}, Requested: {item.quantity}."
+                })
+            inventory_item.quantity -= item.quantity
+            inventory_item.save()
 
-        # Update the parent CarePackage instance, but avoid saving it too early
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        # Set to track products already processed in the request
-        processed_products = set()
-
-        # First, handle updates or creations for CarePackageItem objects
-        for item_data in items_data:
-            product = item_data.get('product')
-            product_id = product.id if isinstance(product, Inventory) else item_data.get('product_id')
-
-            if product_id in existing_items:
-                # Update existing item
-                item = existing_items[product_id]
-                for attr, value in item_data.items():
-                    if attr != 'product_id':  # Skip updating product_id
-                        setattr(item, attr, value)
-                item.save()
-            else:
-                # Create new item if not already processed
-                if product_id not in processed_products:
-                    processed_products.add(product_id)
-                    CarePackageItem.objects.create(
-                        care_package=instance,
-                        product=product,
-                        quantity=item_data.get('quantity', 1)
-                    )
-
-            # Now handle deletions for items that were not included in the request
-            product_ids = [item['product_id'] for item in items_data]
-            for product_id, item in existing_items.items():
-                if product_id not in product_ids:
-                    item.delete()
-
-            # Save the parent CarePackage instance after updating its items
-            instance.save()
-
-            return instance
+        # Create the order
+        order = OrderHistory.objects.create(**validated_data)
+        return order

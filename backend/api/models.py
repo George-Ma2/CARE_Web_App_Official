@@ -101,13 +101,15 @@ class CarePackageStatus(models.TextChoices): # <constant_name> = '<database_valu
     CREATED = 'Created', 'Created',
     PICKED_UP = 'Picked Up', 'Picked Up',
     CANCELLED = 'Cancelled', 'Cancelled'
+    ORDERED = 'Ordered', 'Ordered'
+
 
 class CarePackage(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     items = models.ManyToManyField(Inventory, through='CarePackageItem')
-    quantity = models.IntegerField(default=1)
     delivery_date = models.DateField(blank = True, null = True)
+    quantity = models.PositiveIntegerField()
     status = models.CharField(
         max_length=50,
         choices=CarePackageStatus.choices,
@@ -123,10 +125,26 @@ class CarePackage(models.Model):
 class CarePackageItem(models.Model):
     care_package = models.ForeignKey(CarePackage, related_name='care_package_items', on_delete=models.CASCADE)
     product = models.ForeignKey(Inventory, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    quantity = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
+
+
+
+class OrderHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order_histories')
+    package = models.ForeignKey('CarePackage', on_delete=models.CASCADE, related_name='order_histories')
+    order_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=50,
+        choices=CarePackageStatus.choices,
+        default=CarePackageStatus.ORDERED
+    )
+
+    def __str__(self):
+        return f"Order by {self.user.username} for package {self.package.name} - Status: {self.status}"
+
 
 
 # class CarePackagePickup(models.Model):
