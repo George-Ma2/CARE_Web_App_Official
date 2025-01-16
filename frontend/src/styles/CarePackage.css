@@ -1,105 +1,136 @@
-/* Modal Overlay */
-.modal-overlay-cp {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-/* Modal Box */
-.modal-cp {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 100%;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Form styling */
-.form-group-cp {
-    margin-bottom: 15px;
-}
-
-.form-group-cp label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.form-group-cp input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.form-buttons-cp {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.button-cp {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.button-cp.primary {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.button-cp.primary:hover {
-    background-color: #197c1e;
-}
-
-.button-cp.cancel {
-    background-color: #f44336;
-    color: white;
-}
-
-.button-cp.cancel:hover {
-    background-color: #e53935;
-}
-
-.button-cp.danger {
-    background-color: #f44336;
-    color: white;
-}
-
-.button-cp.danger:hover {
-    background-color: #e53935;
-}
-
-/* Table styling */
+/* General Styles for the Table */
 .product-table-cp {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    margin-bottom: 40px; /* Added spacing beneath the table */
 }
 
 .product-table-cp th,
 .product-table-cp td {
     padding: 12px;
-    text-align: left;
     border: 1px solid #ddd;
+    text-align: center;
+    word-wrap: break-word;
 }
 
 .product-table-cp th {
-    background-color: #f2f2f2;
+    background-color: #f4f4f4;
+    font-weight: bold;
 }
 
-.product-table-cp tr:hover {
-    background-color: #f9f9f9;
+/* Button Styles (Update & Delete) */
+.product-table-cp td .button-cp {
+    padding: 6px 12px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.product-table-cp td .edit {
+    background-color: green;
+    margin-right: 10px;
+}
+
+.product-table-cp td .edit:hover {
+    background-color: darkgreen;
+}
+
+.product-table-cp td .delete {
+    background-color: red;
+}
+
+.product-table-cp td .delete:hover {
+    background-color: darkred;
+}
+
+/* Create Button Styles */
+.button-cp.primary {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button-cp.primary:hover {
+    background-color: #45a049;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    /* Mobile styles */
+    .product-table-cp {
+        font-size: 12px; /* Smaller font size for mobile */
+    }
+
+    .product-table-cp th,
+    .product-table-cp td {
+        padding: 8px; /* Reduce padding */
+    }
+
+    .product-table-cp td .button-cp {
+        padding: 4px 8px; /* Smaller buttons */
+        font-size: 12px;
+    }
+
+    .product-table-cp td {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+    .product-table-cp td .button-cp {
+        width: 100%; /* Full width buttons on mobile */
+        margin: 5px 0;
+    }
+
+    /* Create Button for Mobile */
+    .button-cp.primary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1024px) {
+    /* Tablet styles */
+    .product-table-cp {
+        font-size: 14px;
+    }
+
+    .product-table-cp th,
+    .product-table-cp td {
+        padding: 9px;
+    }
+
+    .product-table-cp td .button-cp {
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+
+    .button-cp.primary {
+        width: auto;
+    }
+}
+
+@media (min-width: 1025px) {
+    /* Desktop styles */
+    .product-table-cp {
+        font-size: 16px;
+    }
+
+    .product-table-cp th,
+    .product-table-cp td {
+        padding: 12px;
+    }
+
+    .product-table-cp td .button-cp {
+        padding: 8px 15px;
+        font-size: 16px;
+    }
+
+    .button-cp.primary {
+        width: auto;
+    }
 }
