@@ -45,7 +45,7 @@ function App() {
         <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
 
         {/* <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/> */}
-        <Route path="/admin/care-package" element={<ProtectedRoute> <CarePackage /> </ProtectedRoute>}/>
+        <Route path="/admin/care-package" element={<ProtectedRoute> <AdminNavbar> <CarePackage /> </AdminNavbar></ProtectedRoute>}/>
         <Route path="/admin/dashboard" element={<ProtectedRoute> <AdminNavbar> <Dashboard /> </AdminNavbar> </ProtectedRoute>}/>
         <Route path="/admin/inventory" element={<ProtectedRoute> <AdminNavbar> <Inventory /> </AdminNavbar> </ProtectedRoute>}/>
         {/* <Route path="/admin/boxcreation" element={<ProtectedRoute> <AdminNavbar> <Inventory /> </AdminNavbar> </ProtectedRoute>}/> */}

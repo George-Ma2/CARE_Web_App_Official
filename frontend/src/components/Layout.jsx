@@ -100,14 +100,14 @@ const AdminNavbar = ({ children }) => {
           <button
             className="btn btn-outline-secondary"
             type="button"
-            onClick={() => navigate('/admin/boxcreation')}
+            onClick={() => navigate('/admin/care-package')}
           >
             Box Creation
           </button>
           <button
             className="btn btn-outline-secondary"
             type="button"
-            onClick={() => navigate('/admin/boxcreation')}
+            onClick={() => navigate('/admin/care-package')}
           >
             Manage Users
           </button>
