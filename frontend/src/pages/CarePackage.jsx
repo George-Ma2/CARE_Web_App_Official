@@ -52,12 +52,29 @@ const CarePackagePage = () => {
             }
 
             await fetchInventory();
-            
+
             setShowCreateModal(false);
             setSelectedCarePackage(null);
         } catch (error) {
             console.error('Error saving care package:', error);
             alert('Failed to save care package.');
+        }
+    };
+
+    const handleDeleteCarePackage = async (carePackageId) => {
+        try {
+            const response = await api.delete(`/api/care-packages/${carePackageId}/delete/`);
+            
+            // Remove the deleted care package from the state
+            setCarePackages(prevPackages =>
+                prevPackages.filter(pkg => pkg.id !== carePackageId)
+            );
+    
+            alert("Care package deleted successfully!");
+            await fetchInventory();
+        } catch (error) {
+            console.error('Error deleting care package:', error);
+            alert('Failed to delete care package.');
         }
     };
 
@@ -98,7 +115,17 @@ const CarePackagePage = () => {
                                         setShowCreateModal(true);
                                     }}
                                 >
-                                    Edit
+                                    Update
+                                </button>
+                                <button
+                                    className="button-cp delete"
+                                    onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this care package?")) {
+                                            handleDeleteCarePackage(carePackage.id);
+                                        }
+                                    }}
+                                >
+                                    Delete
                                 </button>
                             </td>
                         </tr>
