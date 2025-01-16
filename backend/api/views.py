@@ -260,6 +260,18 @@ class CarePackageDeleteView(APIView):
         except CarePackage.DoesNotExist:
             return Response({"detail": "Care package not found."}, status=status.HTTP_404_NOT_FOUND)
 
+
+
+class OrderHistoryCreateView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = OrderHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)  # Automatically assign the logged-in user
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
     # def update(self, request, *args, **kwargs):
     #     """
     #     Update a care package and adjust stock quantities (reserve more or return stock).
@@ -327,21 +339,9 @@ class CarePackageDeleteView(APIView):
     #         # Update care package details
     #         self.perform_update(serializer)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+     #   return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
-class OrderHistoryCreateView(APIView):
-    def post(self, request, *args, **kwargs):
-        serializer = OrderHistorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)  # Automatically assign the logged-in user
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-        
     # def update(self, request, *args, **kwargs):
     #     """
     #     Update a care package and update stock quantities (reserve more or return stock).

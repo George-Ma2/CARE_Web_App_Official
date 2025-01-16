@@ -111,11 +111,8 @@ class CarePackageSerializer(serializers.ModelSerializer):
                     product=product,
                     quantity=quantity
                 )
-            else:
-                logger.debug(f"Product {product.name} already added to this care package, skipping duplication.")
-
+                
         return care_package
-
 
 class OrderHistorySerializer(serializers.ModelSerializer):
     class Meta:
