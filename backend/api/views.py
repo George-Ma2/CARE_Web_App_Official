@@ -242,6 +242,22 @@ class CarePackageViewSet(viewsets.ModelViewSet):
     serializer_class = CarePackageSerializer
     permission_classes = [IsStaffUser]
 
+
+class CarePackageDeleteView(APIView):
+    def delete(self, request, pk):
+        try:
+            care_package = CarePackage.objects.get(pk=pk)
+            # Iterate through each item in the care package and return stock to the inventory
+            for item in care_package.care_package_items.all():
+                item.product.return_stock(item.quantity)
+            # Delete the care package and its items
+            care_package.delete()
+
+            return Response({"detail": "Care package deleted and stock returned."}, status=status.HTTP_204_NO_CONTENT)
+        
+        except CarePackage.DoesNotExist:
+            return Response({"detail": "Care package not found."}, status=status.HTTP_404_NOT_FOUND)
+
     # def update(self, request, *args, **kwargs):
     #     """
     #     Update a care package and adjust stock quantities (reserve more or return stock).
@@ -365,28 +381,3 @@ class CarePackageViewSet(viewsets.ModelViewSet):
     #             )
 
     #     return Response(serializer.data)
-
-    # def perform_destroy(self, instance):
-    #     """
-    #     Delete a care package and return the reserved stock.
-    #     """
-    #     with transaction.atomic():
-    #         # Return all reserved stock for this care package
-    #         for item in instance.care_package_items.all():
-    #             item.product.return_stock(item.quantity)
-    #         instance.delete()
-
-    # @action(detail=True, methods=['get'])
-    # def return_stock(self, request, pk=None):
-    #     """
-    #     Custom action to return stock to the inventory if a care package is cancelled.
-    #     """
-    #     care_package = self.get_object()
-    #     if care_package.status != 'Cancelled':
-    #         return Response({"detail": "Care package is not cancelled."}, status=status.HTTP_400_BAD_REQUEST)
-        
-    #     # Return stock for all items in the care package
-    #     for item in care_package.care_package_items.all():
-    #         item.product.return_stock(item.quantity)
-
-    #     return Response({"detail": "Stock successfully returned."}, status=status.HTTP_200_OK)
