@@ -106,7 +106,7 @@ class CarePackage(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     items = models.ManyToManyField(Inventory, through='CarePackageItem')
-    quantity = models.IntegerField(default=1)
+    quantity = models.PositiveIntegerField()
     status = models.CharField(
         max_length=50,
         choices=CarePackageStatus.choices,
@@ -122,7 +122,7 @@ class CarePackage(models.Model):
 class CarePackageItem(models.Model):
     care_package = models.ForeignKey(CarePackage, related_name='care_package_items', on_delete=models.CASCADE)
     product = models.ForeignKey(Inventory, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    quantity = models.PositiveIntegerField()
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
