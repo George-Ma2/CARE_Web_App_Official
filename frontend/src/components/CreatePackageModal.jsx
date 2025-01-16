@@ -12,7 +12,6 @@ const CreatePackageModal = ({
     const [carePackageDescription, setCarePackageDescription] = useState('');
     const [numPackages, setNumPackages] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [deliveryDate, setDeliveryDate] = useState('');
 
     // If carePackage prop is provided (i.e., editing mode), populate fields
     useEffect(() => {
@@ -21,13 +20,11 @@ const CreatePackageModal = ({
             setCarePackageDescription(carePackage.description);
             setNumPackages(carePackage.quantity);
             setSelectedItems(carePackage.items || []);
-            setDeliveryDate(carePackage.deliveryDate || '');
         } else {
             setCarePackageName('');
             setCarePackageDescription('');
             setNumPackages(1);
             setSelectedItems([]);
-            setDeliveryDate('')
         }
     }, [carePackage]);
 
@@ -49,7 +46,6 @@ const CreatePackageModal = ({
                 product_id: item.inventory_item_id,
                 quantity: item.quantity,
             })),
-            delivery_date: deliveryDate,
         });
     };
 
@@ -97,15 +93,6 @@ const CreatePackageModal = ({
                         />
                     </label>
                     <label>
-                        Delivery Date:
-                        <input
-                            type="date"
-                            value={deliveryDate}
-                            onChange={(e) => setDeliveryDate(e.target.value)}
-                            required
-                        />
-                    </label>
-                    <label>
                         Quantity:
                         <input
                             type="number"
@@ -115,6 +102,7 @@ const CreatePackageModal = ({
                             required
                         />
                     </label>
+
                     <h3>Select Products and Quantities</h3>
                     {inventoryItems.map((item) => (
                         <div key={item.id} className={`form-group ${item.quantity === 0 ? 'out-of-stock' : ''}`}>

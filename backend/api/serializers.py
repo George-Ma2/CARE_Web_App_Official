@@ -102,7 +102,7 @@ class CarePackageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CarePackage
-        fields = ['id', 'name', 'description', 'items', 'quantity', 'delivery_date', 'status', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'description', 'items', 'quantity', 'status', 'created_at', 'updated_at']
         extra_kwargs = {
             'id': {'read_only': True},
             'created_at': {'read_only': True},
