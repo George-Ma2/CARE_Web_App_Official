@@ -288,6 +288,16 @@ class CarePackageViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
+        # Check if the delivery date is being updated
+        delivery_date = request.data.get('delivery_date', None)
+        if delivery_date:
+            # Perform any validation on the delivery date
+            if delivery_date < str(date.today()):
+                return Response({"error": "Delivery date cannot be in the past."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Update the delivery date on the instance
+            instance.delivery_date = delivery_date
+        
         # Transaction to ensure atomicity of stock adjustments
         with transaction.atomic():
             # Return stock for removed or reduced items
