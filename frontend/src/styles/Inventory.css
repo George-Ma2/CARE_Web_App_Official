@@ -1,22 +1,22 @@
-.product-table {
+.product-table-inv {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-.product-table th,
-.product-table td {
+.product-table-inv th,
+.product-table-inv td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: center;
 }
 
-.product-table th {
+.product-table-inv th {
     background-color: #f4f4f4;
     font-weight: bold;
 }
 
-.product-table td .update-btn {
+.product-table-inv td .update-btn-inv {
     padding: 5px 10px;
     background-color: green;
     margin-right: 10px;
@@ -25,11 +25,11 @@
     cursor: pointer;
 }
 
-.product-table td .update-btn:hover {
+.product-table-inv td .update-btn-inv:hover {
     background-color: darkgreen; 
 }
 
-.product-table td .delete-btn {
+.product-table-inv td .delete-btn-inv {
     padding: 5px 10px;
     background-color: red;
     color: white;
@@ -37,6 +37,43 @@
     cursor: pointer;
 }
 
-.product-table td .delete-btn:hover {
+.product-table-inv td .delete-btn-inv:hover {
     background-color: darkred;
+}
+
+
+@media (max-width: 1024px) {
+    /* Tablet styles */
+    .product-table-inv {
+        font-size: 14px;
+    }
+
+    .product-table-inv th,
+    .product-table-inv td {
+        padding: 9px;
+    }
+
+    .product-table-inv td .update-btn-inv,
+    .product-table-inv td .delete-btn-inv {
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1025px) {
+    /* Desktop styles */
+    .product-table-inv {
+        font-size: 16px;
+    }
+
+    .product-table-inv th,
+    .product-table-inv td {
+        padding: 12px;
+    }
+
+    .product-table-inv td .update-btn-inv,
+    .product-table-inv td .delete-btn-inv {
+        padding: 8px 15px;
+        font-size: 16px;
+    }
 }
