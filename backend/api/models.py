@@ -101,6 +101,8 @@ class CarePackageStatus(models.TextChoices): # <constant_name> = '<database_valu
     CREATED = 'Created', 'Created',
     PICKED_UP = 'Picked Up', 'Picked Up',
     CANCELLED = 'Cancelled', 'Cancelled'
+    ORDERED = 'Ordered', 'Ordered'
+
 
 class CarePackage(models.Model):
     name = models.CharField(max_length=255)
@@ -126,6 +128,22 @@ class CarePackageItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
+
+
+
+class OrderHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order_histories')
+    package = models.ForeignKey('CarePackage', on_delete=models.CASCADE, related_name='order_histories')
+    order_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=50,
+        choices=CarePackageStatus.choices,
+        default=CarePackageStatus.ORDERED
+    )
+
+    def __str__(self):
+        return f"Order by {self.user.username} for package {self.package.name} - Status: {self.status}"
+
 
 
 # class CarePackagePickup(models.Model):
