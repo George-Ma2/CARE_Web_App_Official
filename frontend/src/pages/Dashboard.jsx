@@ -8,17 +8,21 @@ const InventoryDashboard = () => {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState(null);
     const [lowInventoryProducts, setLowInventoryProducts] = useState([]);
+    const [latestPackage, setLatestPackage] = useState(null);
 
-    const fetchProducts = async () => {
-        try {
-            const response = await api.get("api/dashboard/");
-            setProducts(response.data);
-        } catch (err) {
-            console.error("Error fetching products:", err);
-            setError(err.message);
-        }
-    };
-
+// Fetch products data
+const fetchDashboardData = async () => {
+    try {
+        const response = await api.get("api/dashboard/");
+        const { category_summary, latest_package } = response.data;
+        setProducts(category_summary);  // Set inventory category summary data
+        setLatestPackage(latest_package);  // Set latest care package data
+    } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+        setError(err.message);
+    }
+};
+// Fetch student data
     const fetchStudents = async () => {
         try {
             const response = await api.get("api/students/");
@@ -28,12 +32,13 @@ const InventoryDashboard = () => {
             setError(err.message);
         }
     };
-
+ // Run initial fetches
     useEffect(() => {
-        fetchProducts();
+        fetchDashboardData();
         fetchStudents();
     }, []);
 
+// Set low inventory based on student count
     useEffect(() => {
         if (products.length > 0 && students.length > 0) {
             const requiredQuantity = students.length;
@@ -115,8 +120,10 @@ const InventoryDashboard = () => {
                     <div className="card text-center shadow-sm p-4">
                         <h5 className="card-title">Handouts Completed</h5>
                         <div className="card-body">
-                            <h2 className="display-4">N/A</h2>
-                            <p className="text-muted">Total packages handed out</p>
+                            <h2 className="display-6">
+                                {latestPackage ? latestPackage.quantity : 'Loading...'}
+                            </h2>
+                            <p className="card-text">Latest Package: {latestPackage?.name || 'N/A'}</p>
                         </div>
                     </div>
                 </div>
@@ -124,7 +131,7 @@ const InventoryDashboard = () => {
                     <div className="card text-center shadow-sm p-4">
                         <h5 className="card-title">Students Registered</h5>
                         <div className="card-body">
-                            <h2 className="display-4">{students.length}</h2>
+                            <h2 className="display-6">{students.length}</h2>
                             <p className="text-muted">Total students in the system</p>
                         </div>
                     </div>

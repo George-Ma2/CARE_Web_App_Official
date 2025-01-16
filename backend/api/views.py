@@ -212,7 +212,20 @@ class InventoryCategorySummary(generics.GenericAPIView):
             .annotate(total_quantity=Sum('quantity'))
             .order_by('category')
         )
-        return Response(category_summary)
+        # Retrieve the latest care package
+        latest_package = CarePackage.objects.latest('created_at')  # Fetch the most recently created package
+        latest_package_data = {
+            "name": latest_package.name,
+            "quantity": latest_package.quantity,
+            "description": latest_package.description,
+            "status": latest_package.status,
+        }
+        
+        response_data = {
+            'category_summary': category_summary,
+            'latest_package': latest_package_data,
+        }
+        return Response(response_data)
 
 
 class UpdateProductQuantity(APIView):
