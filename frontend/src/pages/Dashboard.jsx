@@ -140,7 +140,7 @@ const fetchDashboardData = async () => {
                     <div className="card text-center shadow-sm p-4">
                         <h5 className="card-title">Last Scheduled Delivery</h5>
                         <div className="card-body">
-                            <h2 className="display-6">N/A</h2>
+                            <h2 className="display-6">{latestPackage?.delivery_date || 'N/A'}</h2>
                             <p className="text-muted">Last delivery date</p>
                         </div>
                     </div>

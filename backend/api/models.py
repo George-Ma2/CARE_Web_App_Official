@@ -108,8 +108,8 @@ class CarePackage(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     items = models.ManyToManyField(Inventory, through='CarePackageItem')
-    delivery_date = models.DateField(blank = True, null = True)
     quantity = models.PositiveIntegerField()
+    delivery_date = models.DateField(blank = True, null = True)
     status = models.CharField(
         max_length=50,
         choices=CarePackageStatus.choices,

@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.db.models import Sum
 
 
 def get_oldest_package_date(request):

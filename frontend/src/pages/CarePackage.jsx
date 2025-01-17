@@ -100,6 +100,7 @@ const CarePackagePage = () => {
                         <th>Care Package Name</th>
                         <th>Description</th>
                         <th>Created At</th>
+                        <th>Delivery Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -109,6 +110,7 @@ const CarePackagePage = () => {
                             <td>{carePackage.name}</td>
                             <td>{carePackage.description}</td>
                             <td>{new Date(carePackage.created_at).toLocaleString()}</td>
+                            <td>{carePackage.delivery_date}</td>
                             <td>
                                 <button
                                     className="button-cp edit"
