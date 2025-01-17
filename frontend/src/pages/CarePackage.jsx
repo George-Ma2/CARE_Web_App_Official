@@ -138,8 +138,8 @@ const CarePackagePage = () => {
             </table>
 
             {showCreateModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
+                <div className="modal-overlay-cp">
+                    <div className="modal-content-cp">
                         <CreatePackageModal
                             inventoryItems={inventoryItems}
                             carePackage={selectedCarePackage} // Pass selected package for editing
