@@ -1,9 +1,10 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, OrderHistorySerializer
 from .models import Inventory, CarePackage
 from rest_framework.views import APIView
@@ -11,6 +12,16 @@ from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db.models import Sum
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # Add custom field for is_staff in the token response
+        data['is_staff'] = self.user.is_staff
+        return data
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 def get_oldest_package_date(request):
@@ -298,6 +309,7 @@ class CarePackageViewSet(viewsets.ModelViewSet):
 
 
 class CarePackageDeleteView(APIView):
+    permission_classes = [IsStaffUser]
     def delete(self, request, pk):
         try:
             care_package = CarePackage.objects.get(pk=pk)
@@ -314,6 +326,7 @@ class CarePackageDeleteView(APIView):
 
 
 class OrderHistoryCreateView(APIView):
+    permission_classes = [IsStaffUser]
     def post(self, request, *args, **kwargs):
         serializer = OrderHistorySerializer(data=request.data)
         if serializer.is_valid():
