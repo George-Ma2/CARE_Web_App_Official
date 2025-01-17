@@ -1,0 +1,50 @@
+.page-container {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start; 
+    width: 100%;
+    padding: 20px;
+    max-width: 1200px; 
+    margin-top: 20px;
+}
+
+
+.chart-card {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.students-card {
+    flex: 1; 
+    max-width: none;
+}
+
+.students-card h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.students-card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.students-card li {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 1050; /* Ensure it's above the calendar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

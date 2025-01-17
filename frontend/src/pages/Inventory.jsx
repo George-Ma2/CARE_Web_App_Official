@@ -114,10 +114,9 @@ const Inventory = () => {
                                 <button className="delete-btn-inv" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
                             </td>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-
+                        ))}
+                    </tbody>
+                </table>
             {showUpdateModal && (
                 <UpdateProductModal
                     product={selectedProduct}
@@ -125,7 +124,7 @@ const Inventory = () => {
                     onSave={handleUpdateProduct}
                 />
             )}
-        </div>        
+        </div>
     );
 };
 

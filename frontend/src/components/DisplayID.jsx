@@ -17,7 +17,6 @@ function DisplayID() {
       try {
         // Fetch the current user's profile directly
         const response = await api.get("api/profile");
-       
         // Assuming response.data contains the logged-in user's information
         console.log("Current User Data:", response.data);
         setUserData(response.data);

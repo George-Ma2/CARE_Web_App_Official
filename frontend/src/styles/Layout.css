@@ -1,0 +1,200 @@
+:root {
+    --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  
+  .student-dashboard { 
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 7px 17px 57px;
+  }
+  
+  .header-container {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .navbar {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eaeaea;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 40px;
+  }
+  
+  .navbar .form-inline {
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap; /* Adjust layout when screen width is smaller */
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .navbar .btn {
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+    padding: 10px 15px;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar .btn-outline-success {
+    background-color: #174bda;
+    color: white;
+    border-color: #174bda;
+  }
+  
+  .navbar .btn-outline-success:hover {
+    background-color: #174bda;
+    color: white;
+  }
+  
+  .navbar .btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+  }
+  
+  .navbar .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  .navbar .btn-logout-btn {
+    margin-left: 370px;
+    background-color: #d90f13;
+    border-color: #d90f13;
+    color: white;
+  }
+  
+  .navbar .btn-logout-btn:hover {
+    background-color: #F6C932;
+    border-color: #F6C932;
+    color: black;
+  }
+  
+  .full-height {
+    min-height: 100vh; /* Ensure full height of the viewport */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .container {
+    flex: 1; /* Allow the container to grow and fill remaining space */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header {
+    flex-shrink: 0; /* Prevent the header from shrinking */
+  }
+  
+  .content-container {
+    flex: 1; /* Allow the content to expand and fill remaining space */
+    padding: 20px; /* Optional padding */
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: flex-start;
+    background-color: #f4f4f4; /* Match the background */
+  }
+  
+  .top-left-img {
+    position: absolute;
+    top: 10px;
+    left: 0px;
+    width: 120px;
+  }
+  
+  .title {
+    color: rgb(255, 252, 252);
+    font-weight: bold;
+    font-size: 24px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .button {
+    width: 164px;
+    height: 40px;
+    background: rgba(149, 149, 149, 1);
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    margin: 5px;
+  }
+  
+  .button.active {
+    background: rgba(0, 64, 146, 1);
+  }
+  
+  .button.inactive {
+    background: rgba(217, 217, 217, 1);
+    color: rgb(234, 229, 229);
+  }
+  
+  .section {
+    background: rgb(237, 196, 14);
+    color: rgb(25, 24, 24) !important;
+    padding: 20px;
+    margin-top: 20px;
+    max-width: 900px; 
+    width: 100%; 
+    margin-left: auto; 
+    margin-right: auto; 
+  }
+  
+  .main-content {
+    align-self: center;
+    margin-top: 108px;
+    width: 100%;
+    max-width: 1016px;
+  }
+  
+  .content-grid {
+    display: flex;
+    justify-content: space-between; 
+    width: 100%;
+    gap: 20px;
+    max-width: 1200px;
+  }
+  
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .navbar .form-inline {
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+  
+    .navbar .btn {
+      width: 100%;
+    }
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
