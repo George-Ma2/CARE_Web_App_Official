@@ -22,20 +22,10 @@ const fetchDashboardData = async () => {
         setError(err.message);
     }
 };
-// Fetch student data
-    const fetchStudents = async () => {
-        try {
-            const response = await api.get("api/students/");
-            setStudents(response.data);
-        } catch (err) {
-            console.error("Error fetching students:", err);
-            setError(err.message);
-        }
-    };
+
  // Run initial fetches
     useEffect(() => {
         fetchDashboardData();
-        fetchStudents();
     }, []);
 
 // Set low inventory based on student count
