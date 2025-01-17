@@ -18,18 +18,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.contrib.auth import views as auth_views
-from api.views import CreateUserView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from django.conf import settings
-from django.conf.urls.static import static
+from api.views import CreateUserView, CustomTokenObtainPairView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/register/', CreateUserView.as_view(), name='register'),
-    path('api/token/', TokenObtainPairView.as_view(), name='get_token'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh'),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='get_token'),
+    path('api/token/refresh/',TokenRefreshView.as_view(), name='refresh'),
     path('api-auth/', include('rest_framework.urls')),
     path('api/password_reset/',include('django_rest_passwordreset.urls', namespace='password_reset')), 
     path('api/', include('api.urls')) # forward urls to urls from the api folder if it doesnt match any url from the backend urls.py
