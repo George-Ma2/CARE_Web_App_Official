@@ -8,7 +8,6 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 from django.db import models
-import json
 
 
 class ProductCategory(models.TextChoices): # <constant_name> = '<database_value>', '<human_readable_value>'
