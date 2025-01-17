@@ -4,10 +4,8 @@ from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action, api_view
-from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, CarePackageItemSerializer, OrderHistorySerializer
-from .models import Inventory, CarePackage, CarePackageItem
-from rest_framework.exceptions import ValidationError
-import base64
+from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, OrderHistorySerializer
+from .models import Inventory, CarePackage
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
@@ -222,7 +220,7 @@ class InventoryRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsStaffUser]
 
 class InventoryCategorySummary(generics.GenericAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsStaffUser]
 
     def get(self, request):
         # Aggregate inventory quantity by category
@@ -233,17 +231,17 @@ class InventoryCategorySummary(generics.GenericAPIView):
             .order_by('category')
         )
         # Retrieve the latest care package
-        latest_package = CarePackage.objects.latest('created_at')  # Fetch the most recently created package
-        latest_package_data = {
-            "name": latest_package.name,
-            "quantity": latest_package.quantity,
-            "description": latest_package.description,
-            "status": latest_package.status,
-        }
+        # latest_package = CarePackage.objects.latest('created_at')  # Fetch the most recently created package
+        # latest_package_data = {
+        #     "name": latest_package.name,
+        #     "quantity": latest_package.quantity,
+        #     "description": latest_package.description,
+        #     "status": latest_package.status,
+        # }
         
         response_data = {
             'category_summary': category_summary,
-            'latest_package': latest_package_data,
+            # 'latest_package': latest_package_data,
         }
         return Response(response_data)
 
@@ -315,7 +313,6 @@ class CarePackageDeleteView(APIView):
             return Response({"detail": "Care package not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class OrderHistoryCreateView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = OrderHistorySerializer(data=request.data)
@@ -323,129 +320,3 @@ class OrderHistoryCreateView(APIView):
             serializer.save(user=request.user)  # Automatically assign the logged-in user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-    # def update(self, request, *args, **kwargs):
-    #     """
-    #     Update a care package and adjust stock quantities (reserve more or return stock).
-    #     """
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance, data=request.data, partial=True)
-    #     serializer.is_valid(raise_exception=True)
-
-    #     # Transaction to ensure atomicity of stock adjustments
-    #     with transaction.atomic():
-    #         # Return stock for removed or reduced items
-    #         for old_item in instance.care_package_items():
-    #             new_quantity = next(
-    #                 (item['quantity'] for item in request.data.get('items', []) if item['product_id'] == old_item.product.id), 
-    #                 None
-    #             )
-    #             if new_quantity is None:
-    #                 # Item removed, return stock
-    #                 old_item.product.quantity += old_item.quantity
-    #                 old_item.product.save()
-    #                 old_item.delete()
-    #             elif new_quantity < old_item.quantity:
-    #                 # Quantity reduced, return excess stock
-    #                 old_item.product.quantity += (old_item.quantity - new_quantity)
-    #                 old_item.product.save()
-    #                 old_item.quantity = new_quantity
-    #                 old_item.save()
-
-    #         # Reserve stock for new or increased items
-    #         for item_data in request.data.get('items', []):
-    #             product_id = item_data['product_id']
-    #             quantity = item_data['quantity']
-    #             try:
-    #                 product = Inventory.objects.get(id=product_id)
-    #             except Inventory.DoesNotExist:
-    #                 raise serializers.ValidationError(f"Product with ID {product_id} does not exist.")
-
-    #             existing_item = instance.carepackageitem_set.filter(product_id=product_id).first()
-    #             if existing_item:
-    #                 # Adjust stock for increased quantity
-    #                 if quantity > existing_item.quantity:
-    #                     additional_stock = quantity - existing_item.quantity
-    #                     if product.quantity < additional_stock:
-    #                         raise serializers.ValidationError(
-    #                             f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {additional_stock}."
-    #                         )
-    #                     product.quantity -= additional_stock
-    #                     product.save()
-    #                     existing_item.quantity = quantity
-    #                     existing_item.save()
-    #             else:
-    #                 # New item, reserve stock
-    #                 if product.quantity < quantity:
-    #                     raise serializers.ValidationError(
-    #                         f"Not enough stock for {product.name}. Available: {product.quantity}, Requested: {quantity}."
-    #                     )
-    #                 product.quantity -= quantity
-    #                 product.save()
-    #                 CarePackageItem.objects.create(
-    #                     care_package=instance,
-    #                     product=product,
-    #                     quantity=quantity,
-    #                 )
-
-    #         # Update care package details
-    #         self.perform_update(serializer)
-
-     #   return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-    # def update(self, request, *args, **kwargs):
-    #     """
-    #     Update a care package and update stock quantities (reserve more or return stock).
-    #     """
-    #     instance = self.get_object()
-    #     serializer = self.get_serializer(instance, data=request.data, partial=True)
-    #     serializer.is_valid(raise_exception=True)
-
-    #     # Transaction to ensure atomicity of stock reservation or return
-    #     with transaction.atomic():
-    #         # Before updating, return stock for items that are no longer in the care package
-    #         for old_item in instance.care_package_items.all():
-    #             new_quantity = next(
-    #                 (item['quantity'] for item in request.data['items'] if item['product']['id'] == old_item.product.id), 
-    #                 None
-    #             )
-    #             if new_quantity is None:
-    #                 # If item is removed, return stock
-    #                 old_item.product.return_stock(old_item.quantity)
-    #             elif new_quantity != old_item.quantity:
-    #                 # If quantity changed, adjust stock
-    #                 if new_quantity < old_item.quantity:
-    #                     old_item.product.return_stock(old_item.quantity - new_quantity)
-    #                 elif new_quantity > old_item.quantity:
-    #                     # Reserve additional stock
-    #                     old_item.product.reserve_stock(new_quantity - old_item.quantity)
-
-    #         # Now update the care package itself
-    #         self.perform_update(serializer)
-
-    #         # Update or create CarePackageItems based on the new data
-    #         new_items = {item['product']['id']: item for item in request.data['items']}
-    #         for old_item in instance.care_package_items.all():
-    #             if old_item.product.id in new_items:
-    #                 # Update existing items
-    #                 old_item.quantity = new_items[old_item.product.id]['quantity']
-    #                 old_item.save()
-    #                 new_items.pop(old_item.product.id)
-    #             else:
-    #                 # Remove the item (already handled above by returning stock)
-    #                 old_item.delete()
-
-    #         # Create any new items
-    #         for new_item in new_items.values():
-    #             product = Inventory.objects.get(id=new_item['product']['id'])
-    #             product.reserve_stock(new_item['quantity'])
-    #             CarePackageItem.objects.create(
-    #                 care_package=instance,
-    #                 product=product,
-    #                 quantity=new_item['quantity']
-    #             )
-
-    #     return Response(serializer.data)
