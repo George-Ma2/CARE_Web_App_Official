@@ -184,7 +184,6 @@ body {
   width: 98.7vw; /* Use 100% instead of 100vw to prevent overflow on mobile devices */
   padding: 10px 0;
   box-sizing: border-box; /* Include padding in the width calculation */
-  margin-left: -50px;
   margin-top: 20px;
   padding-top: 20px;
 }
