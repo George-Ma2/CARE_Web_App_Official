@@ -112,7 +112,7 @@ const CarePackagePage = () => {
                             <td>{new Date(carePackage.created_at).toLocaleString()}</td>
                             <td>{carePackage.delivery_date}</td>
                             <td>
-                                <button
+                                {/* <button
                                     className="button-cp edit"
                                     onClick={() => {
                                         setSelectedCarePackage(carePackage);
@@ -120,7 +120,7 @@ const CarePackagePage = () => {
                                     }}
                                 >
                                     Update
-                                </button>
+                                </button> */}
                                 <button
                                     className="button-cp delete"
                                     onClick={() => {
