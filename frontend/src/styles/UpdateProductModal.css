@@ -79,22 +79,22 @@
 }
 
 /* Update Button Styles */
-.save-button {
+.save-button-update {
     background-color: #007bff;
     color: white;
 }
 
-.save-button:hover {
+.save-button-update:hover {
     background-color: #0056b3;
 }
 
 /* Close Button Styles */
-.close-button {
+.close-button-update {
     background-color: #C0C0C0;
     color: #333;
 }
 
-.close-button:hover {
+.close-button-update:hover {
     background-color: #A9A9A9;
 }
 

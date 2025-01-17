@@ -79,8 +79,8 @@ const UpdateProductModal = ({ product, onClose, onSave }) => {
                     </label>
                     <div>
 
-                        <button className="save-button" onClick={handleSave}>Save Changes</button>
-                        <button type="button" className = "close-button" onClick={onClose}>Close</button>
+                        <button className="save-button-update" onClick={handleSave}>Save Changes</button>
+                        <button type="button" className = "close-button-update" onClick={onClose}>Close</button>
                     </div>
                 </form>
             </div>
