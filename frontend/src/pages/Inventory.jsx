@@ -111,7 +111,16 @@ const Inventory = () => {
                             <td>{product.expiration_date}</td>
                             <td>
                                 <button className="update-btn-inv" onClick={() => openUpdateModal(product)}>Update</button>
-                                <button className="delete-btn-inv" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
+                                <button 
+                                    className="delete-btn-inv" 
+                                    onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this care package?")) {
+                                            handleDeleteProduct(product.id);
+                                        }
+                                    }}
+                                >
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                         ))}
