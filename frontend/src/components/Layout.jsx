@@ -2,13 +2,13 @@ import "../styles/Layout.css";
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const handleLogout = () => {
-  localStorage.clear();
-  navigate('/login');
-};
-
 const AdminNavbar = ({ children }) => {
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
 
   return (
     <div className="container full-height">
