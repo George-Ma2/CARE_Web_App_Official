@@ -47,11 +47,20 @@ function Form({ route, method }) {
         }
         try {
             const res = await api.post(route, formData);
+            console.log(formData)
         
             if (method === "login") {
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                navigate("/userdash/calendar");
+                localStorage.setItem("is_staff", res.data.is_staff);
+                console.log('is staff:', res.data.is_staff)
+
+                if (res.data.is_staff) {
+                    navigate("/admin/dashboard");
+                } else {
+                    navigate("/userdash/calendar");
+                }
+
             } else if (method === "register") {
                 alert("Registration successful. Please log in.");
                 navigate("/login");
@@ -64,7 +73,7 @@ function Form({ route, method }) {
                 console.error("HTTP Status Code:", error.response.status);
                 alert(`Error: ${JSON.stringify(error.response.data)}`);
             } else {
-                alert("Form submission error: " + error.message);
+                alert("Form submission error: " + error.message || error);
             }
         
         } finally {
