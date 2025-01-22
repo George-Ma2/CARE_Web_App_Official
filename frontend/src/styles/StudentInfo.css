@@ -7,24 +7,22 @@
   font-size: 35px; 
   font-weight: 700;
   color: #174bda;
- 
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  margin-left:80px;
+  margin-left: 80px;
   margin-top: 2px;
   text-align: justify;
 }
 
-.summary-content p{
-
+.summary-content p {
   font-family: 'Poppins', var(--default-font-family);
   font-size: 35px;
   font-weight: 700;
   color: black;
-  padding-left:20px;
+  padding-left: 20px;
   text-align: center;
 }
-.id-section h4{
 
+.id-section h4 {
   font-family: 'Poppins', var(--default-font-family);
   font-size: 25px;
   font-weight: 700;
@@ -37,6 +35,7 @@
   margin-left: 80px;
   padding-right: 5px;
 }
+
 .id-section h2 {
   font-family: 'Poppins', var(--default-font-family);
   font-size: 50px;
@@ -91,8 +90,8 @@
   justify-content: center;
   align-items: center;
   gap: 20px;
-  
 }
+
 .navbar .btn {
   flex-shrink: 0; /* Prevent buttons from shrinking */
   padding: 10px 15px;
@@ -135,8 +134,6 @@
   color: black;
 }
 
-
-
 .top-left-img {
   width: 100px;
   height: auto;
@@ -152,8 +149,9 @@
   width: 100%;
   max-width: 1016px;
   max-height: 90vh; /* Prevents excessive height on larger screens */
-  overflow:hidden;
+  overflow: hidden;
 }
+
 .content-grid {
   gap: 100px;
   display: flex;
@@ -171,7 +169,7 @@
   flex-direction: column;
   margin-right: 45px;
   margin-bottom: 55px;
- }
+}
 
 .order-section {
   display: flex;
@@ -179,7 +177,6 @@
   gap: 10px; /* Reduced gap */
   font: 700 16px Poppins, sans-serif;
   margin-top: 10px; /* Reduced margin-top */
- 
 }
 
 .order-form {
@@ -273,6 +270,42 @@
   width: 120px;
 }
 
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.table th, .table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #174bda;
+  color: white;
+  font-weight: bold;
+}
+
+
+.table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table tr:hover {
+  background-color: #ddd;
+}
+
+.table .table-header {
+  font-size: 18px;
+  color: #174bda;
+}
+
+.table .table-cell {
+  font-size: 16px;
+  color: #333;
+}
 
 .footer {
   position: relative; /* Ensure the footer is part of the normal document flow */
@@ -306,141 +339,95 @@
   overflow-wrap: break-word; /* Ensure consistent wrapping in modern browsers */
 }
 
-
 .footer p {
   font-family: 'Poppins', var(--default-font-family);
   font-size: 16px; /* Slightly smaller for better readability */
   font-weight: 600; /* Slightly lighter for a modern look */
   color: #fcf9f9; /* Softer black for less harshness */
-  margin: 10px auto; /* Center align and reduce excessive spacing */
-  text-align: justify;
-  line-height: 25px;
-  max-width: 600px; /* Prevent it from stretching too wide */
-  text-align: center;
-  
 }
 
-/* Center-align text in the second column */
-.footer-column:nth-child(2) {
+.footer .footer-links {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  gap: 10px; /* Provide space between links */
 }
 
-/* Highlight style for the first paragraph in the second column */
-.footer-column:nth-child(2) .highlight {
-  font-size: 18px; /* Larger font size */
-  font-weight: bold; /* Bold text */
-  color: #F6C932; /* Highlighted color */
-  margin-bottom: 10px; /* Add spacing below */
-}
-/* Footer column styles */
-.footer-column:nth-child(3) {
-  display: flex;
-  flex-direction: column; /* Arrange items vertically */
-  align-items: center; /* Center items horizontally */
-  justify-content: center; /* Center items vertically */
-  text-align: center; /* Ensure text is centered */
+.footer .footer-links a {
+  color: #f6c932;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 5px 0;
+  transition: color 0.3s ease;
 }
 
-/* "Follow Us" heading */
-.footer-column:nth-child(3) h2 {
-  font-size: 24px; /* Larger font size */
-  color: #a4d7f0; /* Highlight color */
-  margin-top: 30px; /* Larger top margin */
-  margin-bottom: 15px; /* Add spacing below the heading */
+.footer .footer-links a:hover {
+  color: #174bda;
 }
 
-/* Social media links list */
-.footer-column:nth-child(3) ul.social-links {
-  list-style: none; /* Remove default list styling */
-  padding: 0;
-  margin: 0;
+.table-container {
+  margin-top: 20px;
+  overflow-x: auto; /* Adds horizontal scrolling on small screens */
 }
 
-/* Social media links */
-.footer-column:nth-child(3) ul.social-links li {
-  margin-bottom: 10px; /* Add spacing between links */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 16px;
+  color: #333;
 }
 
-.footer-column:nth-child(3) ul.social-links li a {
-  color: #F6C932; /* Set link color to match highlight */
-  text-decoration: none; /* Remove underline */
-  font-size: 18px; /* Increase font size */
+th,
+td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: center;
 }
 
-.footer-column:nth-child(3) ul.social-links li a:hover {
-  color: white; /* Change color on hover */
-  text-decoration: underline; /* Underline on hover */
+th {
+  background-color: #F6C932;
+  color: #121111;
+  font-weight: 700;
+}
+
+/* Custom header styling */
+.order-header {
+  background-color: #d90f13;
+  color: #fff;
+  font-weight: 700;
+  font-size: 20px; /* Adjust font size as needed */
+  padding: 12px 15px;
+  text-align: center;
+  width: 100%;
 }
 
 
-@media (max-width: 991px) {
-  .header-container {
-    max-width: 100%;
+td {
+  background-color: #fff;
+}
+
+tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+tr:hover td {
+  background-color: #9eb0ea;
+  transition: background-color 0.3s ease;
+}
+
+
+
+@media (max-width: 768px) {
+  table {
+    font-size: 14px;
   }
-  
-  .nav-menu {
-    max-width: 100%;
+
+  th,
+  td {
+    padding: 8px 10px;
   }
-  
-  .nav-item {
-    padding: 0 20px;
-  }
-  
-  .main-content {
-    max-width: 100%;
-    margin-top: 40px;
-  }
-  
-  .content-grid {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-  }
-  
-  .content-column {
-    width: 100%;
-  }
-  
-  .box-section {
-    margin-top: 40px;
-  }
-  
-  .box-preview {
-    margin-top: 40px;
-  }
-  
-  .order-section {
-    margin-top: 40px;
-  }
-  
-  .order-summary,
-  .summary-header,
-  .summary-content {
-    max-width: 100%;
-  }
-  
-  .summary-content {
-    padding-right: 20px;
-    margin-top: 40px;
-  }
-  
-  .package-info,
-  .pickup-location {
-    margin-left: 10px;
-  }
-  
-  .pickup-location {
-    margin-top: 40px;
-  }
-  
-  .checkbox-group {
-    margin-top: 40px;
-  }
-  
-  .submit-button {
-    padding-left: 20px;
+
+  .table-container {
+    margin: 20px;
   }
 }

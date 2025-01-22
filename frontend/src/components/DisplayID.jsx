@@ -5,25 +5,22 @@ import "../styles/StudentInfo.css";
 
 function DisplayID() {
   const [userData, setUserData] = useState(null);
-  const [orderDate, setOrderDate] = useState(null);
-  const [status, setStatus] = useState(null);
-  const [delivery_date, setDelivery] = useState(null);    
-  const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);  // To store all orders
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-
 
   useEffect(() => {
     document.title = "Student Information";
   }, []);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         // Fetch the current user's profile
         const profileResponse = await api.get("api/profile/");
         setUserData(profileResponse.data);
-  
+
         // Fetch the order history
         const orderResponse = await api.get("api/user/order-history/");
         if (orderResponse.data.orders && orderResponse.data.orders.length > 0) {
@@ -40,10 +37,9 @@ function DisplayID() {
         setLoading(false);
       }
     };
-  
+
     fetchUserData();
   }, [navigate]);
-  
 
   const handleLogout = () => {
     localStorage.clear();
@@ -61,7 +57,6 @@ function DisplayID() {
   // Check if profile exists and has photo_id
   const hasPhoto = userData.profile && userData.profile.photo_base64;
 
-
   return (
     <div className="container">
       <header className="header">
@@ -70,29 +65,28 @@ function DisplayID() {
 
       <nav className="navbar">
         <form className="form-inline">
-          
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              onClick={() => navigate("/userdash/calendar")}
-            >
-              Calendar
-            </button>
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              onClick={() => navigate("/userdash/boxinfo")}
-            >
-              Box Information
-            </button>
-            <button
-              className="btn btn-outline-success"
-              type="button"
-              onClick={() => navigate("/userdash/studentinfo")}
-            >
-              Student Info
-            </button>
-            <button
+          <button
+            className="btn btn-outline-secondary"
+            type="button"
+            onClick={() => navigate("/userdash/calendar")}
+          >
+            Calendar
+          </button>
+          <button
+            className="btn btn-outline-secondary"
+            type="button"
+            onClick={() => navigate("/userdash/boxinfo")}
+          >
+            Box Information
+          </button>
+          <button
+            className="btn btn-outline-success"
+            type="button"
+            onClick={() => navigate("/userdash/studentinfo")}
+          >
+            Student Info
+          </button>
+          <button
             className="btn btn-outline-secondary"
             type="button"
             onClick={() => navigate('/userdash/ordercart')}
@@ -138,55 +132,34 @@ function DisplayID() {
             </div>
             <div className="content-column">
               <div className="order-section">
-                <form className="order-form">
-                <div className="order-summary">
-                  <h3 className="summary-header">Order History:</h3>
-                  <div className="summary-content">
-                    {orders.length > 0 ? (
-                      orders.map((order, index) => (
-                        <div className="form-row" key={index}>
-                          <div className="form-group">
-                            <label htmlFor={`orderedOn-${index}`}>Ordered On:</label>
-                            <input
-                              type="text"
-                              id={`orderedOn-${index}`}
-                              className="order-info"
-                              value={order.order_date}
-                              readOnly
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label htmlFor={`deliveryDate-${index}`}>
-                              Scheduled Delivery Date:
-                            </label>
-                            <input
-                              type="text"
-                              id={`deliveryDate-${index}`}
-                              className="order-info"
-                              value={order.delivery_date}
-                              readOnly
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label htmlFor={`orderStatus-${index}`}>Order Picked Up:</label>
-                            <input
-                              type="text"
-                              id={`orderStatus-${index}`}
-                              className="order-info"
-                              value={order.status}
-                              readOnly
-                            />
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <p>No order history found</p>
-                    )}
-                  </div>
-
-
-                  </div>
-                </form>
+             
+                {orders.length > 0 ? (
+                  
+                  <table className="order-table">
+                       
+                    <thead>
+                      <tr>
+                      <th colspan="3" className="order-header">Order History</th>
+                      </tr>
+                      <tr>
+                        <th>Ordered On</th>
+                        <th>Scheduled Delivery Date</th>
+                        <th>Order Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.map((order, index) => (
+                        <tr key={index}>
+                          <td>{order.order_date}</td>
+                          <td>{order.delivery_date}</td>
+                          <td>{order.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p>No order history found</p>
+                )}
               </div>
             </div>
           </div>
