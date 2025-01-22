@@ -162,32 +162,31 @@
   background: #D9D9D9;
   display: flex;
   flex-direction: column;
-  padding: 2px 0 78px;
+  padding: 20px; /* Adjust padding for better spacing */
+  margin-bottom: -10px; /* Ensure space below the summary */
 }
-
 .summary-header {
   background: #d90f13;
   font-size: 20px;
   color: #fff;
   text-align: center;
-  padding: 5px 22px 14px;
   font: 700 16px Poppins, sans-serif;
 }
 
 .summary-content {
   display: flex;
-  margin-top: 47px;
   width: 100%;
   flex-direction: column;
   align-items: start;
   font-size: 16px;
   color: #000;
-  padding: 0 64px 0 20px;
+  
 }
 
-.package-info,
-.pickup-location {
-  text-align: center;
+
+.pickupLocation
+{
+  margin-top: -20px;
 }
 
 .package-contents-textarea {
@@ -201,7 +200,7 @@
   box-sizing: border-box;
   resize: none; /* Prevent manual resizing */
   margin-top: 10px;
-
+  margin-bottom: 20px;
 }
 
 .pickup-location-textarea {
@@ -215,12 +214,14 @@
   box-sizing: border-box;
   resize: none; /* Prevent manual resizing */
   margin-top: 10px;
-  margin-right: 50px
+  margin-right: 50px;
+  margin-bottom: 20px;
+  
 }
 
 
 .order-date-textarea {
-  width: 70%; /* Full width of the order-summary section */
+  width: 60%; /* Full width of the order-summary section */
   padding: 10px 0px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -231,23 +232,21 @@
   resize: none; /* Prevent manual resizing */
   margin-top: 10px;
   text-align: center;
-
+  margin-bottom: -60px;
 }
 
 
 
 .form-row {
   display: flex;
-  gap: 20px; /* Adjust spacing between the groups */
   align-items: center; /* Align items vertically */
   justify-content: center;
+  
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 5px; /* Adjust spacing between label and input */
-  margin-bottom: 20px;
 }
 
 

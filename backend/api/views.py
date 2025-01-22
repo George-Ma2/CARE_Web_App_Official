@@ -112,6 +112,7 @@ def get_packages_with_same_create_date(request):
                 {
                     "id": package.id,
                     "created_at": package.created_at.isoformat(),
+                    "delivery_date": package.delivery_date,
                     "pickup_location": package.description,
                     "quantity": package.quantity,
                     "contents": [

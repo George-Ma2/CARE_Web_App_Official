@@ -66,7 +66,7 @@ const handlePackageSelect = (pkg) => {
   console.log("Package INFO:", pkg);
 
   setOrderInfo({
-    packageDate: pkg.created_at,
+    packageDate: pkg.delivery_date,
     pickupLocation: pkg.pickup_location,
     packageContents: formatContents(pkg.contents || [])
   });
@@ -182,8 +182,9 @@ const handlePackageSelect = (pkg) => {
                     <h3 className="summary-header">Package Details:</h3>
                     <div className="summary-content">
                       <div className="form-row">
-                        <div className="form-group">
-                          <label htmlFor="pickupLocation">Pick-up Location:</label>
+
+                        <div className="form-group">                       
+                          <label class="pickupLocation" htmlFor="pickupLocation">Pickup Location:</label>
                           <input
                             type="text"
                             id="pickupLocation"
@@ -193,6 +194,7 @@ const handlePackageSelect = (pkg) => {
                           />
                         </div>
                       </div>
+                                         
                       <label htmlFor="packageContents">Package Contents:</label>
                       <textarea
                         id="packageContents"
@@ -202,6 +204,18 @@ const handlePackageSelect = (pkg) => {
                        // rows={Math.max(3, orderInfo.packageContents.split(', ').length)} // Dynamically adjusts rows
                         style={{ resize: "none" }} // Prevents manual resizing by the user
                       />
+                      <div className="form-row">                       
+                      <div className="form-group">
+                          <label htmlFor="deliveryDate">Order Pickup Day:</label>
+                          <input
+                            type="text"
+                            id="deliveryDate"
+                            className="order-date-textarea"
+                            value={orderInfo.packageDate}
+                            readOnly
+                          />
+                        </div>
+                        </div>  
                     </div>
                   </div>
                   
