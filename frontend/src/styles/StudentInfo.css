@@ -9,11 +9,20 @@
   color: #174bda;
  
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  margin-left:60px;
+  margin-left:80px;
   margin-top: 2px;
   text-align: justify;
 }
 
+.summary-content p{
+
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 35px;
+  font-weight: 700;
+  color: black;
+  padding-left:20px;
+  text-align: center;
+}
 .id-section h4{
 
   font-family: 'Poppins', var(--default-font-family);

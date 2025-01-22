@@ -412,3 +412,40 @@ class OrderHistoryCreateView(APIView):
             serializer.save(user=request.user)  # Automatically assign the logged-in user
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserOrderHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            # Get the current user's ID
+            user_id = request.user.id
+
+            # Fetch all orders belonging to the current user
+            user_orders = OrderHistory.objects.filter(user_id=user_id)
+
+            # If no orders exist, return an appropriate response
+            if not user_orders.exists():
+                return Response({"message": "No order history found for the user."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Enrich order data with delivery_date from CarePackage
+            orders_data = []
+            for order in user_orders:
+                # Fetch the CarePackage associated with the package_id
+                care_package = CarePackage.objects.filter(id=order.package_id).first()
+                delivery_date = care_package.delivery_date if care_package else None
+
+                # Append the enriched data to the list
+                orders_data.append({
+                    "order_date": order.order_date.date(),
+                    "status": order.status,
+                    "delivery_date": delivery_date,
+                })
+
+            # Return the enriched data
+            return Response({"orders": orders_data}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # Handle unexpected errors
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
