@@ -150,7 +150,8 @@
   max-width: 1016px;
   max-height: 90vh; /* Prevents excessive height on larger screens */
   overflow: hidden;
-  margin-bottom:-20px;
+  margin-bottom:-120px;
+  
 }
 
 .content-grid {
@@ -180,7 +181,7 @@
   font-weight: 600;
   padding: 10px;
   color: #fff;
-  background-color: #174bda;
+  background-color: #dbdee7;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -189,31 +190,31 @@
   text-align: center;
 }
 
-.id-section input[type="file"]:hover {
-  background-color: #F6C932;
-  transform: scale(1.05); /* Slightly enlarge on hover */
-}
+
 
 .id-section label {
   font-family: 'Poppins', var(--default-font-family);
-  font-size: 18px; /* Increased font size */
+  font-size: 20px; /* Increased font size */
   font-weight: 700; /* Make it bold */
   color: black;
   margin-bottom: 15px; /* Adds space between label and input */
   display: block; /* Ensure it takes up its own line */
 }
 
-#photo-preview {
-  display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  margin-top: 20px; /* Space between the input field and the preview */
+ .submit-button {
+  margin-top:20px;
+  margin-left: 25px;
+  background-color: #d90f13;
+  border-color: #d90f13;
+  color: white;
+  border-radius: 5px;
 }
 
-#photo-preview img {
-  max-width: 100%; /* Prevents image from exceeding the container width */
-  max-height: 200px; /* Restricts image height to a reasonable size */
-  object-fit: contain; /* Maintains aspect ratio */
+.submit-button:hover {
+  background-color: #F6C932;
+  border-color: #F6C932;
+  color: black;
+  transition: color 0.3s ease;
 }
 
 .order-section {
@@ -260,20 +261,6 @@
 }
 
 
-
-.submit-button {
-  background: #F6C932;
-  border-radius: 50%;
-  align-self: center;
-  margin-top: 26px;
-  width: 191px;
-  max-width: 100%;
-  font-size: 16px;
-  color: #000;
-  text-align: center;
-  padding: 35px 21px;
-  cursor: pointer;
-}
 
 .visually-hidden {
   position: absolute;

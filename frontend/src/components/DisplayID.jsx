@@ -59,23 +59,34 @@ function DisplayID() {
 
   const handleSubmitPhoto = async () => {
     const formData = new FormData();
-    formData.append("photo_id", photoId); // Append the uploaded photo
-    console.log("Form data:", photoId);
-    try {
-      // Make a PATCH request to update the photo
-      await api.patch("api/profile/update/", formData); // Use PATCH endpoint for updating photo
-      alert("Photo uploaded successfully!");
-      // Refresh user data or update UI accordingly
-      setUserData({ ...userData, profile: { ...userData.profile, photo_base64: photoId } });
-    } catch (error) {
-      console.error("Error uploading photo:", error);
-      alert("There was an error uploading your photo.");
+    formData.append("photo_id", photoId);  // photoId is already a File object
+
+    // Log the FormData content to ensure it's being appended correctly
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
     }
-  };
+
+    
+    try {
+        // Make the PATCH request to update the photo
+        const response = await api.patch("api/profile/update/", formData);
+
+        console.log("Response:", response.data);
+        alert("Photo uploaded successfully!");
+
+        // Update user data
+        setUserData({ ...userData, profile: { ...userData.profile, photo_base64: response.data.photo_id } });
+    } catch (error) {
+        console.error("Error uploading photo:", error);
+        alert("There was an error uploading your photo.");
+    }
+};
+
+
   
 
   if (loading) {
-    return <div className="loading-spinner">Loading...</div>; // You can style this to show a spinner
+    return <p>Loading...</p>;
   }
 
   if (!userData) {
@@ -158,7 +169,7 @@ function DisplayID() {
                         />
                       </div>
                     )}
-                    <button onClick={handleSubmitPhoto} disabled={!photoId}>
+                    <button className="submit-button" onClick={handleSubmitPhoto} disabled={!photoId}>
                       Submit Photo
                     </button>
                   </div>

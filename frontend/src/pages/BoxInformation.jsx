@@ -34,6 +34,7 @@ function BoxInformation() {
   };
 
   const fetchAvailablePackages = async (createDate) => {
+    createDate = null;
     try {
         console.log("Create date: ", createDate);
         // If createDate is not provided, fetch the oldest package date from the backend
@@ -48,13 +49,17 @@ function BoxInformation() {
             return; // Stop execution if no date is available
         }
 
+        // Extract only the date portion
+        const formattedDate = new Date(createDate).toISOString().slice(0, 10);
+        
         // Fetch available packages for the given date
-        const response = await api.get(`/api/care-packages/same-create-date/?create_date=${createDate}`);
+        const response = await api.get(`/api/care-packages/same-create-date/?create_date=${formattedDate}`);
         console.log("Initial response:", response.data);
-      // Filter out packages with quantity 0
-      const filteredPackages = response.data.filter(pkg => pkg.quantity > 0); 
-      console.log("Filtered packages:", filteredPackages);
-      setAvailablePackages(filteredPackages); // Update state with the filtered response data
+
+        // Filter out packages with quantity 0
+        const filteredPackages = response.data.filter(pkg => pkg.quantity > 0); 
+        console.log("Filtered packages:", filteredPackages);
+        setAvailablePackages(filteredPackages); // Update state with the filtered response data
     } catch (error) {
         console.error("Error fetching available packages:", error.response?.data || error.message);
     }

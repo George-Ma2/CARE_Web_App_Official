@@ -72,22 +72,34 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 def get_oldest_package_date(request):
     """
     View to fetch the oldest package's creation date, considering only packages
-    with a quantity greater than zero.
+    with a quantity greater than zero. If the oldest package has a quantity of zero,
+    it selects the next closest package with a valid quantity.
     """
     try:
         # Query the oldest package based on `created_at` with a quantity greater than 0
         oldest_package = CarePackage.objects.filter(quantity__gt=0).order_by('created_at').first()
         
         if oldest_package:
-            # Return the date in ISO format
+            # If the oldest package has a valid quantity, return its creation date
             return JsonResponse({'oldest_date': oldest_package.created_at.isoformat()})
         else:
-            # Handle the case where no eligible packages are found
-            return JsonResponse({'oldest_date': None, 'message': 'No packages with valid quantity found'}, status=404)
+            # If no eligible package is found, query the next closest package with quantity > 0
+            next_package = CarePackage.objects.filter(quantity__gt=0).order_by('created_at').skip(1).first()
+
+            if next_package:
+                # Return the next closest package's creation date
+                return JsonResponse({'oldest_date': next_package.created_at.isoformat()})
+            else:
+                # Handle the case where no eligible packages are found
+                return JsonResponse({'oldest_date': None, 'message': 'No packages with valid quantity found'}, status=404)
+
     except Exception as e:
         # Handle unexpected errors
         return JsonResponse({'error': str(e)}, status=500)
 
+
+
+from datetime import datetime
 
 @csrf_exempt
 def get_packages_with_same_create_date(request):
@@ -96,17 +108,21 @@ def get_packages_with_same_create_date(request):
     """
     try:
         if request.method == "GET":
-            # Get the package with the earliest creation date
-            oldest_package = CarePackage.objects.order_by('created_at').first()
+            # Get the createDate from the query parameters
+            createDate = request.GET.get("create_date", None)
 
-            if not oldest_package:
-                return JsonResponse({"message": "No packages found."}, status=404)
+            if not createDate:
+                return JsonResponse({"error": "Missing create_date parameter."}, status=400)
 
-            # Find all packages created on the same date
-            same_date_packages = CarePackage.objects.filter(
-                created_at__date=oldest_package.created_at.date()
-            )
-            
+            try:
+                # Parse the createDate and extract the date portion
+                create_date_obj = datetime.fromisoformat(createDate).date()
+            except ValueError:
+                return JsonResponse({"error": "Invalid date format. Use ISO 8601 format."}, status=400)
+
+            # Query packages created on the specified date
+            same_date_packages = CarePackage.objects.filter(created_at__date=create_date_obj)
+
             # Prepare the response data
             packages_data = [
                 {
@@ -129,7 +145,9 @@ def get_packages_with_same_create_date(request):
 
         return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        # Log the error and return JSON error response
+        print(f"Error in get_packages_with_same_create_date: {e}")
+        return JsonResponse({"error": "An unexpected error occurred."}, status=500)
 
 @csrf_exempt
 def get_packages_details(request):
