@@ -1,31 +1,46 @@
 import "../styles/Calendar.css";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import api from '../api';
+
 
 function Calendar() {
   const navigate = useNavigate();
+  const [events, setEvents] = useState([]);
+
 
   useEffect(() => {
     document.title = 'Calendar';
-  }, []);
+  
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate('/login');
+  // Fetch packages from the backend
+  const fetchPackages = async () => {
+    try {
+      const response = await api.get('/api/package/');
+      const packages = response.data;
+
+      // Map package delivery dates to FullCalendar event format
+      const eventList = packages
+      .filter(pkg => pkg.quantity > 0) // Filter out packages with quantity <= 0
+      .map(pkg => ({
+        title: 'Order Pickup Day!',
+        date: pkg.delivery_date,
+      }));
+      setEvents(eventList);
+    } catch (error) {
+      console.error("Error fetching package details:", error);
+    }
   };
 
-  const events = [
-    {
-      title: '4th Package Drop!',
-      date: '2024-12-19'
-    },
-    {
-      title: 'Christmas!',
-      date: '2024-12-25'
-    }
-  ];
+  fetchPackages();
+}, []);
+
+const handleLogout = () => {
+  localStorage.clear();
+  navigate('/login');
+};
 
   return (
     <div className="container">

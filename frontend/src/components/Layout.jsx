@@ -1,14 +1,18 @@
 import "../styles/Layout.css";
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AdminNavbar = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
   };
+
+  // Function to determine active button styles
+  const isActive = (path) => location.pathname === path ? 'btn btn-primary' : 'btn btn-outline-secondary';
 
   return (
     <div className="container full-height">
@@ -19,34 +23,27 @@ const AdminNavbar = ({ children }) => {
       <nav className="navbar">
         <form className="form-inline">
           <button
-            className="btn btn-outline-success"
+            className={isActive('/admin/dashboard')}
             type="button"
             onClick={() => navigate('/admin/dashboard')}
           >
             Dashboard
           </button>
           <button
-          
-            className="btn btn-outline-secondary"
+            className={isActive('/admin/inventory')}
             type="button"
             onClick={() => navigate('/admin/inventory')}
           >
             Inventory
           </button>
           <button
-            className="btn btn-outline-secondary"
+            className={isActive('/admin/care-package')}
             type="button"
             onClick={() => navigate('/admin/care-package')}
           >
             Box Creation
           </button>
-          {/* <button
-            className="btn btn-outline-secondary"
-            type="button"
-            onClick={() => navigate('/admin/care-package')}
-          >
-            Manage Users
-          </button> */}
+          {/* Add more buttons as needed */}
           <button
             className="btn btn-logout-btn"
             type="button"

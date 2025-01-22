@@ -40,6 +40,7 @@ function BoxInformation() {
         if (!createDate) {
             const dateResponse = await api.get("/api/care-packages/oldest-package-date/");
             createDate = dateResponse.data.oldest_date;
+            console.log("Create date:", createDate);
         }
 
         if (!createDate) {
@@ -49,7 +50,11 @@ function BoxInformation() {
 
         // Fetch available packages for the given date
         const response = await api.get(`/api/care-packages/same-create-date/?create_date=${createDate}`);
-        setAvailablePackages(response.data); // Update state with the response data
+        console.log("Initial response:", response.data);
+      // Filter out packages with quantity 0
+      const filteredPackages = response.data.filter(pkg => pkg.quantity > 0); 
+      console.log("Filtered packages:", filteredPackages);
+      setAvailablePackages(filteredPackages); // Update state with the filtered response data
     } catch (error) {
         console.error("Error fetching available packages:", error.response?.data || error.message);
     }
@@ -225,27 +230,31 @@ const handlePackageSelect = (pkg) => {
                 <p>Click on a button to select a box and see what it contains!</p>
 
                 <div className="package-list">
-                  {availablePackages.map((pkg, index) => {
-                    // Generate the letter (A, B, C, ...) based on the index
-                    const boxLabel = String.fromCharCode(65 + index); // 65 is the ASCII code for 'A'
+                {availablePackages.length > 0 ? (
+                    availablePackages.map((pkg, index) => {
+                      // Generate the letter (A, B, C, ...) based on the index
+                      const boxLabel = String.fromCharCode(65 + index); // 65 is the ASCII code for 'A'
 
-                    // Define an array of colors to be used for the buttons
-                    const colors = ['#F6C932', '#174bda', '#d90f13', '#FFD700', '#8A2BE2']; // Example colors
+                      // Define an array of colors to be used for the buttons
+                      const colors = ['#F6C932', '#174bda', '#d90f13', '#FFD700', '#8A2BE2']; // Example colors
 
-                    // Assign a color based on the index
-                    const buttonColor = colors[index % colors.length]; // Modulo ensures it loops through the colors if there are more boxes than colors
+                      // Assign a color based on the index
+                      const buttonColor = colors[index % colors.length]; // Modulo ensures it loops through the colors if there are more boxes than colors
 
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => handlePackageSelect(pkg)} // Close modal and update order info
-                        className="package-button"
-                        style={{ backgroundColor: buttonColor }}
-                      >
-                        <strong>Box {boxLabel}</strong>
-                      </button>
-                    );
-                  })}
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => handlePackageSelect(pkg)} // Close modal and update order info
+                          className="package-button"
+                          style={{ backgroundColor: buttonColor }}
+                        >
+                          <strong>Box {boxLabel}</strong>
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p>No packages available at this time.</p>
+                  )}
                 </div>
               </div>
 
