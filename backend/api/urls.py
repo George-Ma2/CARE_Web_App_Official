@@ -10,6 +10,7 @@ router.register(r'care-packages', views.CarePackageViewSet, basename='care-packa
 
 urlpatterns = [
     path('profile/', views.current_user_profile, name='current_user_profile'),
+    path('profile/update/', views.update_user_photo, name='update_photo'),
     path('inventory/', views.InventoryListCreate.as_view(), name='inventory-list-create'),
     path('inventory/<int:pk>/', views.InventoryRetrieveUpdateDestroy.as_view(), name='inventory-detail'),
     path('inventory/update_quantity/<int:pk>/', views.UpdateProductQuantity.as_view(), name='update-product-quantity'),

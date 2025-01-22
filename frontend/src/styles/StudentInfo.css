@@ -150,6 +150,7 @@
   max-width: 1016px;
   max-height: 90vh; /* Prevents excessive height on larger screens */
   overflow: hidden;
+  margin-bottom:-20px;
 }
 
 .content-grid {
@@ -169,6 +170,50 @@
   flex-direction: column;
   margin-right: 45px;
   margin-bottom: 55px;
+ 
+}
+
+/* Styling the Choose File Button */
+.id-section input[type="file"] {
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px;
+  color: #fff;
+  background-color: #174bda;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  width: -20px;
+  text-align: center;
+}
+
+.id-section input[type="file"]:hover {
+  background-color: #F6C932;
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.id-section label {
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 18px; /* Increased font size */
+  font-weight: 700; /* Make it bold */
+  color: black;
+  margin-bottom: 15px; /* Adds space between label and input */
+  display: block; /* Ensure it takes up its own line */
+}
+
+#photo-preview {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  margin-top: 20px; /* Space between the input field and the preview */
+}
+
+#photo-preview img {
+  max-width: 100%; /* Prevents image from exceeding the container width */
+  max-height: 200px; /* Restricts image height to a reasonable size */
+  object-fit: contain; /* Maintains aspect ratio */
 }
 
 .order-section {
@@ -214,15 +259,7 @@
   padding: 0 64px 0 20px;
 }
 
-.package-info {
-  text-align: center;
-  margin-left: 30px;
-}
 
-.pickup-location {
-  text-align: center;
-  margin: 64px 0 0 40px;
-}
 
 .submit-button {
   background: #F6C932;
@@ -249,18 +286,6 @@
   border: 0;
 }
 
-.form-row {
-  display: flex;
-  gap: 20px; /* Adjust spacing between the groups */
-  align-items: center; /* Align items vertically */
-  justify-content: center;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px; /* Adjust spacing between label and input */
-}
 
 .order-info {
   padding: 8px 10px; /* Adjust padding for input boxes */
@@ -268,43 +293,6 @@
   border-radius: 5px; /* Rounded corners */
   font-size: 14px;
   width: 120px;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-}
-
-.table th, .table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.table th {
-  background-color: #174bda;
-  color: white;
-  font-weight: bold;
-}
-
-
-.table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.table tr:hover {
-  background-color: #ddd;
-}
-
-.table .table-header {
-  font-size: 18px;
-  color: #174bda;
-}
-
-.table .table-cell {
-  font-size: 16px;
-  color: #333;
 }
 
 .footer {
@@ -364,12 +352,14 @@
   color: #174bda;
 }
 
-.table-container {
+/* Apply these styles only to tables within .order-table-container */
+.order-table-container {
   margin-top: 20px;
   overflow-x: auto; /* Adds horizontal scrolling on small screens */
+  overflow-y: auto;
 }
 
-table {
+.order-table-container table {
   width: 100%;
   border-collapse: collapse;
   font-family: 'Poppins', var(--default-font-family);
@@ -377,21 +367,42 @@ table {
   color: #333;
 }
 
-th,
-td {
+
+/* Apply these styles only to tables within .order-table-container */
+.order-table-container2 {
+  margin-top: 90px;
+  padding-left: 50px;
+
+}
+
+.order-table-container2 table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Poppins', var(--default-font-family);
+  font-size: 20px;
+  color: #333;
+}
+
+.order-table-container th,
+.order-table-container td,
+.order-table-container2 th,
+.order-table-container2 td
+ {
   padding: 12px 15px;
   border: 1px solid #ddd;
   text-align: center;
 }
 
-th {
+.order-table-container th,
+.order-table-container2 th {
   background-color: #F6C932;
   color: #121111;
   font-weight: 700;
 }
 
 /* Custom header styling */
-.order-header {
+.order-table-container .order-header,
+.order-table-container2 .order-header {
   background-color: #d90f13;
   color: #fff;
   font-weight: 700;
@@ -401,33 +412,33 @@ th {
   width: 100%;
 }
 
-
-td {
+.order-table-container td,
+.order-table-container2 td {
   background-color: #fff;
 }
 
-tr:nth-child(even) td {
+.order-table-container tr:nth-child(even) td,
+.order-table-container2 tr:nth-child(even) td  {
   background-color: #f9f9f9;
 }
 
-tr:hover td {
+.order-table-container tr:hover td,
+.order-table-container2 tr:hover td {
   background-color: #9eb0ea;
   transition: background-color 0.3s ease;
 }
 
-
-
 @media (max-width: 768px) {
-  table {
+  .order-table-container table {
     font-size: 14px;
   }
 
-  th,
-  td {
+  .order-table-container th,
+  .order-table-container td {
     padding: 8px 10px;
   }
 
-  .table-container {
+  .order-table-container {
     margin: 20px;
   }
 }

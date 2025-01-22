@@ -359,6 +359,41 @@ def current_user_profile(request):
     return Response(serialized_user.data)
 
 
+
+@api_view(['PATCH'])
+def update_user_photo(request):
+    """
+    View to update the user's photo_id in their profile.
+    """
+    try:
+        # Get the profile of the authenticated user
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        return Response({"error": "Profile not found for this user."}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Ensure the user has provided a file for the photo_id
+    photo_id = request.FILES.get("photo_id")
+    if not photo_id:
+        return Response({"error": "No photo file provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Validate the file size
+    if photo_id.size > 2 * 1024 * 1024:  # 2MB limit
+        return Response({"error": "File size exceeds 2MB limit."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Validate the file type
+    if not photo_id.content_type.startswith("image/"):
+        return Response({"error": "Invalid file type. Only images are allowed."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Update the photo_id
+    user_profile.photo_id = photo_id.read()  # Read the image data
+    user_profile.save()
+
+    # Return the updated profile
+    return Response({
+        "message": "Profile photo updated successfully.",
+        "photo_id": ProfileSerializer(user_profile).data['photo_base64']
+    }, status=status.HTTP_200_OK)
+
 @api_view(['PATCH'])
 def update_product(request, pk):
     try:
@@ -379,6 +414,7 @@ def update_product(request, pk):
         return Response(serializer_product.data, status=status.HTTP_200_OK)
 
     return Response(serializer_product.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class CarePackageViewSet(viewsets.ModelViewSet):
