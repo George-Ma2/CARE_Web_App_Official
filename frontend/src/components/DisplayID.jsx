@@ -145,14 +145,14 @@ function DisplayID() {
                 ) : (
                   <div>
                     <h4>No photo uploaded.</h4>
-                    <div className="form-file-upload">
+                    {/* <div className="form-file-upload">
                       <label htmlFor="photo_id">Upload Photo:</label>
                       <input
                         id="photo_id"
                         type="file"
                         onChange={handlePhotoUpload}
                       />
-                    </div>
+                    </div> */}
                     {preview && (
                       <div className="photo-preview">
                         <img
