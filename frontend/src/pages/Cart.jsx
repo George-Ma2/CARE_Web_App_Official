@@ -10,6 +10,8 @@ function Cart() {
   const [isTermsAccepted1, setIsTermsAccepted1] = useState(false);
   const [isTermsAccepted2, setIsTermsAccepted2] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false); 
 
   useEffect(() => {
@@ -27,6 +29,28 @@ function Cart() {
     }
   }, [selectedPackage]);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Fetch the current user's profile directly
+        const response = await api.get("api/profile");
+        // Assuming response.data contains the logged-in user's information
+        console.log("Current User Data:", response.data);
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error.response?.data || error.message);
+        if (error.response?.status === 401) {
+          navigate("/login"); // Redirect on unauthorized
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
+
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -38,18 +62,19 @@ function Cart() {
     try {
       setIsSubmitting(true);
 
-      // Prepare the order data
       const orderData = {
-        package_id: selectedPackage.id, // Assuming `id` exists in selectedPackage
-        user: localStorage.getItem('user_id'), // Replace with the actual user identifier
-        status: 'ORDERED', // Default status
+        package: selectedPackage.id, // Use `package` to match the ForeignKey field name
+        status: "Ordered",          // Set a valid status, matching your CarePackageStatus choices
+        user: userData.id
       };
-
+      
+      console.log("Order data:", orderData);
       // Make the API request to create the order
       const response = await api.post('/api/order-history/create/', orderData);
 
       // Redirect to order confirmation page
       navigate("/orderconfirmation");
+
     } catch (error) {
       console.error("Error completing order:", error);
       alert("Failed to complete the order. Please try again later.");

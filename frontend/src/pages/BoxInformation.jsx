@@ -34,12 +34,14 @@ function BoxInformation() {
   };
 
   const fetchAvailablePackages = async (createDate) => {
+    createDate = null;
     try {
         console.log("Create date: ", createDate);
         // If createDate is not provided, fetch the oldest package date from the backend
         if (!createDate) {
             const dateResponse = await api.get("/api/care-packages/oldest-package-date/");
             createDate = dateResponse.data.oldest_date;
+            console.log("Create date:", createDate);
         }
 
         if (!createDate) {
@@ -47,9 +49,17 @@ function BoxInformation() {
             return; // Stop execution if no date is available
         }
 
+        // Extract only the date portion
+        const formattedDate = new Date(createDate).toISOString().slice(0, 10);
+        
         // Fetch available packages for the given date
-        const response = await api.get(`/api/care-packages/same-create-date/?create_date=${createDate}`);
-        setAvailablePackages(response.data); // Update state with the response data
+        const response = await api.get(`/api/care-packages/same-create-date/?create_date=${formattedDate}`);
+        console.log("Initial response:", response.data);
+
+        // Filter out packages with quantity 0
+        const filteredPackages = response.data.filter(pkg => pkg.quantity > 0); 
+        console.log("Filtered packages:", filteredPackages);
+        setAvailablePackages(filteredPackages); // Update state with the filtered response data
     } catch (error) {
         console.error("Error fetching available packages:", error.response?.data || error.message);
     }
@@ -61,7 +71,7 @@ const handlePackageSelect = (pkg) => {
   console.log("Package INFO:", pkg);
 
   setOrderInfo({
-    packageDate: pkg.created_at,
+    packageDate: pkg.delivery_date,
     pickupLocation: pkg.pickup_location,
     packageContents: formatContents(pkg.contents || [])
   });
@@ -177,8 +187,9 @@ const handlePackageSelect = (pkg) => {
                     <h3 className="summary-header">Package Details:</h3>
                     <div className="summary-content">
                       <div className="form-row">
-                        <div className="form-group">
-                          <label htmlFor="pickupLocation">Pick-up Location:</label>
+
+                        <div className="form-group">                       
+                          <label class="pickupLocation" htmlFor="pickupLocation">Pickup Location:</label>
                           <input
                             type="text"
                             id="pickupLocation"
@@ -188,6 +199,7 @@ const handlePackageSelect = (pkg) => {
                           />
                         </div>
                       </div>
+                                         
                       <label htmlFor="packageContents">Package Contents:</label>
                       <textarea
                         id="packageContents"
@@ -197,6 +209,18 @@ const handlePackageSelect = (pkg) => {
                        // rows={Math.max(3, orderInfo.packageContents.split(', ').length)} // Dynamically adjusts rows
                         style={{ resize: "none" }} // Prevents manual resizing by the user
                       />
+                      <div className="form-row">                       
+                      <div className="form-group">
+                          <label htmlFor="deliveryDate">Order Pickup Day:</label>
+                          <input
+                            type="text"
+                            id="deliveryDate"
+                            className="order-date-textarea"
+                            value={orderInfo.packageDate}
+                            readOnly
+                          />
+                        </div>
+                        </div>  
                     </div>
                   </div>
                   
@@ -225,27 +249,31 @@ const handlePackageSelect = (pkg) => {
                 <p>Click on a button to select a box and see what it contains!</p>
 
                 <div className="package-list">
-                  {availablePackages.map((pkg, index) => {
-                    // Generate the letter (A, B, C, ...) based on the index
-                    const boxLabel = String.fromCharCode(65 + index); // 65 is the ASCII code for 'A'
+                {availablePackages.length > 0 ? (
+                    availablePackages.map((pkg, index) => {
+                      // Generate the letter (A, B, C, ...) based on the index
+                      const boxLabel = String.fromCharCode(65 + index); // 65 is the ASCII code for 'A'
 
-                    // Define an array of colors to be used for the buttons
-                    const colors = ['#F6C932', '#174bda', '#d90f13', '#FFD700', '#8A2BE2']; // Example colors
+                      // Define an array of colors to be used for the buttons
+                      const colors = ['#F6C932', '#174bda', '#d90f13', '#FFD700', '#8A2BE2']; // Example colors
 
-                    // Assign a color based on the index
-                    const buttonColor = colors[index % colors.length]; // Modulo ensures it loops through the colors if there are more boxes than colors
+                      // Assign a color based on the index
+                      const buttonColor = colors[index % colors.length]; // Modulo ensures it loops through the colors if there are more boxes than colors
 
-                    return (
-                      <button
-                        key={index}
-                        onClick={() => handlePackageSelect(pkg)} // Close modal and update order info
-                        className="package-button"
-                        style={{ backgroundColor: buttonColor }}
-                      >
-                        <strong>Box {boxLabel}</strong>
-                      </button>
-                    );
-                  })}
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => handlePackageSelect(pkg)} // Close modal and update order info
+                          className="package-button"
+                          style={{ backgroundColor: buttonColor }}
+                        >
+                          <strong>Box {boxLabel}</strong>
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p>No packages available at this time.</p>
+                  )}
                 </div>
               </div>
 

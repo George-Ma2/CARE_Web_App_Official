@@ -9,26 +9,68 @@ const InventoryDashboard = () => {
     const [error, setError] = useState(null);
     const [lowInventoryProducts, setLowInventoryProducts] = useState([]);
     const [latestPackage, setLatestPackage] = useState(null);
+    const [orders, setOrders] = useState({ total_orders: 0, latest_order: null });  // Adjusted orders state structure
+    const [totalPackages, setTotalPackages] = useState(0); // New state to hold the total sum of packages
+    const [nearestDelivery, setNearestDelivery] = useState(null);
 
-// Fetch products data
-const fetchDashboardData = async () => {
-    try {
-        const response = await api.get("api/dashboard/");
-        const { category_summary, latest_package } = response.data;
-        setProducts(category_summary);  // Set inventory category summary data
-        setLatestPackage(latest_package);  // Set latest care package data
-    } catch (err) {
-        console.error("Error fetching dashboard data:", err);
-        setError(err.message);
-    }
-};
+    // Fetch products data
+    const fetchDashboardData = async () => {
+        try {
+            const response = await api.get("api/dashboard/");
+            const { category_summary, latest_package, nearest_delivery } = response.data;
+            setProducts(category_summary);  // Set inventory category summary data
+            setLatestPackage(latest_package);  // Set latest care package data
+            setNearestDelivery(nearest_delivery);
+            console.log("Delivery:", nearestDelivery);
+        } catch (err) {
+            console.error("Error fetching dashboard data:", err);
+            setError(err.message);
+        }
+    };
 
- // Run initial fetches
+    // Fetch students data
+    const fetchStudents = async () => {
+        try {
+            const response = await api.get("api/students/");
+            setStudents(response.data.students); // Update the state with student data
+        } catch (err) {
+            console.error("Error fetching students:", err);
+            setError(err.message);
+        }
+    };
+
+    // Fetch order history
+    const fetchOrderHistory = async () => {
+        try {
+            const response = await api.get("api/orderhistory/");
+            const { total_orders, latest_order } = response.data; // Destructure total_orders and latest_order
+            setOrders({ total_orders, latest_order }); // Set orders state as an object
+            console.log("Order History:", response.data);
+        } catch (err) {
+            console.error("Error fetching orders:", err);
+            setError(err.message);
+        }
+    };
+
+    const fetchTotalPackages = async () => {
+        try {
+            let response = await api.get("api/total-packages/"); // Use let instead of const
+            setTotalPackages(response.data.total_quantity); // Update state with total quantity
+        } catch (err) {
+            console.error("Error fetching packages data:", err);
+            setError(err.message);
+        }
+    };
+    
+    
     useEffect(() => {
         fetchDashboardData();
-    }, []);
+        fetchStudents();
+        fetchOrderHistory();
+        fetchTotalPackages();
+    }, []); // Run all fetches on component load
 
-// Set low inventory based on student count
+    // Set low inventory based on student count
     useEffect(() => {
         if (products.length > 0 && students.length > 0) {
             const requiredQuantity = students.length;
@@ -37,8 +79,10 @@ const fetchDashboardData = async () => {
             );
             setLowInventoryProducts(lowInventory);
         }
+        console.log("Latest package:", latestPackage);
     }, [products, students]);
 
+    // Get chart options for the product distribution
     const getChartOptions = () => {
         return {
             tooltip: { trigger: "item" },
@@ -60,6 +104,9 @@ const fetchDashboardData = async () => {
             ],
         };
     };
+    const orderCount = orders.total_orders;  // Access the total number of orders
+    const latestOrder = orders.latest_order;  // Access the latest order details
+    
     return (
         <div className="container mt-4">
             <h2 className="mb-4">Inventory Dashboard</h2>
@@ -87,8 +134,8 @@ const fetchDashboardData = async () => {
                                     {students.map((student) => (
                                         <li key={student.id} className="list-group-item d-flex align-items-center justify-content-between">
                                             <div>
-                                                <strong>{student.name}</strong> <br />
-                                                <small>ID: {student.id}</small>
+                                                <strong>{student.first_name}</strong> <strong>{student.last_name}</strong><br />
+                                                <small>Email: {student.email}</small>
                                             </div>
                                             <input
                                                 type="checkbox"
@@ -104,19 +151,32 @@ const fetchDashboardData = async () => {
                     </div>
                 </div>
             </div>
+
             {/* Additional Cards Section */}
             <div className="row g-4 mt-4">
                 <div className="col-lg-4">
                     <div className="card text-center shadow-sm p-4">
-                        <h5 className="card-title">Handouts Completed</h5>
+                        <h5 className="card-title">Order Log</h5>
                         <div className="card-body">
-                            <h2 className="display-6">
-                                {latestPackage ? latestPackage.quantity : 'Loading...'}
-                            </h2>
+                            <h2 className="display-6">{orders.total_orders}</h2>
+                            <p className="card-text">Total Orders</p>
+                            <p className="card-text">
+                                Latest Order: {orders.latest_order ? `${latestOrder.order_date}` : 'N/A'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="col-lg-4">
+                    <div className="card text-center shadow-sm p-4">
+                        <h5 className="card-title">Packages Available</h5>
+                        <div className="card-body">
+                            <h2 className="display-6">{totalPackages ? totalPackages: 0}</h2>
                             <p className="card-text">Latest Package: {latestPackage?.name || 'N/A'}</p>
                         </div>
                     </div>
                 </div>
+
                 <div className="col-lg-4">
                     <div className="card text-center shadow-sm p-4">
                         <h5 className="card-title">Students Registered</h5>
@@ -126,16 +186,18 @@ const fetchDashboardData = async () => {
                         </div>
                     </div>
                 </div>
+
                 <div className="col-lg-4">
                     <div className="card text-center shadow-sm p-4">
-                        <h5 className="card-title">Last Scheduled Delivery</h5>
+                        <h5 className="card-title">Delivery</h5>
                         <div className="card-body">
-                            <h2 className="display-6">{latestPackage?.delivery_date || 'N/A'}</h2>
-                            <p className="text-muted">Last delivery date</p>
+                            <h2 className="display-6">{nearestDelivery ? nearestDelivery : 'N/A'}</h2>
+                            <p className="text-muted">Upcoming delivery date</p>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div className="row g-4 mt-4">
                 <div className="col-lg-12">
                     <div className="card shadow-sm p-4">
@@ -145,7 +207,7 @@ const fetchDashboardData = async () => {
                                 <ul className="list-group">
                                     {lowInventoryProducts.map((product) => (
                                         <li key={product.id} className="list-group-item">
-                                            {product.category} is low on stock with {product.total_quantity} items remaining.
+                                            {product.category} is low on stock with {product.total_quantity} item(s) remaining.
                                         </li>
                                     ))}
                                 </ul>

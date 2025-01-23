@@ -101,6 +101,7 @@ class CarePackageStatus(models.TextChoices): # <constant_name> = '<database_valu
     PICKED_UP = 'Picked Up', 'Picked Up',
     CANCELLED = 'Cancelled', 'Cancelled'
     ORDERED = 'Ordered', 'Ordered'
+    OUTOFSTOCK = 'Out of Stock', 'Out of Stock'
 
 
 class CarePackage(models.Model):

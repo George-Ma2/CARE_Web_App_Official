@@ -5,7 +5,11 @@ import "../styles/StudentInfo.css";
 
 function DisplayID() {
   const [userData, setUserData] = useState(null);
+  const [orders, setOrders] = useState([]);  // To store all orders
   const [loading, setLoading] = useState(true);
+  const [photoId, setPhotoId] = useState(null);
+  const [preview, setPreview] = useState(null);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,15 +19,21 @@ function DisplayID() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Fetch the current user's profile directly
-        const response = await api.get("api/profile");
-        // Assuming response.data contains the logged-in user's information
-        console.log("Current User Data:", response.data);
-        setUserData(response.data);
+        // Fetch the current user's profile
+        const profileResponse = await api.get("api/profile/");
+        setUserData(profileResponse.data);
+
+        // Fetch the order history
+        const orderResponse = await api.get("api/user/order-history/");
+        if (orderResponse.data.orders && orderResponse.data.orders.length > 0) {
+          setOrders(orderResponse.data.orders); // Set all orders in state
+        } else {
+          setOrders([]); // If no orders found, set an empty array
+        }
       } catch (error) {
-        console.error("Error fetching user data:", error.response?.data || error.message);
+        console.error("Error fetching data:", error.response?.data || error.message);
         if (error.response?.status === 401) {
-          navigate("/login"); // Redirect on unauthorized
+          navigate("/login");
         }
       } finally {
         setLoading(false);
@@ -38,6 +48,43 @@ function DisplayID() {
     navigate("/login");
   };
 
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoId(file);
+      setPreview(URL.createObjectURL(file));
+      console.log("photo_id", file);
+    }
+  };
+
+  const handleSubmitPhoto = async () => {
+    const formData = new FormData();
+    formData.append("photo_id", photoId);  // photoId is already a File object
+
+    // Log the FormData content to ensure it's being appended correctly
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+    }
+
+    
+    try {
+        // Make the PATCH request to update the photo
+        const response = await api.patch("api/profile/update/", formData);
+
+        console.log("Response:", response.data);
+        alert("Photo uploaded successfully!");
+
+        // Update user data
+        setUserData({ ...userData, profile: { ...userData.profile, photo_base64: response.data.photo_id } });
+    } catch (error) {
+        console.error("Error uploading photo:", error);
+        alert("There was an error uploading your photo.");
+    }
+};
+
+
+  
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -46,65 +93,41 @@ function DisplayID() {
     return <p>No user data found.</p>;
   }
 
-  // Check if profile exists and has photo_id
+  // Check if profile exists and has photo_base64
   const hasPhoto = userData.profile && userData.profile.photo_base64;
-
-
   return (
     <div className="container">
       <header className="header">
         <img src="/care.png" alt="Care logo" className="top-left-img" />
       </header>
-
+  
       <nav className="navbar">
         <form className="form-inline">
-          
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              onClick={() => navigate("/userdash/calendar")}
-            >
-              Calendar
-            </button>
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              onClick={() => navigate("/userdash/boxinfo")}
-            >
-              Box Information
-            </button>
-            <button
-              className="btn btn-outline-success"
-              type="button"
-              onClick={() => navigate("/userdash/studentinfo")}
-            >
-              Student Info
-            </button>
-            <button
-            className="btn btn-outline-secondary"
-            type="button"
-            onClick={() => navigate('/userdash/ordercart')}
-          >
+          <button className="btn btn-outline-secondary" type="button" onClick={() => navigate("/userdash/calendar")}>
+            Calendar
+          </button>
+          <button className="btn btn-outline-secondary" type="button" onClick={() => navigate("/userdash/boxinfo")}>
+            Box Information
+          </button>
+          <button className="btn btn-outline-success" type="button" onClick={() => navigate("/userdash/studentinfo")}>
+            Student Info
+          </button>
+          <button className="btn btn-outline-secondary" type="button" onClick={() => navigate('/userdash/ordercart')}>
             View Cart
           </button>
-         
-          <button
-            className="btn btn-logout-btn"
-            type="button"
-            onClick={handleLogout}
-          >
+          <button className="btn btn-logout-btn" type="button" onClick={handleLogout}>
             Logout
           </button>
         </form>
       </nav>
-
+  
       <div className="student-dashboard">
         <main className="main-content">
           <div className="content-grid">
             <div className="content-column">
               <section className="id-section">
                 <h2>Student ID</h2>
-                <h1>Welcome, {userData.first_name}</h1>
+                <h1>Welcome, {userData.first_name || "Guest"}</h1>
                 {hasPhoto ? (
                   <img
                     src={`data:image/jpeg;base64,${userData.profile.photo_base64}`}
@@ -120,77 +143,127 @@ function DisplayID() {
                     }}
                   />
                 ) : (
-                  <h4>No photo uploaded.</h4>
+                  <div>
+                    <h4>No photo uploaded.</h4>
+                    {/* <div className="form-file-upload">
+                      <label htmlFor="photo_id">Upload Photo:</label>
+                      <input
+                        id="photo_id"
+                        type="file"
+                        onChange={handlePhotoUpload}
+                      />
+                    </div> */}
+                    {/* {preview && (
+                      <div className="photo-preview">
+                        <img
+                          src={preview}
+                          alt="Uploaded Photo Preview"
+                          style={{                      
+                            width: "200px",
+                            height: "auto",
+                            marginTop: "10px",
+                            marginLeft: "100px",
+                            borderRadius: "30px",
+                            boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+                            border: "5px solid #004092", }}
+                        />
+                      </div>
+                    )}
+                    <button className="submit-button" onClick={handleSubmitPhoto} disabled={!photoId}>
+                      Submit Photo
+                    </button> */}
+                  </div>
                 )}
               </section>
             </div>
-
+  
             <div className="content-column">
               <div className="order-section">
-                
-                <form className="order-form">
-                  <div className="order-summary">
-                    <h3 className="summary-header">Order History:</h3>
-                    <div className="summary-content">
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label htmlFor="packageDate">Package Date:</label>
-                          <input
-                            type="text"
-                            id="packageDate"
-                            className="order-info"
-                            placeholder="12/21/2024"
-                            readOnly
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="orderPickUp">Order Picked Up:</label>
-                          <input
-                            type="text"
-                            id="orderPickUp"
-                            className="order-info"
-                            placeholder="Yes/No"
-                            readOnly
-                          />
-                        </div>
-                      </div>
-                    </div>
+                {orders.length > 0 ? (
+                  <div className="order-table-container">
+                    <table className="order-table">
+                      <thead>
+                        <tr>
+                          <th colSpan="3" className="order-header">Order History</th>
+                        </tr>
+                        <tr>
+                          <th>Ordered On</th>
+                          <th>Scheduled Pickup Date</th>
+                          <th>Order Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {orders.map((order, index) => (
+                          <tr key={index}>
+                            <td>{order.order_date}</td>
+                            <td>{order.delivery_date}</td>
+                            <td>{order.status}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                </form>
+                ) : (
+                  <div className="order-table-container2">
+                    <table className="order-table2">
+                      <thead>
+                        <tr>
+                          <th className="order-header" colSpan="1">Order History</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>No order history found. Try placing an order!</td>
+                        </tr>
+              
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </main>
       </div>
-      <div className="footer">
-  <div className="footer-content">
   
-    <div className="footer-column">
-      <img src="/care.png" alt="Care logo" className="care-logo" />
-      <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" className="university-logo" />
-      <p>© {new Date().getFullYear()} CARE</p>
-      <p>Founded by Polytechnic University of Puerto Rico students</p>
+      <div className="footer">
+        <div className="footer-content">
+          <div className="footer-column">
+            <img src="/care.png" alt="Care logo" className="care-logo" />
+            <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" className="university-logo" />
+            <p>© {new Date().getFullYear()} CARE</p>
+            <p>Founded by Polytechnic University of Puerto Rico students</p>
+          </div>
+  
+          <div className="footer-column">
+            <p className="highlight">
+              A non-profit student organization providing support to students in need.
+            </p>
+            <p>
+              To learn more about our initiatives or ask any questions, please visit our social
+              media pages!
+            </p>
+          </div>
+  
+          <div className="footer-column">
+            <h2>Follow Us</h2>
+            <ul className="social-links">
+              <li>
+                <a href="https://www.instagram.com/care_pupr/" target="_blank" rel="noopener noreferrer">
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/?viewAsMember=true" target="_blank" rel="noopener noreferrer">
+                  LinkedIn
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div className="footer-column">
-      <p className="highlight">A non-profit student organization providing support to students in need.</p>
-      <p>To learn more about our initiatives or ask any questions, please visit our social media pages!</p>
-    </div>
- 
-    <div className="footer-column">
-      <h2>Follow Us</h2>
-      <ul className="social-links">
-        
-        <li><a href="https://www.instagram.com/care_pupr/" target="_blank">Instagram</a></li>
-        <li><a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/?viewAsMember=true" target="_blank">LinkedIn</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-    </div>
-    
   );
-}
-
+  }
+  
 export default DisplayID;
