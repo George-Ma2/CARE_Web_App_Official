@@ -1,0 +1,40 @@
+<div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); font-family: Arial, sans-serif;">
+    <div style="background-color: #0f4c99; color: #ffffff; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; margin-bottom:-20px;">
+        Order Confirmation
+    </div>
+    <div style="text-align: center; margin: 20px; margin-bottom:-20px;">
+        <img src="https://1b0ff2a3df.imgdist.com/pub/bfra/1o8kpk9r/wnq/en5/73a/CARE.png" alt="care-logo" title="your-logo" style="display: block; height: auto; border: 0; margin: 0 auto; width: 50%;">
+    </div>
+    <div style="padding: 20px; color: #333333; line-height: 1.6;">
+        <h1 style="font-size: 22px; color: #0f4c99; margin-top:-45px;">Thank You for Your Order, {{ full_name }}!</h1>
+        <p style="font-size: 16px; margin-bottom: 20px;">We’ve received your order and are excited for you to pick it up! Here's the order information:</p>
+        <div>
+
+            <p style="margin: 5px 0;"><strong>Your Email:</strong> {{ email }}</p>
+            <p style="margin: 5px 0;"><strong>Order Number:</strong> {{ order_id }}</p>
+            <p style="margin: 5px 0;"><strong>Order Date:</strong> {{ order_date }}</p>
+            <p style="margin: 5px 0;"><strong>Status:</strong> {{ status }}</p>
+            <p style="margin: 5px 0;"><strong>Pickup Details:</strong> {{ package_description }}</p>
+            <p style="margin: 5px 0;"><strong>Pickup Date:</strong> {{ delivery_date }}</p>
+        </div>
+        <div style="margin-top: 20px;">
+            <h3 style="font-size: 22px; color: #0f4c99;">Products:</h3>
+            <ul style="list-style: none; padding: 0; margin-top: 15px;">
+                {% for product in product_names %}
+                    <li style="margin: 5px 0;">{{ product }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <p style="margin-top: 20px; font-size: 16px;"><strong>Total:</strong> Free</p>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="http://localhost:5173/login" style="display: inline-block; background-color: #ffc727; color: #0f4c99; text-decoration: none; font-size: 18px; padding: 10px 20px; border-radius: 25px; font-weight: bold;">Log in to view your order!</a>
+        </div>
+    </div>
+    <div style="text-align: center; padding: 20px; background-color: #f4f4f4; font-size: 14px; color: #666666;">
+        For additional support, feel free to contact us!
+        <ul style="list-style: none; padding: 0; margin: 10px 0;">
+            <li><a href="https://www.instagram.com/care_pupr/" style="color: #0f4c99; text-decoration: none;" target="_blank">Instagram</a></li>
+            <li><a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/" style="color: #0f4c99; text-decoration: none;" target="_blank">LinkedIn</a></li>
+        </ul>
+    </div>
+</div>
