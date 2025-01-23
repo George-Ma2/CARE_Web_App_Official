@@ -163,15 +163,17 @@ def send_order_confirmation_email(sender, instance, created, **kwargs):
         package_items = CarePackageItem.objects.filter(care_package_id=package.id)
         product_names = [Inventory.objects.get(id=item.product_id).name for item in package_items]
 
-        # Prepare email context
         context = {
+            "full_name": user.first_name + ' ' + user.last_name,
+            "email": user.email,
             "order_id": instance.id,
-            "order_date": instance.order_date,
+            "order_date": instance.order_date.strftime("%B %d, %Y"),  
             "status": instance.status,
             "package_description": package_description,
-            "delivery_date": delivery_date,
+            "delivery_date": delivery_date.strftime("%B %d, %Y"),
             "product_names": product_names,
-        }
+            }
+
 
         # Render email content
         email_html_message = render_to_string("backend/order_confirmation_email.html", context=context)
