@@ -329,27 +329,26 @@ class InventoryCategorySummary(generics.GenericAPIView):
             .order_by('category')
         )
         #Retrieve the latest care package
-        latest_package = CarePackage.objects.latest('created_at')  # Fetch the most recently created package
-        latest_package_data = {
-            "name": latest_package.name,
-            "quantity": latest_package.quantity,
-            "description": latest_package.description,
-            "status": latest_package.status,
-            "delivery_date": latest_package.delivery_date,
-        }
+        # latest_package = CarePackage.objects.latest('created_at')  # Fetch the most recently created package
+        # latest_package_data = {
+        #     "name": latest_package.name,
+        #     "quantity": latest_package.quantity,
+        #     "description": latest_package.description,
+        #     "status": latest_package.status,
+        #     "delivery_date": latest_package.delivery_date,
+        # }
 
             
         # Retrieve the package with the nearest (earliest) delivery date
-        nearest_delivery = CarePackage.objects.filter(delivery_date__gte=timezone.now()).order_by('delivery_date').first()
-        nearest_delivery = {
-            "delivery_date": nearest_delivery.delivery_date
-        }
-           
-   
+        # nearest_delivery = CarePackage.objects.filter(delivery_date__gte=timezone.now()).order_by('delivery_date').first()
+        # nearest_delivery_data = {
+        #     "delivery_date": nearest_delivery.delivery_date
+        # }
+
         response_data = {
-            'category_summary': category_summary,
-            'latest_package': latest_package_data,
-            'nearest_delivery': nearest_delivery_data
+            'category_summary': category_summary
+            # 'nearest_delivery': nearest_delivery_data
+            # 'latest_package': latest_package_data,
         }
         return Response(response_data)
 
