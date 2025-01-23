@@ -146,6 +146,49 @@ class OrderHistory(models.Model):
         return f"Order by {self.user.username} for package {self.package.name} - Status: {self.status}"
 
 
+@receiver(post_save, sender=OrderHistory)
+def send_order_confirmation_email(sender, instance, created, **kwargs):
+    if created:  # Only send email when a new order is created
+        user = instance.user
+        package = CarePackage.objects.filter(id=instance.package_id).first()
+
+        if not package:
+            return  # No email sent if package doesn't exist
+
+        # Fetch package details
+        package_description = package.description
+        delivery_date = package.delivery_date
+
+        # Fetch products in the package
+        package_items = CarePackageItem.objects.filter(care_package_id=package.id)
+        product_names = [Inventory.objects.get(id=item.product_id).name for item in package_items]
+
+        # Prepare email context
+        context = {
+            "order_id": instance.id,
+            "order_date": instance.order_date,
+            "status": instance.status,
+            "package_description": package_description,
+            "delivery_date": delivery_date,
+            "product_names": product_names,
+        }
+
+        # Render email content
+        email_html_message = render_to_string("backend/order_confirmation_email.html", context=context)
+        plain_message = strip_tags(email_html_message)
+
+        # Send the email
+        msg = EmailMultiAlternatives(
+            subject=f"Order Confirmation - Order #{instance.id}",
+            body=plain_message,
+            from_email="sender@example.com",
+            to=[user.email],
+        )
+
+        print ("Sending to email:", user.email)
+        msg.attach_alternative(email_html_message, "text/html")
+        msg.send()
+
 
 # class CarePackagePickup(models.Model):
 #     care_package = models.ForeignKey(CarePackage, related_name='pickups', on_delete=models.CASCADE)
