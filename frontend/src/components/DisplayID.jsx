@@ -153,7 +153,7 @@ function DisplayID() {
                         onChange={handlePhotoUpload}
                       />
                     </div> */}
-                    {preview && (
+                    {/* {preview && (
                       <div className="photo-preview">
                         <img
                           src={preview}
@@ -171,7 +171,7 @@ function DisplayID() {
                     )}
                     <button className="submit-button" onClick={handleSubmitPhoto} disabled={!photoId}>
                       Submit Photo
-                    </button>
+                    </button> */}
                   </div>
                 )}
               </section>

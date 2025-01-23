@@ -286,7 +286,7 @@
   position: relative; /* Ensure the footer is part of the normal document flow */
   left: 0;
   bottom: 0;
-  background-color: rgb(3, 3, 3);
+  background-color: rgb(3, 3, 3) !important;
   color: white;
   text-align: center;
   border-radius: 5px;
@@ -341,6 +341,7 @@
 /* Apply these styles only to tables within .order-table-container */
 .order-table-container {
   margin-top: 20px;
+  max-height: 300px;
   overflow-x: auto; /* Adds horizontal scrolling on small screens */
   overflow-y: auto;
 }
@@ -350,7 +351,8 @@
   border-collapse: collapse;
   font-family: 'Poppins', var(--default-font-family);
   font-size: 16px;
-  color: #333;
+  color: #171717;
+  
 }
 
 /* Ensure styling is correctly applied to both order-table-container and order-table-container2 */
@@ -379,7 +381,7 @@
 /* Add specific styles for th inside .order-table-container */
 .order-table-container th {
   background-color: #F6C932 !important; /* Force yellow background for header */
-  color: #121111;
+  color: #121111 !important;
   font-weight: 700;
 }
 
