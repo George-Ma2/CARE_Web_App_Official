@@ -5,33 +5,29 @@ import api from "../api"; // Ensure this is correctly configured
 
 function OrderConfirmation() {
   const [userData, setUserData] = useState(null);
-  const [orders, setOrders] = useState([]);
+  const [orderData, setOrderData] = useState(null); // Change from 'orders' to 'orderData'
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Order Confirmation";
 
-    const fetchUserData = async () => {
+    const fetchOrderConfirmationData = async () => {
       try {
         // Fetch the current user's profile
         const profileResponse = await api.get("api/profile/");
         setUserData(profileResponse.data);
         console.log("User:", profileResponse.data);
 
+        // Fetch the most recent order using the new endpoint
+        const orderResponse = await api.get("api/order-receipt/");  // Update to the new endpoint
+        console.log("Order Data:", orderResponse.data);
 
-      // Fetch the order history
-      const orderResponse = await api.get("api/user/order-history/");
-      if (orderResponse.data.orders && orderResponse.data.orders.length > 0) {
-        // Sort orders by date (assuming 'orderDate' or 'createdAt' is the date field)
-        const sortedOrders = orderResponse.data.orders.sort(
-          (a, b) => new Date(b.order_date) - new Date(a.order_date)
-        );
-        // Set only the most recent order
-        setOrders([sortedOrders[0]]);
-      } else {
-        setOrders([]); // If no orders found, set an empty array
-      }
+        if (orderResponse.data) {
+          setOrderData(orderResponse.data);
+        } else {
+          setOrderData(null);
+        }
       } catch (error) {
         console.error("Error fetching data:", error.response?.data || error.message);
         if (error.response?.status === 401) {
@@ -42,7 +38,7 @@ function OrderConfirmation() {
       }
     };
 
-    fetchUserData();
+    fetchOrderConfirmationData();
   }, [navigate]);
 
   const handleLogout = () => {
@@ -50,10 +46,15 @@ function OrderConfirmation() {
     navigate("/login");
   };
 
-
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  const formatDate = (dateString) => {
+    // Parse the date string and return only the date part (YYYY-MM-DD)
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
 
   return (
     <div className="container">
@@ -119,33 +120,39 @@ function OrderConfirmation() {
             <p>Unable to load user information.</p>
           </div>
         )}
-        <div className="order-details">
-          <h3>Order Summary</h3>
-          <table className="order-table">
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Pickup Location</th>
-                <th>Contents</th>
-                <th>Pickup Date</th>
-                <th>Quantity</th>
-                <th>Ordered on</th>
-              </tr>
-            </thead>
-            <tbody>
-            {orders.map((order, index) => (
-                          <tr key={index}>
-                            <td>{order.status}</td>
-                            <td>{order.status}</td>
-                            <td>{order.status}</td>
-                            <td>{order.delivery_date}</td>
-                            <td>{order.status}</td>
-                            <td>{order.order_date}</td>
-                          </tr>
-                        ))}
-            </tbody>
-          </table>
-        </div>
+
+        {orderData ? (
+          <div className="order-details">
+            <h3>Order Summary</h3>
+            <table className="order-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Pickup Location</th>
+                  <th>Contents</th>
+                  <th>Pickup Date</th>
+                  <th>Quantity</th>
+                  <th>Ordered on</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{orderData.order_details.status}</td>
+                  <td>{orderData.package_description}</td>
+                  <td>{orderData.product_names.join(", ")}</td>
+                  <td>{orderData.delivery_date}</td>
+                  <td>1</td>
+                  <td>{formatDate(orderData.order_details.order_date)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="order-details">
+            <p>Unable to load order details.</p>
+          </div>
+        )}
+
         <div className="order-total">
           <h3>Total Amount</h3>
           <p>Free</p>

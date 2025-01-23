@@ -205,7 +205,7 @@ function DisplayID() {
                   </div>
                 ) : (
                   <div className="order-table-container2">
-                    <table className="order-table">
+                    <table className="order-table2">
                       <thead>
                         <tr>
                           <th className="order-header" colSpan="1">Order History</th>

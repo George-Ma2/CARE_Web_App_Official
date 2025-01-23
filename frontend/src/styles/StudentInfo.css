@@ -338,7 +338,6 @@
 .footer .footer-links a:hover {
   color: #174bda;
 }
-
 /* Apply these styles only to tables within .order-table-container */
 .order-table-container {
   margin-top: 20px;
@@ -354,12 +353,10 @@
   color: #333;
 }
 
-
-/* Apply these styles only to tables within .order-table-container */
+/* Ensure styling is correctly applied to both order-table-container and order-table-container2 */
 .order-table-container2 {
   margin-top: 90px;
   padding-left: 50px;
-
 }
 
 .order-table-container2 table {
@@ -373,24 +370,23 @@
 .order-table-container th,
 .order-table-container td,
 .order-table-container2 th,
-.order-table-container2 td
- {
+.order-table-container2 td {
   padding: 12px 15px;
   border: 1px solid #ddd;
   text-align: center;
 }
 
-.order-table-container th,
-.order-table-container2 th {
-  background-color: #F6C932;
+/* Add specific styles for th inside .order-table-container */
+.order-table-container th {
+  background-color: #F6C932 !important; /* Force yellow background for header */
   color: #121111;
   font-weight: 700;
 }
 
-/* Custom header styling */
+/* Custom header styling for .order-header class */
 .order-table-container .order-header,
 .order-table-container2 .order-header {
-  background-color: #d90f13;
+  background-color: #d90f13 !important;
   color: #fff;
   font-weight: 700;
   font-size: 20px; /* Adjust font size as needed */
@@ -405,7 +401,7 @@
 }
 
 .order-table-container tr:nth-child(even) td,
-.order-table-container2 tr:nth-child(even) td  {
+.order-table-container2 tr:nth-child(even) td {
   background-color: #f9f9f9;
 }
 
@@ -414,6 +410,7 @@
   background-color: #9eb0ea;
   transition: background-color 0.3s ease;
 }
+
 
 @media (max-width: 768px) {
   .order-table-container table {

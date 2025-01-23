@@ -171,7 +171,7 @@ const InventoryDashboard = () => {
                     <div className="card text-center shadow-sm p-4">
                         <h5 className="card-title">Packages Available</h5>
                         <div className="card-body">
-                            <h2 className="display-6">{totalPackages ? totalPackages: 'Loading...'}</h2>
+                            <h2 className="display-6">{totalPackages ? totalPackages: 0}</h2>
                             <p className="card-text">Latest Package: {latestPackage?.name || 'N/A'}</p>
                         </div>
                     </div>

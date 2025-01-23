@@ -6,7 +6,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, OrderHistorySerializer
-from .models import Inventory, CarePackage, OrderHistory
+from .models import Inventory, CarePackage, OrderHistory, CarePackageItem
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
@@ -495,6 +495,7 @@ class UserOrderHistoryView(APIView):
                     "order_date": order.order_date.date(),
                     "status": order.status,
                     "delivery_date": delivery_date,
+                    
                 })
 
             # Return the enriched data
@@ -502,4 +503,61 @@ class UserOrderHistoryView(APIView):
 
         except Exception as e:
             # Handle unexpected errors
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+from datetime import datetime
+
+class OrderConfirmationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            # Fetch the user id from the request
+            user_id = request.user.id
+
+            # Fetch the most recent order for the user
+            latest_order = OrderHistory.objects.filter(user_id=user_id).order_by('-order_date').first()
+
+            if not latest_order:
+                return Response({"error": "No orders found for this user."}, status=status.HTTP_404_NOT_FOUND)
+
+
+            # Extract relevant information about the most recent order
+            latest_order_data = {
+                'order_id': latest_order.id,
+                'order_date': latest_order.order_date,
+                'status': latest_order.status,
+                'package_id': latest_order.package_id,
+            }
+
+            # Fetch the package details using the package_id from the OrderHistory model
+            package = CarePackage.objects.filter(id=latest_order.package_id).first()
+
+            if not package:
+                return Response({"error": "Package not found for this order."}, status=status.HTTP_404_NOT_FOUND)
+
+            # Fetch the package description and delivery date
+            package_description = package.description
+            delivery_date = package.delivery_date
+
+            # Fetch product details from CarePackageItem and Inventory models
+            package_items = CarePackageItem.objects.filter(care_package_id=latest_order.package_id)
+            product_names = []
+            for item in package_items:
+                product = Inventory.objects.filter(id=item.product_id).first()
+                if product:
+                    product_names.append(product.name)
+
+            # Prepare the response data
+            response_data = {
+                'order_details': latest_order_data,
+                'package_description': package_description,
+                'delivery_date': delivery_date,
+                'product_names': product_names,
+            }
+
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
