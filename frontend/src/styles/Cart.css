@@ -16,49 +16,77 @@ body {
   padding: 0;
 }
 
-/* Navbar Styles */
-.navbar {
+.navbar-cart {
   background-color: #f8f9fa;
   border-bottom: 1px solid #eaeaea;
   padding: 10px 20px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
   width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 50px;
 }
 
-.navbar .form-inline {
+.navbar-cart .form-inline {
+  padding: 10px;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
   gap: 20px;
+  
 }
-
-.navbar .btn {
+.navbar-cart .btn {
+  flex-shrink: 0;
+  padding: 10px 15px;
   font-weight: bold;
   border-radius: 5px;
   transition: all 0.3s ease;
 }
 
-.navbar .btn-outline-success {
-  background-color: var(--primary-color);
+.navbar-cart .btn-outline-success {
+  background-color: #174bda;
   color: white;
-  border-color: var(--primary-color);
+  border-color: #174bda;
 }
 
-.navbar .btn-outline-success:hover {
-  background-color: var(--primary-color);
+.navbar-cart .btn-outline-success:hover {
+  background-color: #174bda;
   color: white;
 }
 
-.navbar .btn-logout-btn {
-  background-color: var(--secondary-color);
-  color: white;
-  border-color: var(--secondary-color);
+.navbar-cart .btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
 }
 
-.navbar .btn-logout-btn:hover {
+.navbar-cart .btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+.navbar-cart .btn-logout-btn {
+  margin-left: 370px;
+  background-color: #d90f13;
+  border-color: #d90f13;
+  color: white;
+}
+
+.navbar-cart .btn-logout-btn:hover {
   background-color: #F6C932;
+  border-color: #F6C932;
   color: black;
+}
+
+.top-left-img-cart {
+  position: absolute;
+  top: -40px;
+  left: 85px;
+  width: 40px;
+  height: auto;
 }
 
 /* Cart Section */
@@ -171,56 +199,68 @@ body {
   border: none;
 }
 
+.footer-cart .care-logo {
+  width: 100px;
+  height: auto;
+  border-radius: 5px;
+  margin-left: 50px;
+  margin-top: 15px;
+}
 
+.footer-cart .university-logo {
+  width: 100px;
+  height: auto;
+  border-radius: 5px;
+  margin-left: 20px;
+  margin-top: 15px;
+}
 
-.footer {
-  position: relative; /* Ensure the footer is part of the normal document flow */
-  left: 0;
+.footer-cart {
+  position: relative;
   bottom: 0;
   background-color: rgb(3, 3, 3);
   color: white;
   text-align: center;
   border-radius: 5px;
-  width: 98.7vw; /* Use 100% instead of 100vw to prevent overflow on mobile devices */
-  padding: 10px 0;
-  box-sizing: border-box; /* Include padding in the width calculation */
-  margin-top: 20px;
+  width: 100%;
+  padding: 20px 0;
+  box-sizing: border-box;
+  margin-top: 50px;
   padding-top: 20px;
 }
 
-.footer .footer-content {
-  display: flex; /* Use flexbox for creating columns */
-  justify-content: space-around; /* Space out columns evenly */
-  flex-wrap: wrap; /* Ensure columns wrap on smaller screens */
-  text-align: left; /* Align text to the left within each column */
-
+.footer-cart .footer-content-cart {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap; 
+  text-align: left;
 }
 
-.footer .footer-column {
-  flex: 1; /* Equal width for all columns */
-  margin: 0 10px; /* Add spacing between columns */
-  min-width: 150px; /* Prevent columns from shrinking too much */
-  max-width: 300px; /* Restrict the width for better text wrapping */
-  word-wrap: break-word; /* Force long words to wrap */
-  overflow-wrap: break-word; /* Ensure consistent wrapping in modern browsers */
+.footer-cart .footer-column-cart {
+  flex: 1; 
+  margin: 0 10px;
+  min-width: 150px;
+  max-width: 300px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 
-.footer p {
+.footer-cart p {
   font-family: 'Poppins', var(--default-font-family);
-  font-size: 16px; /* Slightly smaller for better readability */
-  font-weight: 600; /* Slightly lighter for a modern look */
-  color: #fcf9f9; /* Softer black for less harshness */
-  margin: 10px auto; /* Center align and reduce excessive spacing */
+  font-size: 16px;
+  font-weight: 600;
+  color: #fcf9f9;
+  margin: 10px auto;
   text-align: justify;
   line-height: 25px;
-  max-width: 600px; /* Prevent it from stretching too wide */
+  max-width: 600px;
   text-align: center;
   
 }
 
 /* Center-align text in the second column */
-.footer-column:nth-child(2) {
+.footer-column-cart:nth-child(2) {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -228,53 +268,51 @@ body {
 }
 
 /* Highlight style for the first paragraph in the second column */
-.footer-column:nth-child(2) .highlight {
-  font-size: 18px; /* Larger font size */
-  font-weight: bold; /* Bold text */
-  color: #F6C932; /* Highlighted color */
-  margin-bottom: 10px; /* Add spacing below */
+.footer-column-cart:nth-child(2) .highlight {
+  font-size: 18px;
+  font-weight: bold;
+  color: #F6C932;
+  margin-bottom: 10px;
 }
 /* Footer column styles */
-.footer-column:nth-child(3) {
+.footer-column-cart:nth-child(3) {
   display: flex;
-  flex-direction: column; /* Arrange items vertically */
-  align-items: center; /* Center items horizontally */
-  justify-content: center; /* Center items vertically */
-  text-align: center; /* Ensure text is centered */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 /* "Follow Us" heading */
-.footer-column:nth-child(3) h2 {
-  font-size: 24px; /* Larger font size */
-  color: #a4d7f0; /* Highlight color */
-  margin-top: 30px; /* Larger top margin */
-  margin-bottom: 15px; /* Add spacing below the heading */
+.footer-column-cart:nth-child(3) h2 {
+  font-size: 24px;
+  color: #a4d7f0;
+  margin-top: 30px;
+  margin-bottom: 15px;
 }
 
 /* Social media links list */
-.footer-column:nth-child(3) ul.social-links {
-  list-style: none; /* Remove default list styling */
+.footer-column-cart:nth-child(3) ul.social-links {
+  list-style: none;
   padding: 0;
   margin: 0;
 }
 
 /* Social media links */
-.footer-column:nth-child(3) ul.social-links li {
-  margin-bottom: 10px; /* Add spacing between links */
+.footer-column-cart:nth-child(3) ul.social-links li {
+  margin-bottom: 10px;
 }
 
-.footer-column:nth-child(3) ul.social-links li a {
-  color: #F6C932; /* Set link color to match highlight */
-  text-decoration: none; /* Remove underline */
-  font-size: 18px; /* Increase font size */
+.footer-column-cart:nth-child(3) ul.social-links li a {
+  color: #F6C932;
+  text-decoration: none;
+  font-size: 18px;
 }
 
-.footer-column:nth-child(3) ul.social-links li a:hover {
-  color: white; /* Change color on hover */
-  text-decoration: underline; /* Underline on hover */
+.footer-column-cart:nth-child(3) ul.social-links li a:hover {
+  color: white;
+  text-decoration: underline;
 }
-
-
 
 /* Responsive Design */
 @media (max-width: 768px) {

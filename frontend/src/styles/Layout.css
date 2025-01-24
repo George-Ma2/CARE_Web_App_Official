@@ -18,7 +18,7 @@
     justify-content: space-between;
   }
   
-  .navbar {
+  .navbar-layout {
     background-color: #f8f9fa;
     border-bottom: 1px solid #eaeaea;
     padding: 10px 20px;
@@ -28,10 +28,10 @@
     position: relative;
     width: 100%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 40px;
+    margin-top: 50px;
   }
   
-  .navbar .form-inline {
+  .navbar-layout .form-inline {
     padding: 10px;
     display: flex;
     flex-wrap: wrap; /* Adjust layout when screen width is smaller */
@@ -40,7 +40,7 @@
     gap: 20px;
   }
   
-  .navbar .btn {
+  .navbar-layout .btn {
     flex-shrink: 0; /* Prevent buttons from shrinking */
     padding: 10px 15px;
     font-weight: bold;
@@ -48,35 +48,35 @@
     transition: all 0.3s ease;
   }
   
-  .navbar .btn-outline-success {
+  .navbar-layout .btn-outline-success {
     background-color: #174bda;
     color: white;
     border-color: #174bda;
   }
   
-  .navbar .btn-outline-success:hover {
+  .navbar-layout .btn-outline-success:hover {
     background-color: #174bda;
     color: white;
   }
   
-  .navbar .btn-outline-secondary {
+  .navbar-layout .btn-outline-secondary {
     color: #6c757d;
     border-color: #6c757d;
   }
   
-  .navbar .btn-outline-secondary:hover {
+  .navbar-layout .btn-outline-secondary:hover {
     background-color: #6c757d;
     color: white;
   }
   
-  .navbar .btn-logout-btn {
+  .navbar-layout .btn-logout-btn {
     margin-left: 370px;
     background-color: #d90f13;
     border-color: #d90f13;
     color: white;
   }
   
-  .navbar .btn-logout-btn:hover {
+  .navbar-layout .btn-logout-btn:hover {
     background-color: #F6C932;
     border-color: #F6C932;
     color: black;
@@ -104,14 +104,15 @@
     display: flex;
     justify-content: center; /* Center content horizontally */
     align-items: flex-start;
-    background-color: #f4f4f4; /* Match the background */
+    background-color: white; /* Match the background */
   }
   
-  .top-left-img {
+  .top-left-img-layout {
     position: absolute;
-    top: 10px;
-    left: 0px;
-    width: 120px;
+    top: -40px;
+    left: 85px;
+    width: 40px;
+    height: auto;
   }
   
   .title {
@@ -172,18 +173,18 @@
   }
   
   @media (max-width: 768px) {
-    .navbar {
+    .navbar-layout {
       flex-direction: column;
       align-items: center;
     }
   
-    .navbar .form-inline {
+    .navbar-layout .form-inline {
       flex-direction: column;
       gap: 10px;
       width: 100%;
     }
   
-    .navbar .btn {
+    .navbar-layout .btn {
       width: 100%;
     }
   }

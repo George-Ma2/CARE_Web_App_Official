@@ -45,10 +45,10 @@ const handleLogout = () => {
   return (
     <div className="container">
       <header className="header">
-        <img src="/care.png" alt="Care logo" className="top-left-img" />
+        <img src="/care.png" alt="Care logo" className="top-left-img-calendar" />
       </header>
 
-      <nav className="navbar">
+      <nav className="navbar-calendar">
         <form className="form-inline">
         
           <button
@@ -103,34 +103,31 @@ const handleLogout = () => {
           events={events}
         />
       </div>
-    </main>
-    <div className="footer">
-  <div className="footer-content">
+      </main>
+
+      <div className="footer-calendar">
+        <div className="footer-content-calendar">
+          <div className="footer-column-calendar">
+            <img src="/care.png" alt="Care logo" className="care-logo" />
+            <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" className="university-logo" />
+            <p>© {new Date().getFullYear()} CARE</p>
+            <p>Founded by Polytechnic University of Puerto Rico students</p>
+          </div>
+
+          <div className="footer-column-calendar">
+            <p className="highlight">A non-profit student organization providing support to students in need.</p>
+            <p>To learn more about our initiatives or ask any questions, please visit our social media pages!</p>
+          </div>
   
-    <div className="footer-column">
-      <img src="/care.png" alt="Care logo" className="care-logo" />
-      <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" className="university-logo" />
-      <p>© {new Date().getFullYear()} CARE</p>
-      <p>Founded by Polytechnic University of Puerto Rico students</p>
-    </div>
-
-    <div className="footer-column">
-      <p className="highlight">A non-profit student organization providing support to students in need.</p>
-      <p>To learn more about our initiatives or ask any questions, please visit our social media pages!</p>
-    </div>
- 
-    <div className="footer-column">
-      <h2>Follow Us</h2>
-      <ul className="social-links">
-        
-        <li><a href="https://www.instagram.com/care_pupr/profilecard/?igsh=d3pqdXZra3cwcmEz" target="_blank">Instagram</a></li>
-        <li><a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/?viewAsMember=true" target="_blank">LinkedIn</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-
+          <div className="footer-column-calendar">
+            <h2>Follow Us</h2>
+            <ul className="social-links">
+              <li><a href="https://www.instagram.com/care_pupr/profilecard/?igsh=d3pqdXZra3cwcmEz" target="_blank">Instagram</a></li>
+              <li><a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/?viewAsMember=true" target="_blank">LinkedIn</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

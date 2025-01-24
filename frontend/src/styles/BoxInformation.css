@@ -10,21 +10,21 @@
   background-color: #F6C932;
   margin-bottom: 20px;
   margin-right: 120px;
-  margin-left: 5px; /* Push h2 further to the left */
-  padding: 10px 20px; /* Add consistent padding */
+  margin-left: 5px;
+  padding: 10px 20px;
   border-radius: 5px;
-  text-align: left; /* Align text to the left */
-  white-space: nowrap; /* Prevent text wrapping to new lines */
+  text-align: left;
+  white-space: nowrap;
 }
 
 .student-dashboard {
   background: #fff;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Avoids extra scrolling on the dashboard */
+  overflow: hidden;
   padding: 7px 17px 57px;
-  height: 100vh; /* Make dashboard height span full viewport */
-  box-sizing: border-box; /* Ensures padding is included in height */
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 .header-container {
@@ -35,7 +35,7 @@
   justify-content: space-between;
 }
 
-.navbar {
+.navbar-bi {
   background-color: #f8f9fa;
   border-bottom: 1px solid #eaeaea;
   padding: 10px 20px;
@@ -43,68 +43,68 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  margin: 0;
+  position: relative;
   width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
+  margin-top: 50px;
 }
 
-
-.navbar .form-inline {
+.navbar-bi .form-inline {
   padding: 10px;
   display: flex;
-  flex-wrap: wrap; /* Adjust layout when screen width is smaller */
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 20px;
   
 }
-.navbar .btn {
-  flex-shrink: 0; /* Prevent buttons from shrinking */
+.navbar-bi .btn {
+  flex-shrink: 0;
   padding: 10px 15px;
   font-weight: bold;
   border-radius: 5px;
   transition: all 0.3s ease;
 }
 
-.navbar .btn-outline-success {
+.navbar-bi .btn-outline-success {
   background-color: #174bda;
   color: white;
   border-color: #174bda;
 }
 
-.navbar .btn-outline-success:hover {
+.navbar-bi .btn-outline-success:hover {
   background-color: #174bda;
   color: white;
 }
 
-.navbar .btn-outline-secondary {
+.navbar-bi .btn-outline-secondary {
   color: #6c757d;
   border-color: #6c757d;
 }
 
-.navbar .btn-outline-secondary:hover {
+.navbar-bi .btn-outline-secondary:hover {
   background-color: #6c757d;
   color: white;
 }
 
-.navbar .btn-logout-btn {
+.navbar-bi .btn-logout-btn {
   margin-left: 370px;
   background-color: #d90f13;
   border-color: #d90f13;
   color: white;
 }
 
-.navbar .btn-logout-btn:hover {
+.navbar-bi .btn-logout-btn:hover {
   background-color: #F6C932;
   border-color: #F6C932;
   color: black;
 }
 
-
-
-.top-left-img {
-  width: 100px;
+.top-left-img-bi {
+  position: absolute;
+  top: -40px;
+  left: 85px;
+  width: 40px;
   height: auto;
 }
 
@@ -118,7 +118,7 @@
   margin: 20px auto;
   width: 100%;
   max-width: 1016px;
-  max-height: 90vh; /* Prevents excessive height on larger screens */
+  max-height: 90vh;
   overflow:hidden;
 }
 .content-grid {
@@ -162,8 +162,8 @@
   background: #D9D9D9;
   display: flex;
   flex-direction: column;
-  padding: 20px; /* Adjust padding for better spacing */
-  margin-bottom: -10px; /* Ensure space below the summary */
+  padding: 20px;
+  margin-bottom: -10px;
 }
 .summary-header {
   background: #d90f13;
@@ -190,7 +190,7 @@
 }
 
 .package-contents-textarea {
-  width: 100%; /* Full width of the order-summary section */
+  width: 100%;
   padding: 12px 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -198,13 +198,13 @@
   color: #333;
   background-color: #f9f9f9;
   box-sizing: border-box;
-  resize: none; /* Prevent manual resizing */
+  resize: none;
   margin-top: 10px;
   margin-bottom: 20px;
 }
 
 .pickup-location-textarea {
-  width: 100%; /* Full width of the order-summary section */
+  width: 100%;
   padding: 12px 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -212,7 +212,7 @@
   color: #333;
   background-color: #f9f9f9;
   box-sizing: border-box;
-  resize: none; /* Prevent manual resizing */
+  resize: none;
   margin-top: 10px;
   margin-right: 50px;
   margin-bottom: 20px;
@@ -221,7 +221,7 @@
 
 
 .order-date-textarea {
-  width: 60%; /* Full width of the order-summary section */
+  width: 60%;
   padding: 10px 0px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -229,7 +229,7 @@
   color: #333;
   background-color: #f9f9f9;
   box-sizing: border-box;
-  resize: none; /* Prevent manual resizing */
+  resize: none;
   margin-top: 10px;
   text-align: center;
   margin-bottom: -60px;
@@ -239,7 +239,7 @@
 
 .form-row {
   display: flex;
-  align-items: center; /* Align items vertically */
+  align-items: center;
   justify-content: center;
   
 }
@@ -265,7 +265,7 @@
 
 /* Modal container styles */
 .modal {
-  display: block !important; /* Added to ensure visibility from Bootstrap JS */
+  display: block !important;
   position: fixed;
   z-index: 1;
   left: 0;
@@ -288,8 +288,8 @@
   list-style-type: none;
   padding: 0;
   display: flex;
-  flex-wrap: wrap; /* Allows items to wrap into multiple rows if necessary */
-  gap: 20px; /* Adds space between items */
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 /* Close button styling */
@@ -311,71 +311,83 @@
   font-size: 90px;
   font-weight: 500;
   margin-top: 20px;
-  padding: 10px 10px; /* Adjust horizontal padding for a more elongated shape */
+  padding: 10px 10px;
   background-color: #ac3fca;
   color: white;
   border: none;
-  border-radius: 50px; /* Large value to create an oval shape */
+  border-radius: 50px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  text-align: center; /* Ensures the text stays centered */
+  text-align: center;
 }
 
 .reserve-button:hover {
-  background-color: rgb(125, 46, 182); /* Darker shade on hover */
+  background-color: rgb(125, 46, 182);
 }
 
+.footer-bi .care-logo {
+  width: 100px;
+  height: auto;
+  border-radius: 5px;
+  margin-left: 50px;
+  margin-top: 15px;
+}
 
+.footer-bi .university-logo {
+  width: 100px;
+  height: auto;
+  border-radius: 5px;
+  margin-left: 20px;
+  margin-top: 15px;
+}
 
-.footer {
-  position: relative; /* Ensure the footer is part of the normal document flow */
-  left: 0;
+.footer-bi {
+  position: relative;
   bottom: 0;
   background-color: rgb(3, 3, 3);
   color: white;
   text-align: center;
   border-radius: 5px;
-  width: 98.7vw; /* Use 100% instead of 100vw to prevent overflow on mobile devices */
-  padding: 10px 0;
-  box-sizing: border-box; /* Include padding in the width calculation */
-  margin-left: -50px;
+  width: 100%;
+  padding: 20px 0;
+  box-sizing: border-box;
   margin-top: 50px;
   padding-top: 20px;
 }
 
-.footer .footer-content {
-  display: flex; /* Use flexbox for creating columns */
-  justify-content: space-around; /* Space out columns evenly */
-  flex-wrap: wrap; /* Ensure columns wrap on smaller screens */
-  text-align: left; /* Align text to the left within each column */
+.footer-bi .footer-content-bi {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  text-align: left;
 }
 
-.footer .footer-column {
-  flex: 1; /* Equal width for all columns */
-  margin: 0 10px; /* Add spacing between columns */
-  min-width: 150px; /* Prevent columns from shrinking too much */
-  max-width: 300px; /* Restrict the width for better text wrapping */
-  word-wrap: break-word; /* Force long words to wrap */
-  overflow-wrap: break-word; /* Ensure consistent wrapping in modern browsers */
+.footer-bi .footer-column-bi {
+  flex: 1;
+  margin: 0 10px;
+  min-width: 150px;
+  max-width: 300px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 
-.footer p {
+.footer-bi p {
   font-family: 'Poppins', var(--default-font-family);
-  font-size: 16px; /* Slightly smaller for better readability */
-  font-weight: 600; /* Slightly lighter for a modern look */
-  color: #fcf9f9; /* Softer black for less harshness */
-  margin: 10px auto; /* Center align and reduce excessive spacing */
+  font-size: 16px;
+  font-weight: 600;
+  color: #fcf9f9;
+  margin: 10px auto; 
   text-align: justify;
   line-height: 25px;
-  max-width: 600px; /* Prevent it from stretching too wide */
+  max-width: 600px; 
   text-align: center;
   
 }
 
 /* Center-align text in the second column */
-.footer-column:nth-child(2) {
+.footer-column-bi:nth-child(2) {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -383,52 +395,51 @@
 }
 
 /* Highlight style for the first paragraph in the second column */
-.footer-column:nth-child(2) .highlight {
-  font-size: 18px; /* Larger font size */
-  font-weight: bold; /* Bold text */
-  color: #F6C932; /* Highlighted color */
-  margin-bottom: 10px; /* Add spacing below */
+.footer-column-bi:nth-child(2) .highlight {
+  font-size: 18px; 
+  font-weight: bold;
+  color: #F6C932;
+  margin-bottom: 10px;
 }
 /* Footer column styles */
-.footer-column:nth-child(3) {
+.footer-column-bi:nth-child(3) {
   display: flex;
-  flex-direction: column; /* Arrange items vertically */
-  align-items: center; /* Center items horizontally */
-  justify-content: center; /* Center items vertically */
-  text-align: center; /* Ensure text is centered */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 /* "Follow Us" heading */
-.footer-column:nth-child(3) h2 {
-  font-size: 24px; /* Larger font size */
-  color: #a4d7f0; /* Highlight color */
-  margin-top: 30px; /* Larger top margin */
-  margin-bottom: 15px; /* Add spacing below the heading */
+.footer-column-bi:nth-child(3) h2 {
+  font-size: 24px;
+  color: #a4d7f0;
+  margin-top: 30px;
+  margin-bottom: 15px;
 }
 
 /* Social media links list */
-.footer-column:nth-child(3) ul.social-links {
-  list-style: none; /* Remove default list styling */
+.footer-column-bi:nth-child(3) ul.social-links {
+  list-style: none;
   padding: 0;
   margin: 0;
 }
 
 /* Social media links */
-.footer-column:nth-child(3) ul.social-links li {
-  margin-bottom: 10px; /* Add spacing between links */
+.footer-column-bi:nth-child(3) ul.social-links li {
+  margin-bottom: 10px;
 }
 
-.footer-column:nth-child(3) ul.social-links li a {
-  color: #F6C932; /* Set link color to match highlight */
-  text-decoration: none; /* Remove underline */
-  font-size: 18px; /* Increase font size */
+.footer-column-bi:nth-child(3) ul.social-links li a {
+  color: #F6C932;
+  text-decoration: none;
+  font-size: 18px;
 }
 
-.footer-column:nth-child(3) ul.social-links li a:hover {
-  color: white; /* Change color on hover */
-  text-decoration: underline; /* Underline on hover */
+.footer-column-bi:nth-child(3) ul.social-links li a:hover {
+  color: white;
+  text-decoration: underline;
 }
-
 
 
 @media (max-width: 991px) {

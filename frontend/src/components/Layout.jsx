@@ -17,10 +17,10 @@ const AdminNavbar = ({ children }) => {
   return (
     <div className="container full-height">
       <header className="header">
-        <img src="/care.png" alt="Care logo" className="top-left-img" />
+        <img src="/care.png" alt="Care logo" className="top-left-img-layout" />
       </header>
 
-      <nav className="navbar">
+      <nav className="navbar-layout">
         <form className="form-inline">
           <button
             className={isActive('/admin/dashboard')}
