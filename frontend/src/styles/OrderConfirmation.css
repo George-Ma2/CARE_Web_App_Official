@@ -71,8 +71,7 @@
   
   .header img {
     width: 150px;
-    display: block;
-    margin: 0 auto;
+    margin: -55px auto 0;
   }
   
   .receipt-container {

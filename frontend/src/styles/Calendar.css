@@ -33,7 +33,7 @@
   position: relative;
   width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 50px;
+  margin-top: 60px;
 }
 
 .navbar-calendar .form-inline {
@@ -87,16 +87,12 @@
   color: black;
 }
 
-
-
 .top-left-img-calendar {
   position: absolute;
-  top: -40px;
   left: 85px;
   width: 40px;
   height: auto;
 }
-
 
 @media (max-width: 768px) {
   .navbar-calendar {
