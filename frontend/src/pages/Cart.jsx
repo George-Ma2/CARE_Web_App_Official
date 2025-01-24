@@ -5,7 +5,7 @@ import { useAppContext } from '../AppContext';
 import api from "../api"; // Ensure this is correctly configured
 
 function Cart() {
-  const { selectedPackage } = useAppContext();
+  const { selectedPackage, setSelectedPackage } = useAppContext();
   const navigate = useNavigate();
   const [isTermsAccepted1, setIsTermsAccepted1] = useState(false);
   const [isTermsAccepted2, setIsTermsAccepted2] = useState(false);
@@ -71,7 +71,7 @@ function Cart() {
       console.log("Order data:", orderData);
       // Make the API request to create the order
       const response = await api.post('/api/order-history/create/', orderData);
-
+      setSelectedPackage(null);
       // Redirect to order confirmation page
       navigate("/orderconfirmation");
 

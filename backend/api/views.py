@@ -23,6 +23,7 @@ class RegisteredStudentsView(APIView):
         students = User.objects.filter(is_staff=False).values('id', 'first_name', 'last_name', 'email')
         return Response({'students': list(students)})
 
+
 class OrderHistoryView(APIView):
     permission_classes = [IsStaffUser]
 

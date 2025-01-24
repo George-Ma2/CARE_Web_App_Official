@@ -10,7 +10,7 @@ const CarePackagePage = () => {
     const [carePackages, setCarePackages] = useState([]);
     const [selectedCarePackage, setSelectedCarePackage] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
-
+    const [events, setEvents] = useState([]);
     // Fetch inventory items when component mounts
     const fetchInventory = async () => {
         try {
@@ -36,6 +36,28 @@ const CarePackagePage = () => {
         fetchCarePackages();
     }, []);
 
+    useEffect(() => {
+  // Fetch packages from the backend
+  const fetchPackages = async () => {
+    try {
+      const response = await api.get('/api/package/');
+      const packages = response.data;
+
+      // Map package delivery dates to FullCalendar event format
+      const eventList = packages
+     
+      .map(pkg => ({
+        title: 'Order Pickup Day!',
+        date: pkg.delivery_date,
+      }));
+      setEvents(eventList);
+    } catch (error) {
+      console.error("Error fetching package details:", error);
+    }
+  };
+
+  fetchPackages();
+}, []);
 
     const handleSaveCarePackage = async (packageData) => {
         try {
@@ -155,7 +177,7 @@ const CarePackagePage = () => {
                 <FullCalendar
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
-                    //events={events}
+                    events={events}
                     //dateClick={handleDateClick} // Allow user to click and assign a delivery date
                     height="auto"
                     headerToolbar={{
