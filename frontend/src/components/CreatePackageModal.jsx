@@ -108,6 +108,7 @@ const CreatePackageModal = ({
                             type="text"
                             value={carePackageName}
                             onChange={(e) => setCarePackageName(e.target.value)}
+                            placeholder="Enter name"
                             required
                         />
                     </label>
