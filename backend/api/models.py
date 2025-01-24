@@ -103,13 +103,13 @@ class CarePackageStatus(models.TextChoices): # <constant_name> = '<database_valu
     ORDERED = 'Ordered', 'Ordered'
     OUTOFSTOCK = 'Out of Stock', 'Out of Stock'
 
-
 class CarePackage(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     items = models.ManyToManyField(Inventory, through='CarePackageItem')
     quantity = models.PositiveIntegerField()
-    delivery_date = models.DateField(blank = True, null = True)
+    initial_quantity = models.PositiveIntegerField()  # Set default as a placeholder
+    delivery_date = models.DateField(blank=True, null=True)
     status = models.CharField(
         max_length=50,
         choices=CarePackageStatus.choices,
@@ -117,6 +117,12 @@ class CarePackage(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        # Dynamically set initial_quantity to quantity if not explicitly provided
+        if self.initial_quantity is None: 
+            self.initial_quantity = self.quantity
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Care Package: {self.name}"

@@ -100,7 +100,6 @@ def get_oldest_package_date(request):
 
 
 from datetime import datetime
-
 @csrf_exempt
 def get_packages_with_same_create_date(request):
     """
@@ -130,17 +129,21 @@ def get_packages_with_same_create_date(request):
                     "created_at": package.created_at.isoformat(),
                     "delivery_date": package.delivery_date,
                     "pickup_location": package.description,
+                    "initial_quantity": package.initial_quantity,  # Include initial quantity
                     "quantity": package.quantity,
+
+       
                     "contents": [
                         {
                             "item_name": item.product.name,
-                            "quantity": item.quantity,
+                            "quantity": item.quantity / package.initial_quantity  # Divide by initial quantity
                         }
                         for item in package.care_package_items.all()
                     ],
                 }
                 for package in same_date_packages
             ]
+
             return JsonResponse(packages_data, safe=False, status=200)
 
         return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
@@ -155,6 +158,8 @@ def get_packages_details(request):
     try:
         if request.method == "GET":
             all_packages = CarePackage.objects.all()
+
+          
             # Prepare the response data
             packages_data = [
                 {
@@ -167,7 +172,9 @@ def get_packages_details(request):
                         {
                             "item_name": item.product.name,
                             "quantity": item.quantity,
+                            
                         }
+                        
                         for item in package.care_package_items.all()
                     ],
                 }
