@@ -98,10 +98,10 @@ function DisplayID() {
   return (
     <div className="container">
       <header className="header">
-        <img src="/care.png" alt="Care logo" className="top-left-img" />
+        <img src="/care.png" alt="Care logo" className="top-left-img-si" />
       </header>
   
-      <nav className="navbar">
+      <nav className="navbar-si">
         <form className="form-inline">
           <button className="btn btn-outline-secondary" type="button" onClick={() => navigate("/userdash/calendar")}>
             Calendar
@@ -226,16 +226,16 @@ function DisplayID() {
         </main>
       </div>
   
-      <div className="footer">
-        <div className="footer-content">
-          <div className="footer-column">
+      <div className="footer-si">
+        <div className="footer-content-si">
+          <div className="footer-column-si">
             <img src="/care.png" alt="Care logo" className="care-logo" />
             <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" className="university-logo" />
             <p>© {new Date().getFullYear()} CARE</p>
             <p>Founded by Polytechnic University of Puerto Rico students</p>
           </div>
   
-          <div className="footer-column">
+          <div className="footer-column-si">
             <p className="highlight">
               A non-profit student organization providing support to students in need.
             </p>
@@ -245,7 +245,7 @@ function DisplayID() {
             </p>
           </div>
   
-          <div className="footer-column">
+          <div className="footer-column-si">
             <h2>Follow Us</h2>
             <ul className="social-links">
               <li>
