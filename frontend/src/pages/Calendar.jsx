@@ -20,7 +20,7 @@ function Calendar() {
     try {
       const response = await api.get('/api/package/');
       const packages = response.data;
-
+      const userOrders = 
       // Map package delivery dates to FullCalendar event format
       const eventList = packages
       .filter(pkg => pkg.quantity > 0) // Filter out packages with quantity <= 0
