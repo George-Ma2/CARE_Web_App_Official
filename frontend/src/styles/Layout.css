@@ -28,7 +28,7 @@
     position: relative;
     width: 100%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-top: 50px;
+    margin-top: -30px;
   }
   
   .navbar-layout .form-inline {
@@ -108,9 +108,8 @@
   }
   
   .top-left-img-layout {
-    position: absolute;
     top: -40px;
-    left: 85px;
+    left: 0px;
     width: 40px;
     height: auto;
   }
@@ -155,13 +154,6 @@
     width: 100%; 
     margin-left: auto; 
     margin-right: auto; 
-  }
-  
-  .main-content {
-    align-self: center;
-    margin-top: 108px;
-    width: 100%;
-    max-width: 1016px;
   }
   
   .content-grid {

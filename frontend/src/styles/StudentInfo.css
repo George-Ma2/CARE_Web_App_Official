@@ -80,7 +80,7 @@
   position: relative;
   width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 50px;
+  margin-top: 60px;
 }
 
 .navbar-si .form-inline {
@@ -136,7 +136,6 @@
 
 .top-left-img-si {
   position: absolute;
-  top: -40px;
   left: 85px;
   width: 40px;
   height: auto;

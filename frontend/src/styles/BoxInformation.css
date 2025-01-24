@@ -46,7 +46,7 @@
   position: relative;
   width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 50px;
+  margin-top: 60px;
 }
 
 .navbar-bi .form-inline {
@@ -102,7 +102,6 @@
 
 .top-left-img-bi {
   position: absolute;
-  top: -40px;
   left: 85px;
   width: 40px;
   height: auto;
