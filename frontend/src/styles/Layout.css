@@ -156,13 +156,6 @@
     margin-right: auto; 
   }
   
-  .main-content {
-    align-self: center;
-    margin-top: 108px;
-    width: 100%;
-    max-width: 1016px;
-  }
-  
   .content-grid {
     display: flex;
     justify-content: space-between; 
