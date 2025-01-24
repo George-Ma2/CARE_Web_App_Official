@@ -349,6 +349,8 @@ class InventoryRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsStaffUser]
 from datetime import datetime
 
+from django.utils import timezone
+
 class InventoryCategorySummary(generics.GenericAPIView):
     permission_classes = [IsStaffUser]
 
@@ -360,12 +362,22 @@ class InventoryCategorySummary(generics.GenericAPIView):
             .annotate(total_quantity=Sum('quantity'))
             .order_by('category')
         )
-            
-        # Retrieve the package with the nearest (earliest) delivery date
-        package = CarePackage.objects.order_by('delivery_date').first()
-        package_data = {
-            "delivery_date": package.delivery_date.strftime('%B %d, %Y') if package and package.delivery_date else None
-        }
+        
+        # Get the current time
+        now = timezone.now()
+
+        # Retrieve the next package with the nearest (earliest) delivery date that has not passed
+        package = CarePackage.objects.filter(delivery_date__gte=now).order_by('delivery_date').first()
+
+        # If no package is found with a future delivery date, handle appropriately
+        if package:
+            package_data = {
+                "delivery_date": package.delivery_date.strftime('%B %d, %Y')
+            }
+        else:
+            package_data = {
+                "delivery_date": None  # No future packages
+            }
 
         response_data = {
             'category_summary': category_summary,
