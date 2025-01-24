@@ -98,7 +98,7 @@ const CarePackagePage = () => {
                 <thead>
                     <tr>
                         <th>Care Package Name</th>
-                        <th>Description</th>
+                        <th>Pickup Time and Location</th>
                         <th>Created At</th>
                         <th>Delivery Date</th>
                         <th>Actions</th>

@@ -112,7 +112,7 @@ const CreatePackageModal = ({
                         />
                     </label>
                     <label>
-                        Description:
+                        Pickup Time and Location:
                         <textarea
                             value={carePackageDescription}
                             onChange={(e) => setCarePackageDescription(e.target.value)}
