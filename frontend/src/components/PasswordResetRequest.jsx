@@ -31,11 +31,15 @@ const PasswordResetRequest = () => {
                 setSuccessMessage('Password reset email sent successfully. Please check your inbox.');
             }
         } catch (error) {
-            setErrorMessage('An error occurred while sending the password reset email. Please try again later.');
+            if (error.response && error.response.status === 400) {
+                // If the email is not found, you can set a specific error message
+                setErrorMessage('The email address is not registered in our database. Please check the email and try again.');
+            } else {
+                // Handle other errors
+                setErrorMessage('An error occurred while sending the password reset email. Please try again later.');
+            }
         }
-
         setEmail('');
-        setUsername('');
     };
 
     return (
