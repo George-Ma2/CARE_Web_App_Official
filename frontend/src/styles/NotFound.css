@@ -14,7 +14,7 @@
     margin-bottom: 20px;  /* Space between the image and text */
 }
 
-.header img {
+.header-not-found img {
     max-width: 150px;  /* Limit the image size */
     height: auto;  /* Maintain aspect ratio */
 }

@@ -88,10 +88,10 @@ function Cart() {
   return (
     <div className="container">
       <header className="header">
-        <img src="/care.png" alt="Care logo" className="top-left-img" />
+        <img src="/care.png" alt="Care logo" className="top-left-img-cart" />
       </header>
 
-      <nav className="navbar">
+      <nav className="navbar-cart">
         <form className="form-inline">
           <button
             className="btn btn-outline-secondary"
@@ -142,7 +142,7 @@ function Cart() {
               <th>Quantity</th>
             </tr>
           </thead>
-           <tbody>
+          <tbody>
             {cartItems.map((item, index) => (
               <tr key={index}>
                 <td>{item.name}</td>
@@ -159,7 +159,6 @@ function Cart() {
               </tr>
             ))}
           </tbody>
-
         </table>
 
         <div className="terms-section">
@@ -200,32 +199,30 @@ function Cart() {
           </button>
         </div>
       </main>
-      <div className="footer">
-  <div className="footer-content">
+
+      <div className="footer-cart">
+        <div className="footer-content-cart">
+          <div className="footer-column-cart">
+            <img src="/care.png" alt="Care logo" className="care-logo" />
+            <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" className="university-logo" />
+            <p>© {new Date().getFullYear()} CARE</p>
+            <p>Founded by Polytechnic University of Puerto Rico students</p>
+          </div>
+
+          <div className="footer-column-cart">
+            <p className="highlight">A non-profit student organization providing support to students in need.</p>
+            <p>To learn more about our initiatives or ask any questions, please visit our social media pages!</p>
+          </div>
   
-    <div className="footer-column">
-      <img src="/care.png" alt="Care logo" className="care-logo" />
-      <img src="/poli.png" alt="Polytechnic University of Puerto Rico logo" className="university-logo" />
-      <p>© {new Date().getFullYear()} CARE</p>
-      <p>Founded by Polytechnic University of Puerto Rico students</p>
-    </div>
-
-    <div className="footer-column">
-      <p className="highlight">A non-profit student organization providing support to students in need.</p>
-      <p>To learn more about our initiatives or ask any questions, please visit our social media pages!</p>
-    </div>
- 
-    <div className="footer-column">
-      <h2>Follow Us</h2>
-      <ul className="social-links">
-        
-        <li><a href="https://www.instagram.com/care_pupr/profilecard/?igsh=d3pqdXZra3cwcmEz" target="_blank">Instagram</a></li>
-        <li><a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/?viewAsMember=true" target="_blank">LinkedIn</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-
+          <div className="footer-column-cart">
+            <h2>Follow Us</h2>
+            <ul className="social-links">
+              <li><a href="https://www.instagram.com/care_pupr/profilecard/?igsh=d3pqdXZra3cwcmEz" target="_blank">Instagram</a></li>
+              <li><a href="https://www.linkedin.com/company/care-centro-de-apoyo-y-recursos-para-estudiantes/?viewAsMember=true" target="_blank">LinkedIn</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
