@@ -23,7 +23,6 @@ class RegisteredStudentsView(APIView):
         students = User.objects.filter(is_staff=False).values('id', 'first_name', 'last_name', 'email')
         return Response({'students': list(students)})
 
-
 class OrderHistoryView(APIView):
     permission_classes = [IsStaffUser]
 
@@ -35,18 +34,20 @@ class OrderHistoryView(APIView):
             # Count the total number of orders
             total_orders = orders.count()
 
-            # Get the most recent order (assuming orders have a 'date' field)
-            latest_order = orders.order_by('order_date').first()  # You can change 'date' to the appropriate field
+            # Get the most recent order (assuming orders have an 'order_date' field)
+            latest_order = orders.order_by('order_date').last()
 
             # If there's no order yet
             if not latest_order:
                 return Response({"total_orders": total_orders, "latest_order": None})
 
-            # Extract relevant information about the most recent order
+            # Extract relevant information about the most recent order, including user details
             latest_order_data = {
                 'order_id': latest_order.id,
-                'order_date': latest_order.order_date,
-                'status': latest_order.status,  
+                'order_date': latest_order.order_date.strftime('%B %d, %Y'),
+                'status': latest_order.status,
+                'user_first_name': latest_order.user.first_name if latest_order.user else None,
+                'user_last_name': latest_order.user.last_name if latest_order.user else None,
             }
 
             # Return the total orders and the most recent order information
@@ -57,6 +58,7 @@ class OrderHistoryView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -186,26 +188,47 @@ def get_packages_details(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.response import Response
+from .models import CarePackage  # Import your model
+
 @csrf_exempt
 def get_total_packages(request):
- 
     try:
         if request.method == "GET":
+            # Retrieve all CarePackage objects
             all_packages = CarePackage.objects.all()
-               
+
             # Calculate the sum of all quantities
             total_quantity = sum(package.quantity for package in all_packages)
 
+            # Get the latest package based on creation time
+            latest_package = all_packages.order_by('created_at').last()
+
+            if not latest_package:
+                # No packages found, return response with None
+                return JsonResponse({"total_quantity": total_quantity, "latest_package": None}, status=200)
+
+            # Prepare data for the latest package
+            latest_package_data = {
+                'name': latest_package.name,
+                'quantity': latest_package.quantity,
+                'created_at': latest_package.created_at.strftime('%B %d, %Y'),  # Format as string
+            }
+
             # Prepare the response data
             response_data = {
-                "total_quantity": total_quantity
+                "total_quantity": total_quantity,
+                "latest_package": latest_package_data,  # Use serializable data
             }
-            
+
             return JsonResponse(response_data, status=200)
 
         return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -323,6 +346,7 @@ class InventoryRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Inventory.objects.all()
     serializer_class = InventorySerializer
     permission_classes = [IsStaffUser]
+from datetime import datetime
 
 class InventoryCategorySummary(generics.GenericAPIView):
     permission_classes = [IsStaffUser]
@@ -335,29 +359,19 @@ class InventoryCategorySummary(generics.GenericAPIView):
             .annotate(total_quantity=Sum('quantity'))
             .order_by('category')
         )
-        #Retrieve the latest care package
-        # latest_package = CarePackage.objects.latest('created_at')  # Fetch the most recently created package
-        # latest_package_data = {
-        #     "name": latest_package.name,
-        #     "quantity": latest_package.quantity,
-        #     "description": latest_package.description,
-        #     "status": latest_package.status,
-        #     "delivery_date": latest_package.delivery_date,
-        # }
-
             
         # Retrieve the package with the nearest (earliest) delivery date
-        # nearest_delivery = CarePackage.objects.filter(delivery_date__gte=timezone.now()).order_by('delivery_date').first()
-        # nearest_delivery_data = {
-        #     "delivery_date": nearest_delivery.delivery_date
-        # }
+        package = CarePackage.objects.order_by('delivery_date').first()
+        package_data = {
+            "delivery_date": package.delivery_date.strftime('%B %d, %Y') if package and package.delivery_date else None
+        }
 
         response_data = {
-            'category_summary': category_summary
-            # 'nearest_delivery': nearest_delivery_data
-            # 'latest_package': latest_package_data,
+            'category_summary': category_summary,
+            'nearest_delivery': package_data
         }
         return Response(response_data)
+
 
 
 class UpdateProductQuantity(APIView):

@@ -104,7 +104,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CARE_Web_App_DB',
         'USER': 'postgres',
-        'PASSWORD': '1301',
+        'PASSWORD': 'Pizzalover2003',
         'HOST':'localhost'
     }
 }
