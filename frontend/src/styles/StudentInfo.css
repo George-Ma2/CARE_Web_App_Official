@@ -150,7 +150,7 @@
   width: 100%;
   max-width: 1016px;
   max-height: 90vh; /* Prevents excessive height on larger screens */
-  overflow: hidden;
+  overflow-y: auto;
   margin-bottom:-120px;
   
 }
