@@ -508,7 +508,7 @@ class UserOrderHistoryView(APIView):
         try:
             # Get the current user's ID
             user_id = request.user.id
-
+            print(user_id)
             # Fetch all orders belonging to the current user
             user_orders = OrderHistory.objects.filter(user_id=user_id)
 
@@ -528,6 +528,8 @@ class UserOrderHistoryView(APIView):
                     "order_date": order.order_date.date(),
                     "status": order.status,
                     "delivery_date": delivery_date,
+                    "package_id": order.package_id,
+                    "order_number": order.id,
                     
                 })
 
@@ -537,48 +539,6 @@ class UserOrderHistoryView(APIView):
         except Exception as e:
             # Handle unexpected errors
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-
-
-
-class UserOrderDeliveryDatesView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, user_id):
-        try:
-            # Verify if the user is authorized to access this data
-            if request.user.id != int(user_id) and not request.user.is_staff:
-                return Response({"error": "Unauthorized access."}, status=status.HTTP_403_FORBIDDEN)
-
-            # Fetch all orders belonging to the specified user
-            user_orders = OrderHistory.objects.filter(user_id=user_id)
-
-            # If no orders exist for the user, return an appropriate response
-            if not user_orders.exists():
-                return Response({"message": "No order history found for the user."}, status=status.HTTP_404_NOT_FOUND)
-
-            # Extract delivery dates from the related CarePackage for each order
-            delivery_dates = []
-            for order in user_orders:
-                # Fetch the CarePackage associated with the package_id
-                care_package = CarePackage.objects.filter(id=order.package_id).first()
-                delivery_date = care_package.delivery_date.strftime('%B %d, %Y') if care_package and care_package.delivery_date else None
-
-                # Append delivery_date to the list
-                delivery_dates.append({
-                    "order_date": order.order_date.date(),
-                    "delivery_date": delivery_date,
-                    "status": order.status,
-                })
-
-            # Return the list of delivery dates and related order information
-            return Response({"user_id": user_id, "orders": delivery_dates}, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            # Handle unexpected errors
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 
 from datetime import datetime
