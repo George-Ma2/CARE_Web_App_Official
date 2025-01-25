@@ -34,6 +34,7 @@ const CarePackagePage = () => {
     useEffect(() => {
         fetchInventory();
         fetchCarePackages();
+        
     }, []);
 
     useEffect(() => {

@@ -1,5 +1,5 @@
 import "../styles/Layout.css";
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const AdminNavbar = ({ children }) => {
@@ -10,6 +10,20 @@ const AdminNavbar = ({ children }) => {
     localStorage.clear();
     navigate('/login');
   };
+
+  // Map paths to page titles
+  const pageTitles = {
+    '/admin/dashboard': 'Admin Dashboard',
+    '/admin/inventory': 'Inventory',
+    '/admin/care-package': 'Box Creation',
+    // Add more routes and titles as needed
+  };
+
+  // Update the document title based on the current path
+  useEffect(() => {
+    const title = pageTitles[location.pathname] || 'Admin Panel';
+    document.title = title;
+  }, [location.pathname]);
 
   // Function to determine active button styles
   const isActive = (path) => location.pathname === path ? 'btn btn-primary' : 'btn btn-outline-secondary';
