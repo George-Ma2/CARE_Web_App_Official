@@ -66,19 +66,29 @@ class CarePackageItemSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
             'care_package': {'read_only': True},
         }
-
 class CarePackageSerializer(serializers.ModelSerializer):
     items = CarePackageItemSerializer(many=True)
 
     class Meta:
         model = CarePackage
-        fields = ['id', 'name', 'description', 'items', 'quantity', 'delivery_date', 'status', 'created_at', 'updated_at']
+        fields = [
+            'id',
+            'name',
+            'description',
+            'items',
+            'quantity',
+            'initial_quantity',  # Include the new field
+            'delivery_date',
+            'status',
+            'created_at',
+            'updated_at'
+        ]
         extra_kwargs = {
             'id': {'read_only': True},
+            'initial_quantity': {'read_only': True},  # Make this field read-only
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
         }
-
 
     def create(self, validated_data):
         # Extract nested 'items' data
@@ -97,7 +107,9 @@ class CarePackageSerializer(serializers.ModelSerializer):
 
             # Ensure stock is sufficient
             if product.quantity < quantity:
-                raise serializers.ValidationError(f"Not enough stock for product {product.name}. Available: {product.quantity}, Requested: {quantity}.")
+                raise serializers.ValidationError(
+                    f"Not enough stock for product {product.name}. Available: {product.quantity}, Requested: {quantity}."
+                )
 
             # Reserve stock for the product
             product.reserve_stock(quantity)
@@ -113,6 +125,7 @@ class CarePackageSerializer(serializers.ModelSerializer):
                 )
                 
         return care_package
+
 
 class OrderHistorySerializer(serializers.ModelSerializer):
     class Meta:

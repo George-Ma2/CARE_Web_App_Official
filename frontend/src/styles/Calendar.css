@@ -165,6 +165,10 @@ body {
   font: 700 20px Poppins, sans-serif;
   
 }
+
+.section p{
+  color: rgb(12, 10, 10);
+}
 .section h2{
   font-family: 'Poppins', var(--default-font-family);
   font-size: 50px; 

@@ -9,30 +9,54 @@ import api from '../api';
 function Calendar() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
-
+  const [orders, setOrders] = useState([]);  // To store all orders
 
   useEffect(() => {
     document.title = 'Calendar';
   
 
-  // Fetch packages from the backend
-  const fetchPackages = async () => {
-    try {
-      const response = await api.get('/api/package/');
-      const packages = response.data;
 
-      // Map package delivery dates to FullCalendar event format
-      const eventList = packages
-      .filter(pkg => pkg.quantity > 0) // Filter out packages with quantity <= 0
-      .map(pkg => ({
-        title: 'Order Pickup Day!',
-        date: pkg.delivery_date,
-      }));
-      setEvents(eventList);
-    } catch (error) {
-      console.error("Error fetching package details:", error);
-    }
-  };
+      const fetchPackages = async () => {
+        try {
+          // Fetch all packages
+          const response = await api.get('/api/package/');
+          const packages = response.data;
+          console.log('Fetched packages:', packages);
+      
+          // Fetch the user's order history
+          const orderResponse = await api.get('/api/user/order-history/');
+          const userOrders = orderResponse.data.orders || []; // Default to empty array if no orders
+          console.log('User orders:', userOrders);
+      
+          // Create a map of user orders by package ID for quick lookup
+          const userOrdersMap = new Map(
+            userOrders.map(order => [order.package_id, order.order_number])
+          );
+      
+          // Map package delivery dates to FullCalendar event format
+          const eventList = packages
+            .filter(pkg => pkg.quantity > 0 || userOrdersMap.has(pkg.id)) // Include only available packages or user-registered ones
+            .map(pkg => {
+              const orderNumber = userOrdersMap.get(pkg.id); // Get the order number if it exists
+              const isUserOrder = Boolean(orderNumber); // Check if the user has registered for this package
+      
+              return {
+                title: isUserOrder ? `Order #${orderNumber}` : 'Order Pickup Day!',
+                date: pkg.delivery_date,
+                color: isUserOrder ? '#ac3fca' : '#28A745', // Use blue for user-specific orders, green for others
+              };
+            });
+      
+          console.log('Event list:', eventList);
+      
+          // Set the events in state
+          setEvents(eventList);
+        } catch (error) {
+          console.error('Error fetching package details or user order history:', error.response || error.message);
+        }
+      };
+      
+
 
   fetchPackages();
 }, []);

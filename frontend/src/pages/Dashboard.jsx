@@ -11,15 +11,14 @@ const InventoryDashboard = () => {
     const [latestPackage, setLatestPackage] = useState(null);
     const [orders, setOrders] = useState({ total_orders: 0, latest_order: null });  // Adjusted orders state structure
     const [totalPackages, setTotalPackages] = useState(0); // New state to hold the total sum of packages
-    const [nearestDelivery, setNearestDelivery] = useState(null);
+    const [nearestDelivery, setNearestDelivery] = useState([]);
 
     // Fetch products data
     const fetchDashboardData = async () => {
         try {
             const response = await api.get("api/dashboard/");
-            const { category_summary, latest_package, nearest_delivery } = response.data;
+            const { category_summary, nearest_delivery } = response.data;
             setProducts(category_summary);  // Set inventory category summary data
-            setLatestPackage(latest_package);  // Set latest care package data
             setNearestDelivery(nearest_delivery);
             console.log("Delivery:", nearestDelivery);
         } catch (err) {
@@ -56,6 +55,9 @@ const InventoryDashboard = () => {
         try {
             let response = await api.get("api/total-packages/"); // Use let instead of const
             setTotalPackages(response.data.total_quantity); // Update state with total quantity
+            setLatestPackage(response.data.latest_package);
+            console.log("Latest package:", latestPackage);
+            
         } catch (err) {
             console.error("Error fetching packages data:", err);
             setError(err.message);
@@ -82,28 +84,34 @@ const InventoryDashboard = () => {
         console.log("Latest package:", latestPackage);
     }, [products, students]);
 
-    // Get chart options for the product distribution
-    const getChartOptions = () => {
-        return {
-            tooltip: { trigger: "item" },
-            legend: { top: "5%", left: "center" },
-            series: [
-                {
-                    name: "Product Type",
-                    type: "pie",
-                    radius: ["40%", "70%"],
-                    avoidLabelOverlap: true,
-                    itemStyle: { borderRadius: 10, borderColor: "#feff", borderWidth: 2 },
-                    label: { show: true, formatter: "{b}: {c}" },
-                    labelLine: { show: true },
-                    data: products.map((product) => ({
-                        value: product.total_quantity,
-                        name: product.category,
-                    })),
-                },
-            ],
-        };
+// Get chart options for the product distribution
+const getChartOptions = () => {
+    return {
+        tooltip: { trigger: "item" },
+        legend: {
+            top: "5%", // Position the legend at the top
+            left: "center", // Center the legend horizontally
+            orient: "horizontal", // Arrange legend items horizontally
+        },
+        series: [
+            {
+                name: "Product Type",
+                type: "pie",
+                radius: ["30%", "60%"], // Reduce the size of the pie chart
+                center: ["50%", "60%"], // Lower the chart within the container
+                avoidLabelOverlap: true,
+                itemStyle: { borderRadius: 10, borderColor: "#feff", borderWidth: 2 },
+                label: { show: false }, // Disable labels on the chart
+                labelLine: { show: false }, // Disable label lines
+                data: products.map((product) => ({
+                    value: product.total_quantity,
+                    name: product.category,
+                })),
+            },
+        ],
     };
+};
+
     const orderCount = orders.total_orders;  // Access the total number of orders
     const latestOrder = orders.latest_order;  // Access the latest order details
     
@@ -152,7 +160,7 @@ const InventoryDashboard = () => {
                 </div>
             </div>
 
-            {/* Additional Cards Section */}
+                             {/* Additional Cards Section */}
             <div className="row g-4 mt-4">
                 <div className="col-lg-4">
                     <div className="card text-center shadow-sm p-4">
@@ -160,22 +168,38 @@ const InventoryDashboard = () => {
                         <div className="card-body">
                             <h2 className="display-6">{orders.total_orders}</h2>
                             <p className="card-text">Total Orders</p>
-                            <p className="card-text">
-                                Latest Order: {orders.latest_order ? `${latestOrder.order_date}` : 'N/A'}
-                            </p>
+                            {orders.latest_order ? (
+                            <ul className="list-unstyled">
+                            <p className="card-text"><u>Most Recent Order:</u></p>
+                            <li><strong>Order Date:</strong> {latestOrder.order_date}</li>
+                            <li><strong>Client Name:</strong> {latestOrder.user_first_name} {latestOrder.user_last_name}</li>
+                            </ul>
+                        ) : (
+                            <p className="card-text">Most Recent Order: N/A</p>
+                        )}
                         </div>
                     </div>
                 </div>
                 
                 <div className="col-lg-4">
                     <div className="card text-center shadow-sm p-4">
-                        <h5 className="card-title">Packages Available</h5>
+                        <h5 className="card-title">Packages</h5>
                         <div className="card-body">
-                            <h2 className="display-6">{totalPackages ? totalPackages: 0}</h2>
-                            <p className="card-text">Latest Package: {latestPackage?.name || 'N/A'}</p>
+                        <h2 className="display-6">{totalPackages ? totalPackages : 0}</h2>
+                        <p className="card-text">Total Packages</p>
+                        {latestPackage ? (
+                            <ul className="list-unstyled">
+                            <p className="card-text"><u>Latest Package Created:</u></p>
+                            <li><strong>Name:</strong> {latestPackage.name}</li>
+                            <li><strong>Quantity:</strong> {latestPackage.quantity}</li>
+                            <li><strong>Created At:</strong> {latestPackage.created_at}</li>
+                            </ul>
+                        ) : (
+                            <p className="card-text">Latest Package Created: N/A</p>
+                        )}
                         </div>
                     </div>
-                </div>
+                    </div>
 
                 <div className="col-lg-4">
                     <div className="card text-center shadow-sm p-4">
@@ -189,10 +213,10 @@ const InventoryDashboard = () => {
 
                 <div className="col-lg-4">
                     <div className="card text-center shadow-sm p-4">
-                        <h5 className="card-title">Delivery</h5>
+                        <h5 className="card-title">Hand-Out</h5>
                         <div className="card-body">
-                            <h2 className="display-6">{nearestDelivery ? nearestDelivery : 'N/A'}</h2>
-                            <p className="text-muted">Upcoming delivery date</p>
+                            <h2 className="display-6">{nearestDelivery ? nearestDelivery.delivery_date : 'N/A'}</h2>
+                            <p className="text-muted">Upcoming hand-out date</p>
                         </div>
                     </div>
                 </div>

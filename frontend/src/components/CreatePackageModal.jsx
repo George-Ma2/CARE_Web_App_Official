@@ -7,15 +7,13 @@ const CreatePackageModal = ({
     onSave,
     carePackage = null,
 }) => {
-    // Initialize state for care package creation or update
     const [carePackageName, setCarePackageName] = useState('');
     const [carePackageDescription, setCarePackageDescription] = useState('');
     const [numPackages, setNumPackages] = useState(1);
     const [selectedItems, setSelectedItems] = useState([]);
     const [deliveryDate, setDeliveryDate] = useState('');
+    const [initialQuantity, setInitialQuantity] = useState(1);
 
-
-    // If carePackage prop is provided (i.e., editing mode), populate fields
     useEffect(() => {
         if (carePackage) {
             setCarePackageName(carePackage.name);
@@ -23,12 +21,14 @@ const CreatePackageModal = ({
             setNumPackages(carePackage.quantity);
             setSelectedItems(carePackage.items || []);
             setDeliveryDate(carePackage.deliveryDate || '');
+            setInitialQuantity(carePackage.quantity);
         } else {
             setCarePackageName('');
             setCarePackageDescription('');
             setNumPackages(1);
             setSelectedItems([]);
-            setDeliveryDate('')
+            setDeliveryDate('');
+            setInitialQuantity(1);
         }
     }, [carePackage]);
 
@@ -62,7 +62,7 @@ const CreatePackageModal = ({
             }
 
             if ((item.quantity * numPackages) > inventoryItem.quantity) {
-                alert(`Requested quantity for ${inventoryItem.name} exceeds available stock. Available: ${inventoryItem.quantity}, Requested: ${item.quantity * numPackages}.`)
+                alert(`Requested quantity for ${inventoryItem.name} exceeds available stock. Available: ${inventoryItem.quantity}, Requested: ${item.quantity * numPackages}.`);
                 return;
             }
         }
@@ -71,6 +71,7 @@ const CreatePackageModal = ({
             name: carePackageName,
             description: carePackageDescription,
             quantity: numPackages,
+            initial_quantity: initialQuantity, // Automatically set
             items: selectedItems.map((item) => ({
                 product_id: item.inventory_item_id,
                 quantity: item.quantity * numPackages,
@@ -79,19 +80,18 @@ const CreatePackageModal = ({
         };
 
         onSave(carePackageData);
-        console.log ('care package data:', carePackageData)
+        console.log('Care package data:', carePackageData);
     };
 
     const handleAddItem = (itemId, quantity) => {
-
         setSelectedItems((prevItems) => {
             const existingItemIndex = prevItems.findIndex((item) => item.inventory_item_id === itemId);
             if (existingItemIndex >= 0) {
                 const updatedItems = [...prevItems];
-                updatedItems[existingItemIndex].quantity = quantity
+                updatedItems[existingItemIndex].quantity = quantity;
                 return updatedItems;
             } else {
-                const newItem = { inventory_item_id: itemId, quantity: quantity }
+                const newItem = { inventory_item_id: itemId, quantity: quantity };
                 return [...prevItems, newItem];
             }
         });
@@ -134,7 +134,11 @@ const CreatePackageModal = ({
                         <input
                             type="number"
                             value={numPackages}
-                            onChange={(e) => setNumPackages(Number(e.target.value))}
+                            onChange={(e) => {
+                                const value = Number(e.target.value);
+                                setNumPackages(value);
+                                setInitialQuantity(value); // Sync with initialQuantity
+                            }}
                             min="1"
                             required
                         />
