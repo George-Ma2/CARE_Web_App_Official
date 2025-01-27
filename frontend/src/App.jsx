@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import NotFound from "./pages/NotFound"
@@ -9,16 +10,11 @@ import StudentInfo from "./pages/StudentInfo"
 import Cart from "./pages/Cart"
 import Inventory from "./pages/Inventory"
 import Dashboard from "./pages/Dashboard"
-import BoxCreation from "./pages/Dashboard"
 import ProtectedRoute from "./components/ProtectedRoute"
-import 'bootstrap/dist/css/bootstrap.min.css';
 import PasswordResetRequest from "./components/PasswordResetRequest"
 import PasswordReset from "./components/PasswordReset"
 import CarePackage from "./pages/CarePackage";
-// import CarePackagePage from "./pages/CarePackage";
-
 import AdminNavbar from "./components/Layout"
-//import CarePackagePage from "./pages/CarePackage";
 import { AppProvider } from './AppContext';
 import OrderConfirmation from "./pages/OrderConfirmation";
 
@@ -33,9 +29,6 @@ function RegisterAndLogout() {
 }
 
 function App() {
-  // Shared state for selected package
-  const [selectedPackage, setSelectedPackage] = useState(null);
-
   return (
     <AppProvider>
     <BrowserRouter>
@@ -51,13 +44,11 @@ function App() {
         <Route path="/userdash/boxinfo" element={<ProtectedRoute> <BoxInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/studentinfo" element={<ProtectedRoute> <StudentInfo /> </ProtectedRoute>}/>
         <Route path="/userdash/ordercart" element={<ProtectedRoute> <Cart /> </ProtectedRoute>}/>
-
-        {/* <Route path="admin/inventory" element={<ProtectedRoute> <Inventory /> </ProtectedRoute>}/> */}
+        <Route path="/orderconfirmation" element={<ProtectedRoute> <OrderConfirmation /> </ProtectedRoute>}/>
+   
         <Route path="/admin/care-package" element={<ProtectedRoute> <AdminNavbar> <CarePackage /> </AdminNavbar></ProtectedRoute>}/>
         <Route path="/admin/dashboard" element={<ProtectedRoute> <AdminNavbar> <Dashboard /> </AdminNavbar> </ProtectedRoute>}/>
         <Route path="/admin/inventory" element={<ProtectedRoute> <AdminNavbar> <Inventory /> </AdminNavbar> </ProtectedRoute>}/>
-        {/* <Route path="/admin/boxcreation" element={<ProtectedRoute> <AdminNavbar> <Inventory /> </AdminNavbar> </ProtectedRoute>}/> */}
-        <Route path="/orderconfirmation" element={<ProtectedRoute> <OrderConfirmation /> </ProtectedRoute>}/>
       </Routes>
       </BrowserRouter>
     </AppProvider>

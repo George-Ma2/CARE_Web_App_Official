@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { addProduct } from './ProductService';
+
 
 const ProductForm = ({ onSubmit }) => {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState('');
-  const [category, setCategory] = useState('Miscellaneous');  // Default category
+  const [category, setCategory] = useState('Miscellaneous');  
   const [expirationDate, setExpirationDate] = useState('');
 
   const handleSubmit = (e) => {
@@ -17,12 +17,12 @@ const ProductForm = ({ onSubmit }) => {
       name,
       quantity,
       category,
-      expiration_date: expirationDate, // Send the expiration date as "expiration_date"
+      expiration_date: expirationDate, 
     };
     onSubmit(newProduct);
     setName('');
     setQuantity('');
-    setCategory('Miscellaneous');  // Reset the category to default
+    setCategory('Miscellaneous'); 
     setExpirationDate('');
   };
 

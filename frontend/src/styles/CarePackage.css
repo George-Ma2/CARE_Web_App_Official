@@ -12,7 +12,7 @@
     align-items: center;
 }
 
-/* Modal Content */
+
 .modal-content-cp {
     background-color: white;
     padding: 20px;
@@ -42,7 +42,7 @@
     font-weight: bold;
 }
 
-/* Button Styles (Update & Delete) */
+
 .product-table-cp td .button-cp {
     padding: 6px 12px;
     border: none;
@@ -68,7 +68,7 @@
     background-color: darkred;
 }
 
-/* Create Button Styles */
+
 .button-cp.primary {
     background-color: #4CAF50;
     color: white;
@@ -82,20 +82,20 @@
     background-color: #45a049;
 }
 
-/* Responsive Design */
+
 @media (max-width: 600px) {
-    /* Mobile styles */
+ 
     .product-table-cp {
-        font-size: 12px; /* Smaller font size for mobile */
+        font-size: 12px; 
     }
 
     .product-table-cp th,
     .product-table-cp td {
-        padding: 8px; /* Reduce padding */
+        padding: 8px; 
     }
 
     .product-table-cp td .button-cp {
-        padding: 4px 8px; /* Smaller buttons */
+        padding: 4px 8px; 
         font-size: 12px;
     }
 
@@ -107,18 +107,18 @@
     }
 
     .product-table-cp td .button-cp {
-        width: 100%; /* Full width buttons on mobile */
+        width: 100%; 
         margin: 5px 0;
     }
 
-    /* Create Button for Mobile */
+
     .button-cp.primary {
         width: 100%;
     }
 }
 
 @media (max-width: 1024px) {
-    /* Tablet styles */
+
     .product-table-cp {
         font-size: 14px;
     }
@@ -139,7 +139,7 @@
 }
 
 @media (min-width: 1025px) {
-    /* Desktop styles */
+
     .product-table-cp {
         font-size: 16px;
     }

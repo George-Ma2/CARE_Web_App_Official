@@ -11,7 +11,7 @@ const CarePackagePage = () => {
     const [selectedCarePackage, setSelectedCarePackage] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [events, setEvents] = useState([]);
-    // Fetch inventory items when component mounts
+
     const fetchInventory = async () => {
         try {
             const response = await api.get('/api/inventory/');
@@ -21,7 +21,7 @@ const CarePackagePage = () => {
         }
     };
 
-    // Fetch care packages when component mounts
+
     const fetchCarePackages = async () => {
         try {
             const response = await api.get('/api/care-packages/');
@@ -38,13 +38,11 @@ const CarePackagePage = () => {
     }, []);
 
     useEffect(() => {
-  // Fetch packages from the backend
+
   const fetchPackages = async () => {
     try {
       const response = await api.get('/api/package/');
       const packages = response.data;
-
-      // Map package delivery dates to FullCalendar event format
       const eventList = packages
      
       .map(pkg => ({
@@ -63,14 +61,14 @@ const CarePackagePage = () => {
     const handleSaveCarePackage = async (packageData) => {
         try {
             if (selectedCarePackage) {
-                // Update existing care package!!! Falta crear este url y su funcionalidad!
+        
                 const response = await api.patch(`/api/care-packages/${selectedCarePackage.id}/`, packageData);
                 setCarePackages(prevPackages =>
                     prevPackages.map(pkg => (pkg.id === selectedCarePackage.id ? response.data : pkg))
                 );
                 alert(`Care package '${response.data.name}' updated successfully!`);
             } else {
-                // Create new care package
+         
                 const response = await api.post('/api/care-packages/', packageData);
                 setCarePackages(prevPackages => [...prevPackages, response.data]);
                 alert(`${packageData.quantity} care package(s) created successfully!`);
@@ -90,7 +88,7 @@ const CarePackagePage = () => {
         try {
             const response = await api.delete(`/api/care-packages/${carePackageId}/delete/`);
             
-            // Remove the deleted care package from the state
+
             setCarePackages(prevPackages =>
                 prevPackages.filter(pkg => pkg.id !== carePackageId)
             );
@@ -110,7 +108,7 @@ const CarePackagePage = () => {
                 className="button-cp primary"
                 onClick={() => {
                     setShowCreateModal(true);
-                    setSelectedCarePackage(null); // Ensure no package is selected
+                    setSelectedCarePackage(null); 
                 }}
             >
                 Create Care Package
@@ -135,15 +133,6 @@ const CarePackagePage = () => {
                             <td>{new Date(carePackage.created_at).toLocaleString()}</td>
                             <td>{carePackage.delivery_date}</td>
                             <td>
-                                {/* <button
-                                    className="button-cp edit"
-                                    onClick={() => {
-                                        setSelectedCarePackage(carePackage);
-                                        setShowCreateModal(true);
-                                    }}
-                                >
-                                    Update
-                                </button> */}
                                 <button
                                     className="button-cp delete"
                                     onClick={() => {
@@ -165,7 +154,7 @@ const CarePackagePage = () => {
                     <div className="modal-content-cp">
                         <CreatePackageModal
                             inventoryItems={inventoryItems}
-                            carePackage={selectedCarePackage} // Pass selected package for editing
+                            carePackage={selectedCarePackage} 
                             onClose={() => setShowCreateModal(false)}
                             onSave={handleSaveCarePackage}
                         />
@@ -179,7 +168,6 @@ const CarePackagePage = () => {
                     plugins={[dayGridPlugin]}
                     initialView="dayGridMonth"
                     events={events}
-                    //dateClick={handleDateClick} // Allow user to click and assign a delivery date
                     height="auto"
                     headerToolbar={{
                         left: "prev,next today",

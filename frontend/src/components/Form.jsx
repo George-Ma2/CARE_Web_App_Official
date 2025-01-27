@@ -19,7 +19,8 @@ function Form({ route, method }) {
 
     const name = method === "login" ? "Login" : "Register";
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?"_:{}|<>]).{8,}$/; // password must contain at least 1 lower and upper case letter, 1 symbol and a minimum of 8 characters
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?"_:{}|<>]).{8,}$/; 
+    // password must contain at least 1 lower and upper case letter, 1 symbol and a minimum of 8 characters
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -42,7 +43,7 @@ function Form({ route, method }) {
             formData.append("first_name", firstName);
             formData.append("last_name", lastName);
             formData.append("email", normalizedEmail);
-            formData.append("photo_id", photoId); // Match the backend field
+            formData.append("photo_id", photoId); 
 
         }
         try {
@@ -93,7 +94,7 @@ function Form({ route, method }) {
     };
 
     const handlePasswordClick = () => {
-        setError(""); // Reset error when the password field is clicked
+        setError(""); 
     };
 
     return (
@@ -123,7 +124,7 @@ function Form({ route, method }) {
                 required
             />
 
-            {error && <p className="error-message">{error}</p>} {/* Show password error */}
+            {error && <p className="error-message">{error}</p>} 
 
             {method === "register" && (
                 <>

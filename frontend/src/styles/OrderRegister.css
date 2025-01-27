@@ -1,40 +1,4 @@
 
-/*HTML
-<div class="order-section">
-<div class="divider"></div>
-<form class="order-form">
-  <div class="order-summary">
-    <h3 class="summary-header">Order Summary:</h3>
-    <div class="summary-content">
-      <p class="package-info">1x CARE Weekly Box FREE</p>
-      <p class="pickup-location">Pick-up @ IDEA Center</p>
-      
-      <div class="checkbox-group">
-        <input type="checkbox" id="pickup-agreement" class="checkbox" required />
-        <label for="pickup-agreement" class="checkbox-label">
-          By clicking, I ensure I will pick up the package within the date established. If I do not send prior notice, I accept I may not receive my reserved box. Certain exceptions may be made with prior notice.
-        </label>
-      </div>
-      
-      <div class="checkbox-group">
-        <input type="checkbox" id="availability-agreement" class="checkbox" required />
-        <label for="availability-agreement" class="checkbox-label">
-          I also understand that donations are limited and boxes will be prepared on a rolling basis. Certain items may not be available for my personal box once the order is recieved.
-        </label>
-      </div>
-    </div>
-  </div>
-  <button type="submit" class="submit-button">Register my order!</button>
-</form>
-</div>
-</div>
-</div>
-
-
-*/
-
-
-
 .order-section {
     display: flex;
     flex-grow: 1;

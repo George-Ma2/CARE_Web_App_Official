@@ -9,7 +9,7 @@ import api from '../api';
 function Calendar() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
-  const [orders, setOrders] = useState([]);  // To store all orders
+  const [orders, setOrders] = useState([]);  
 
   useEffect(() => {
     document.title = 'Calendar';
@@ -18,38 +18,38 @@ function Calendar() {
 
       const fetchPackages = async () => {
         try {
-          // Fetch all packages
+    
           const response = await api.get('/api/package/');
           const packages = response.data;
           console.log('Fetched packages:', packages);
       
-          // Fetch the user's order history
+
           const orderResponse = await api.get('/api/user/order-history/');
-          const userOrders = orderResponse.data.orders || []; // Default to empty array if no orders
+          const userOrders = orderResponse.data.orders || []; 
           console.log('User orders:', userOrders);
       
-          // Create a map of user orders by package ID for quick lookup
+  
           const userOrdersMap = new Map(
             userOrders.map(order => [order.package_id, order.order_number])
           );
       
-          // Map package delivery dates to FullCalendar event format
+      
           const eventList = packages
-            .filter(pkg => pkg.quantity > 0 || userOrdersMap.has(pkg.id)) // Include only available packages or user-registered ones
+            .filter(pkg => pkg.quantity > 0 || userOrdersMap.has(pkg.id)) 
             .map(pkg => {
-              const orderNumber = userOrdersMap.get(pkg.id); // Get the order number if it exists
-              const isUserOrder = Boolean(orderNumber); // Check if the user has registered for this package
+              const orderNumber = userOrdersMap.get(pkg.id); 
+              const isUserOrder = Boolean(orderNumber); 
       
               return {
                 title: isUserOrder ? `Order #${orderNumber}` : 'Order Pickup Day!',
                 date: pkg.delivery_date,
-                color: isUserOrder ? '#ac3fca' : '#28A745', // Use blue for user-specific orders, green for others
+                color: isUserOrder ? '#ac3fca' : '#28A745', 
               };
             });
       
           console.log('Event list:', eventList);
       
-          // Set the events in state
+       
           setEvents(eventList);
         } catch (error) {
           console.error('Error fetching package details or user order history:', error.response || error.message);

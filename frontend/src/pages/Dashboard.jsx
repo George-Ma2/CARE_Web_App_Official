@@ -9,16 +9,16 @@ const InventoryDashboard = () => {
     const [error, setError] = useState(null);
     const [lowInventoryProducts, setLowInventoryProducts] = useState([]);
     const [latestPackage, setLatestPackage] = useState(null);
-    const [orders, setOrders] = useState({ total_orders: 0, latest_order: null });  // Adjusted orders state structure
-    const [totalPackages, setTotalPackages] = useState(0); // New state to hold the total sum of packages
+    const [orders, setOrders] = useState({ total_orders: 0, latest_order: null });  
+    const [totalPackages, setTotalPackages] = useState(0); 
     const [nearestDelivery, setNearestDelivery] = useState([]);
 
-    // Fetch products data
+
     const fetchDashboardData = async () => {
         try {
             const response = await api.get("api/dashboard/");
             const { category_summary, nearest_delivery } = response.data;
-            setProducts(category_summary);  // Set inventory category summary data
+            setProducts(category_summary);  
             setNearestDelivery(nearest_delivery);
             console.log("Delivery:", nearestDelivery);
         } catch (err) {
@@ -27,23 +27,23 @@ const InventoryDashboard = () => {
         }
     };
 
-    // Fetch students data
+   
     const fetchStudents = async () => {
         try {
             const response = await api.get("api/students/");
-            setStudents(response.data.students); // Update the state with student data
+            setStudents(response.data.students); 
         } catch (err) {
             console.error("Error fetching students:", err);
             setError(err.message);
         }
     };
 
-    // Fetch order history
+
     const fetchOrderHistory = async () => {
         try {
             const response = await api.get("api/orderhistory/");
-            const { total_orders, latest_order } = response.data; // Destructure total_orders and latest_order
-            setOrders({ total_orders, latest_order }); // Set orders state as an object
+            const { total_orders, latest_order } = response.data; 
+            setOrders({ total_orders, latest_order }); 
             console.log("Order History:", response.data);
         } catch (err) {
             console.error("Error fetching orders:", err);
@@ -53,8 +53,8 @@ const InventoryDashboard = () => {
 
     const fetchTotalPackages = async () => {
         try {
-            let response = await api.get("api/total-packages/"); // Use let instead of const
-            setTotalPackages(response.data.total_quantity); // Update state with total quantity
+            let response = await api.get("api/total-packages/"); 
+            setTotalPackages(response.data.total_quantity); 
             setLatestPackage(response.data.latest_package);
             console.log("Latest package:", latestPackage);
             
@@ -70,9 +70,9 @@ const InventoryDashboard = () => {
         fetchStudents();
         fetchOrderHistory();
         fetchTotalPackages();
-    }, []); // Run all fetches on component load
+    }, []); 
 
-    // Set low inventory based on student count
+  
     useEffect(() => {
         if (products.length > 0 && students.length > 0) {
             const requiredQuantity = students.length;
@@ -84,25 +84,25 @@ const InventoryDashboard = () => {
         console.log("Latest package:", latestPackage);
     }, [products, students]);
 
-// Get chart options for the product distribution
+
 const getChartOptions = () => {
     return {
         tooltip: { trigger: "item" },
         legend: {
-            top: "5%", // Position the legend at the top
-            left: "center", // Center the legend horizontally
-            orient: "horizontal", // Arrange legend items horizontally
+            top: "5%", 
+            left: "center", 
+            orient: "horizontal",
         },
         series: [
             {
                 name: "Product Type",
                 type: "pie",
-                radius: ["30%", "60%"], // Reduce the size of the pie chart
-                center: ["50%", "60%"], // Lower the chart within the container
+                radius: ["30%", "60%"], 
+                center: ["50%", "60%"], 
                 avoidLabelOverlap: true,
                 itemStyle: { borderRadius: 10, borderColor: "#feff", borderWidth: 2 },
-                label: { show: false }, // Disable labels on the chart
-                labelLine: { show: false }, // Disable label lines
+                label: { show: false }, 
+                labelLine: { show: false }, 
                 data: products.map((product) => ({
                     value: product.total_quantity,
                     name: product.category,
@@ -112,13 +112,13 @@ const getChartOptions = () => {
     };
 };
 
-    const orderCount = orders.total_orders;  // Access the total number of orders
-    const latestOrder = orders.latest_order;  // Access the latest order details
+  
+    const latestOrder = orders.latest_order;  
     
     return (
         <div className="container mt-4">
             <h2 className="mb-4">Inventory Dashboard</h2>
-            {/* Grid Row for Chart and Student Validation */}
+
             <div className="row g-4">
                 <div className="col-lg-6">
                     <div className="card shadow-sm p-4">
@@ -160,7 +160,7 @@ const getChartOptions = () => {
                 </div>
             </div>
 
-                             {/* Additional Cards Section */}
+                     
             <div className="row g-4 mt-4">
                 <div className="col-lg-4">
                     <div className="card text-center shadow-sm p-4">

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api"; // Ensure this is correctly configured
+import api from "../api"; 
 import "../styles/StudentInfo.css";
 
 function DisplayID() {
   const [userData, setUserData] = useState(null);
-  const [orders, setOrders] = useState([]);  // To store all orders
+  const [orders, setOrders] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [photoId, setPhotoId] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -19,16 +19,16 @@ function DisplayID() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Fetch the current user's profile
+       
         const profileResponse = await api.get("api/profile/");
         setUserData(profileResponse.data);
 
-        // Fetch the order history
+       
         const orderResponse = await api.get("api/user/order-history/");
         if (orderResponse.data.orders && orderResponse.data.orders.length > 0) {
-          setOrders(orderResponse.data.orders); // Set all orders in state
+          setOrders(orderResponse.data.orders); 
         } else {
-          setOrders([]); // If no orders found, set an empty array
+          setOrders([]); 
         }
       } catch (error) {
         console.error("Error fetching data:", error.response?.data || error.message);
@@ -59,22 +59,22 @@ function DisplayID() {
 
   const handleSubmitPhoto = async () => {
     const formData = new FormData();
-    formData.append("photo_id", photoId);  // photoId is already a File object
+    formData.append("photo_id", photoId); 
 
-    // Log the FormData content to ensure it's being appended correctly
+ 
     for (let pair of formData.entries()) {
         console.log(pair[0] + ": " + pair[1]);
     }
 
     
     try {
-        // Make the PATCH request to update the photo
+       
         const response = await api.patch("api/profile/update/", formData);
 
         console.log("Response:", response.data);
         alert("Photo uploaded successfully!");
 
-        // Update user data
+      
         setUserData({ ...userData, profile: { ...userData.profile, photo_base64: response.data.photo_id } });
     } catch (error) {
         console.error("Error uploading photo:", error);
@@ -93,7 +93,7 @@ function DisplayID() {
     return <p>No user data found.</p>;
   }
 
-  // Check if profile exists and has photo_base64
+  
   const hasPhoto = userData.profile && userData.profile.photo_base64;
   return (
     <div className="container">
@@ -145,33 +145,6 @@ function DisplayID() {
                 ) : (
                   <div>
                     <h4>No photo uploaded.</h4>
-                    {/* <div className="form-file-upload">
-                      <label htmlFor="photo_id">Upload Photo:</label>
-                      <input
-                        id="photo_id"
-                        type="file"
-                        onChange={handlePhotoUpload}
-                      />
-                    </div> */}
-                    {/* {preview && (
-                      <div className="photo-preview">
-                        <img
-                          src={preview}
-                          alt="Uploaded Photo Preview"
-                          style={{                      
-                            width: "200px",
-                            height: "auto",
-                            marginTop: "10px",
-                            marginLeft: "100px",
-                            borderRadius: "30px",
-                            boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
-                            border: "5px solid #004092", }}
-                        />
-                      </div>
-                    )}
-                    <button className="submit-button" onClick={handleSubmitPhoto} disabled={!photoId}>
-                      Submit Photo
-                    </button> */}
                   </div>
                 )}
               </section>
