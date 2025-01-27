@@ -12,6 +12,42 @@ const InventoryDashboard = () => {
     const [orders, setOrders] = useState({ total_orders: 0, latest_order: null });  // Adjusted orders state structure
     const [totalPackages, setTotalPackages] = useState(0); // New state to hold the total sum of packages
     const [nearestDelivery, setNearestDelivery] = useState(null);
+    const [orderStatus, setOrderStatus] = useState([]);
+
+    //Fetch order status
+    // const fetchOrderStatus = async () => {
+    //     try {
+    //         const response = await api.get("api/orderhistory/${studentId}/status/");
+    //          setOrderStatus(response.data); // Set order status in state
+    //     } catch (err) {
+    //         console.error("Error fetching order status:", err);
+    //         setError(err.message);
+    //     }
+    //     };
+    const handleCheckboxChange = async (studentId, currentStatus) => {
+        try {
+            // Update status based on current status or toggle it
+            const newStatus = currentStatus === "Picked Up" ? "Ordered" : "Picked Up";
+            
+            const response = await api.patch(`api/orderhistory/${studentId}/status/`, {
+                status: newStatus,
+            });
+    
+            // Optimistically update the state
+            setOrderStatus(prevStatus => 
+                prevStatus.map(order =>
+                    order.student_id === studentId
+                        ? { ...order, status: newStatus }
+                        : order
+                )
+            );
+    
+            console.log("Status updated successfully", response.data);
+        } catch (err) {
+            console.error("Error updating order status:", err);
+            setError(err.message);
+        }
+    };
 
     // Fetch products data
     const fetchDashboardData = async () => {
@@ -68,6 +104,8 @@ const InventoryDashboard = () => {
         fetchStudents();
         fetchOrderHistory();
         fetchTotalPackages();
+        //fetchOrderStatus(); 
+        handleCheckboxChange
     }, []); // Run all fetches on component load
 
     // Set low inventory based on student count
@@ -127,26 +165,37 @@ const InventoryDashboard = () => {
 
                 <div className="col-lg-6">
                     <div className="card shadow-sm p-4">
-                        <h5 className="card-title">Student Handout Validation</h5>
+                    <h5 className="card-title">Student Handout Validation</h5>
                         <div className="card-body">
-                            {students.length > 0 ? (
-                                <ul className="list-group">
-                                    {students.map((student) => (
+                        {students.length > 0 ? (
+                            <ul className="list-group">
+                                {students.map((student) => {
+                                    const studentOrderStatus = orderStatus.find(
+                                        (order) => order.student_id === student.id
+                                    );
+                                    return (
                                         <li key={student.id} className="list-group-item d-flex align-items-center justify-content-between">
                                             <div>
-                                                <strong>{student.first_name}</strong> <strong>{student.last_name}</strong><br />
-                                                <small>Email: {student.email}</small>
+                                                <strong>{student.first_name} {student.last_name}</strong>
+                                                <br />
+                                                <small>
+                                                    Status:{" "}
+                                                    {studentOrderStatus ? studentOrderStatus.status : "No orders yet"}
+                                                </small>
                                             </div>
                                             <input
                                                 type="checkbox"
                                                 className="form-check-input"
+                                                checked={studentOrderStatus?.status === "Picked Up"}
+                                                onChange={() => handleCheckboxChange(student.id, studentOrderStatus?.status)}
                                             />
                                         </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>No students assigned to packages</p>
-                            )}
+                                    );
+                                })}
+                            </ul>
+                        ) : (
+                            <p>No students assigned to packages</p>
+                        )}
                         </div>
                     </div>
                 </div>

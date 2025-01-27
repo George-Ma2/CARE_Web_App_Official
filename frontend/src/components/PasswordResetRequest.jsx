@@ -41,7 +41,7 @@ const PasswordResetRequest = () => {
         }
         setEmail('');
     };
-
+    
     return (
         <div className="form-container">
             <img src={careLogo} alt="Logo" className="form-logo" />

@@ -1,7 +1,7 @@
 from . import views
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import OrderHistoryCreateView, get_packages_details, RegisteredStudentsView, OrderHistoryView, get_total_packages, UserOrderHistoryView, OrderConfirmationView
+from .views import OrderHistoryCreateView, get_packages_details, RegisteredStudentsView, OrderHistoryView, get_total_packages, UserOrderHistoryView, OrderConfirmationView, OrderStatusView
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet, basename='user')
@@ -23,9 +23,11 @@ urlpatterns = [
     path('care-packages/same-create-date/', views.get_packages_with_same_create_date, name='packages-same-create-date'),
     path('orderhistory/', OrderHistoryView.as_view(), name='order-history'),
     path('order-history/create/', OrderHistoryCreateView.as_view(), name='order-history-create'),
+    path('orderhistory/<int:pk>/status/', OrderStatusView.as_view(), name='orderhistory-status'),
+    # path('order-status/', OrderStatusView.as_view(), name= 'order-status'),
     path('user/order-history/', UserOrderHistoryView.as_view(), name='user-order-history'),
     path('care-packages/<int:pk>/delete/', views.CarePackageDeleteView.as_view(), name='care-package-delete'),
     path('order-receipt/', OrderConfirmationView.as_view(), name='order-receipt'),
     path('', include(router.urls)),
-
+    
 ]

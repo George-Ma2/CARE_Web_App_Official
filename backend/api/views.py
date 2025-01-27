@@ -6,7 +6,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, OrderHistorySerializer
-from .models import Inventory, CarePackage, OrderHistory, CarePackageItem
+from .models import Inventory, CarePackage, OrderHistory, CarePackageItem, CarePackageStatus
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
@@ -181,11 +181,11 @@ def get_packages_details(request):
 
 @csrf_exempt
 def get_total_packages(request):
- 
+
     try:
         if request.method == "GET":
             all_packages = CarePackage.objects.all()
-               
+            
             # Calculate the sum of all quantities
             total_quantity = sum(package.quantity for package in all_packages)
 
@@ -504,6 +504,35 @@ class UserOrderHistoryView(APIView):
             # Handle unexpected errors
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class OrderStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    # def get(self, request, *args, **kwargs):
+    #     orders = OrderHistory.objects.filter(status=CarePackageStatus.ORDERED)
+    #     serializer = OrderHistorySerializer(orders, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
+    def patch(self, request, *args, **kwargs):
+        # Fetch the order history object by its ID
+        order_history_id = kwargs.get('pk')
+        try:
+            order_history = OrderHistory.objects.get(id=order_history_id)
+        except OrderHistory.DoesNotExist:
+            return Response({'detail': 'Order history not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the provided status is valid
+        new_status = request.data.get('status')
+        if new_status not in dict(CarePackageStatus.choices):
+            return Response({'detail': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update the status of the order history
+        order_history.status = new_status
+        order_history.save()
+
+        # Return the updated data
+        serializer = OrderHistorySerializer(order_history)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 from datetime import datetime
 
