@@ -71,7 +71,7 @@ const CreatePackageModal = ({
             name: carePackageName,
             description: carePackageDescription,
             quantity: numPackages,
-            initial_quantity: initialQuantity, // Automatically set
+            initial_quantity: initialQuantity,
             items: selectedItems.map((item) => ({
                 product_id: item.inventory_item_id,
                 quantity: item.quantity * numPackages,
@@ -137,7 +137,7 @@ const CreatePackageModal = ({
                             onChange={(e) => {
                                 const value = Number(e.target.value);
                                 setNumPackages(value);
-                                setInitialQuantity(value); // Sync with initialQuantity
+                                setInitialQuantity(value); 
                             }}
                             min="1"
                             required

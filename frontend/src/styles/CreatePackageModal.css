@@ -1,4 +1,4 @@
-/* Modal Overlay */
+
 .modal-overlay-create {
     position: fixed;
     top: 0;
@@ -10,26 +10,26 @@
     justify-content: center;
     align-items: center;
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    overflow: hidden; /* Prevent scrolling on the background when modal is open */
+    overflow: hidden; 
 }
 
-/* Modal Content */
+
 .modal-content-create {
     background-color: white;
     border-radius: 8px;
-    width: 600px; /* Increased width */
-    max-width: 90%; /* Allow better responsiveness on smaller screens */
-    max-height: 80%; /* Limit height for overflow handling */
+    width: 600px;
+    max-width: 90%; 
+    max-height: 80%; 
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     transform: scale(0.9);
     animation: scaleIn 0.3s forwards;
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    overflow-y: auto; 
 }
 
-/* Scale-in animation for modal */
+
 @keyframes scaleIn {
     0% {
         transform: scale(0.9);
@@ -39,7 +39,7 @@
     }
 }
 
-/* Close button inside modal */
+
 .modal-content-create .close-btn {
     background: none;
     border: none;
@@ -49,7 +49,7 @@
     margin-left: auto;
 }
 
-/* Form labels and inputs inside modal */
+
 .modal-content-create label {
     display: block;
     margin-bottom: 12px;
@@ -57,21 +57,21 @@
     color: #333;
 }
 
-/* Text Area for Description */
+
 .modal-content-create textarea {
-    width: 100%; /* Full width of the modal */
+    width: 100%; 
     padding: 10px;
-    margin-top: 20px; /* Adjusted margin to ensure it appears below the label */
-    margin-bottom: 20px; /* Space below the text area */
+    margin-top: 20px; 
+    margin-bottom: 20px; 
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
     color: #333;
-    resize: vertical; /* Allow vertical resizing */
-    min-height: 120px; /* Minimum height for better visibility */
+    resize: vertical; 
+    min-height: 120px; 
 }
 
-/* Input Fields */
+
 .modal-content-create input[type="text"],
 .modal-content-create input[type="number"],
 .modal-content-create input[type="date"],
@@ -86,7 +86,7 @@
     color: #333;
 }
 
-/* General button styles */
+
 .modal-content-create button {
     padding: 10px 20px;
     font-size: 16px;
@@ -94,10 +94,10 @@
     cursor: pointer;
     border: none;
     margin-top: 10px;
-    width: 100%; /* Full width for their respective categories */
+    width: 100%; 
 }
 
-/* Update Button Styles */
+
 .save-button {
     background-color: #007bff;
     color: white;
@@ -107,7 +107,7 @@
     background-color: #0056b3;
 }
 
-/* Close Button Styles */
+
 .close-button {
     background-color: #C0C0C0;
     color: #333;
@@ -117,7 +117,7 @@
     background-color: #A9A9A9;
 }
 
-/* Modal Footer (space between buttons) */
+
 .modal-footer-create {
     display: flex;
     justify-content: space-between;

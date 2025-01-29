@@ -25,7 +25,6 @@ const Inventory = () => {
 
     const handleAddProduct = async (newProduct) => {
         try {
-            // Check if the product already exists in the table with the same name, category, and expiration date
             const existingProduct = products.find(
                 (product) =>
                     product.name === newProduct.name &&
@@ -34,18 +33,15 @@ const Inventory = () => {
             );
 
             if (existingProduct) {
-                // Increment the quantity of the existing product
                 const updatedProduct = { ...existingProduct, quantity: parseInt(existingProduct.quantity) + parseInt(newProduct.quantity) };
-                
-                // Update the backend (update the product's quantity)
                 await updateProductQuantity(updatedProduct.id, updatedProduct.quantity);
 
-                // Update the product list on the front-end
+            
                 setProducts(products.map((product) =>
                     product.id === existingProduct.id ? updatedProduct : product
                 ));
             } else {
-                // If no duplicate found, add the new product
+           
                 const addedProduct = await addProduct(newProduct);
                 setProducts([...products, addedProduct]);
             }
@@ -54,11 +50,11 @@ const Inventory = () => {
         }
     };
 
-    // Handle deleting a product
+
     const handleDeleteProduct = async (id) => {
         try {
-        await deleteProduct(id); // Delete the product from the backend
-        setProducts(products.filter((product) => product.id !== id)); // Remove the product from the list
+        await deleteProduct(id); 
+        setProducts(products.filter((product) => product.id !== id)); 
         } catch (error) {
         console.error('Error deleting product:', error);
         }

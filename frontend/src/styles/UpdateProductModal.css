@@ -1,4 +1,4 @@
-/* Modal Overlay */
+
 .modal-overlay-update {
     position: fixed;
     top: 0;
@@ -12,7 +12,7 @@
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* Modal Content */
+
 .modal-content-update {
     background-color: white;
     border-radius: 8px;
@@ -26,7 +26,6 @@
     flex-direction: column;
 }
 
-/* Scale-in animation for modal */
 @keyframes scaleIn {
     0% {
         transform: scale(0.9);
@@ -36,7 +35,7 @@
     }
 }
 
-/* Close button inside modal */
+
 .modal-content-update .close-btn {
     background: none;
     border: none;
@@ -46,7 +45,7 @@
     margin-left: auto;
 }
 
-/* Form labels and inputs inside modal */
+
 .modal-content-update label {
     display: block;
     margin-bottom: 12px;
@@ -67,7 +66,7 @@
     font-size: 16px;
     color: #333;
 }
-/* General button styles */
+
 .modal-content-update button {
     padding: 10px 20px;
     font-size: 16px;
@@ -75,10 +74,10 @@
     cursor: pointer;
     border: none;
     margin-top: 10px;
-    width: 100%; /* Full width for their respective categories */
+    width: 100%; 
 }
 
-/* Update Button Styles */
+
 .save-button-update {
     background-color: #007bff;
     color: white;
@@ -88,7 +87,7 @@
     background-color: #0056b3;
 }
 
-/* Close Button Styles */
+
 .close-button-update {
     background-color: #C0C0C0;
     color: #333;
@@ -98,7 +97,7 @@
     background-color: #A9A9A9;
 }
 
-/* Modal Footer (space between buttons) */
+
 .modal-footer-update {
     display: flex;
     justify-content: space-between;

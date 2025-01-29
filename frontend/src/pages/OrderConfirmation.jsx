@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/OrderConfirmation.css";
-import api from "../api"; // Ensure this is correctly configured
+import api from "../api"; 
 
 function OrderConfirmation() {
   const [userData, setUserData] = useState(null);
-  const [orderData, setOrderData] = useState(null); // Change from 'orders' to 'orderData'
+  const [orderData, setOrderData] = useState(null); 
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -14,13 +14,13 @@ function OrderConfirmation() {
 
     const fetchOrderConfirmationData = async () => {
       try {
-        // Fetch the current user's profile
+
         const profileResponse = await api.get("api/profile/");
         setUserData(profileResponse.data);
         console.log("User:", profileResponse.data);
 
-        // Fetch the most recent order using the new endpoint
-        const orderResponse = await api.get("api/order-receipt/");  // Update to the new endpoint
+
+        const orderResponse = await api.get("api/order-receipt/");  
         console.log("Order Data:", orderResponse.data);
 
         if (orderResponse.data) {
@@ -51,7 +51,6 @@ function OrderConfirmation() {
   }
 
   const formatDate = (dateString) => {
-    // Parse the date string and return only the date part (YYYY-MM-DD)
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
   };

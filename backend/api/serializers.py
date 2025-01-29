@@ -77,7 +77,7 @@ class CarePackageSerializer(serializers.ModelSerializer):
             'description',
             'items',
             'quantity',
-            'initial_quantity',  # Include the new field
+            'initial_quantity',  
             'delivery_date',
             'status',
             'created_at',
@@ -85,7 +85,7 @@ class CarePackageSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             'id': {'read_only': True},
-            'initial_quantity': {'read_only': True},  # Make this field read-only
+            'initial_quantity': {'read_only': True},  
             'created_at': {'read_only': True},
             'updated_at': {'read_only': True},
         }

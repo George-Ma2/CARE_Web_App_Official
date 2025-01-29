@@ -2,30 +2,30 @@
 .container-not-found {
     display: flex;
     flex-direction: column;
-    align-items: center;  /* Horizontally center */
-    justify-content: center;  /* Vertically center */
-    height: 100vh;  /* Make the container take full height of the viewport */
+    align-items: center; 
+    justify-content: center;  
+    height: 100vh; 
     text-align: center;
-    background-color: #f8f9fa;  /* Light background color for contrast */
-    color: #333;  /* Text color */
+    background-color: #f8f9fa;  
+    color: #333; 
 }
 
 .header-not-found {
-    margin-bottom: 20px;  /* Space between the image and text */
+    margin-bottom: 20px; 
 }
 
 .header-not-found img {
-    max-width: 150px;  /* Limit the image size */
-    height: auto;  /* Maintain aspect ratio */
+    max-width: 150px; 
+    height: auto; 
 }
 
 h1 {
-    font-size: 3rem;  /* Large font size for the heading */
+    font-size: 3rem; 
     margin: 10px 0;
 }
 
 p {
     font-size: 1.2rem;
     margin-top: 10px;
-    color: #666;  /* Slightly lighter text color for the paragraph */
+    color: #666;  
 }

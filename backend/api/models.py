@@ -1,16 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
-
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.dispatch import receiver
 from django.urls import reverse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
-from django.db import models
+from django.db.models.signals import post_save
 
 
-class ProductCategory(models.TextChoices): # <constant_name> = '<database_value>', '<human_readable_value>'
+
+class ProductCategory(models.TextChoices): 
     RICE_AND_PASTA = 'Rice and Pasta', 'Rice and Pasta'
     PROCESSED_PROTEINS = 'Processed Proteins', 'Processed Proteins'
     CANNED_FOOD = 'Canned Food', 'Canned Food'
@@ -21,8 +21,6 @@ class Inventory(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField()
-    # quantity_delivered = models.PositiveIntegerField()
-    # quantity_on_change = models.IntegerField()
     category = models.CharField(
         max_length=50,
         choices=ProductCategory.choices,
@@ -84,8 +82,7 @@ def password_reset_token_created(reset_password_token, *args, **kwargs):
     msg.send()
 
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, **kwargs):
@@ -108,7 +105,7 @@ class CarePackage(models.Model):
     description = models.TextField(blank=True, null=True)
     items = models.ManyToManyField(Inventory, through='CarePackageItem')
     quantity = models.PositiveIntegerField()
-    initial_quantity = models.PositiveIntegerField()  # Set default as a placeholder
+    initial_quantity = models.PositiveIntegerField()  
     delivery_date = models.DateField(blank=True, null=True)
     status = models.CharField(
         max_length=50,
@@ -119,7 +116,6 @@ class CarePackage(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        # Dynamically set initial_quantity to quantity if not explicitly provided
         if self.initial_quantity is None: 
             self.initial_quantity = self.quantity
         super().save(*args, **kwargs)
@@ -154,12 +150,12 @@ class OrderHistory(models.Model):
 
 @receiver(post_save, sender=OrderHistory)
 def send_order_confirmation_email(sender, instance, created, **kwargs):
-    if created:  # Only send email when a new order is created
+    if created: 
         user = instance.user
         package = CarePackage.objects.filter(id=instance.package_id).first()
 
         if not package:
-            return  # No email sent if package doesn't exist
+            return  
 
         # Fetch package details
         package_description = package.description
@@ -196,26 +192,3 @@ def send_order_confirmation_email(sender, instance, created, **kwargs):
         print ("Sending to email:", user.email)
         msg.attach_alternative(email_html_message, "text/html")
         msg.send()
-
-
-# class CarePackagePickup(models.Model):
-#     care_package = models.ForeignKey(CarePackage, related_name='pickups', on_delete=models.CASCADE)
-#     user = models.ForeignKey(User, related_name='pickups', on_delete=models.SET_NULL, null=True)
-#     picked_up_at = models.DateTimeField(auto_now_add=True)
-#     picked_up_location = models.CharField(max_length=255, blank=True, null=True)
-#     status = models.CharField(max_length=50, choices=[('PICKED_UP', 'Picked Up'), ('CANCELLED', 'Cancelled')], default='PICKED_UP')
-
-#     def cancel_pickup(self):
-#         """Handles the cancellation of a pickup and replenishes inventory."""
-#         if self.status == 'PICKED_UP':
-#             self.status = 'CANCELLED'
-#             self.save()
-
-#             # Replenish inventory
-#             for item in self.care_package.items.all():
-#                 item.product.quantity += item.quantity
-#                 item.product.save()
-
-#     def __str__(self):
-#         return f"Care Package {self.care_package.name} picked up by {self.user.username if self.user else 'Unknown'}"
-

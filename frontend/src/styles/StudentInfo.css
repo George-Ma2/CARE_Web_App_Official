@@ -55,10 +55,10 @@
   background: #fff;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Avoids extra scrolling on the dashboard */
+  overflow: hidden; 
   padding: 7px 17px 57px;
-  height: 100vh; /* Make dashboard height span full viewport */
-  box-sizing: border-box; /* Ensures padding is included in height */
+  height: 100vh; 
+  box-sizing: border-box; 
 }
 
 .header-container {
@@ -149,7 +149,7 @@
   margin: 20px auto;
   width: 100%;
   max-width: 1016px;
-  max-height: 90vh; /* Prevents excessive height on larger screens */
+  max-height: 90vh; 
   overflow-y: auto;
   margin-bottom:-120px;
   
@@ -174,7 +174,7 @@
   margin-bottom: 55px;
 }
 
-/* Styling the Choose File Button */
+
 .id-section input[type="file"] {
   font-family: 'Poppins', var(--default-font-family);
   font-size: 16px;
@@ -194,11 +194,11 @@
 
 .id-section label {
   font-family: 'Poppins', var(--default-font-family);
-  font-size: 20px; /* Increased font size */
-  font-weight: 700; /* Make it bold */
+  font-size: 20px; 
+  font-weight: 700;
   color: black;
-  margin-bottom: 15px; /* Adds space between label and input */
-  display: block; /* Ensure it takes up its own line */
+  margin-bottom: 15px; 
+  display: block; 
 }
 
 .submit-button {
@@ -220,9 +220,10 @@
 .order-section {
   display: flex;
   flex-grow: 1;
-  gap: 10px; /* Reduced gap */
+  gap: 10px;
   font: 700 16px Poppins, sans-serif;
-  margin-top: 10px; /* Reduced margin-top */
+  margin-top: 10px; 
+  margin-left:20px;
 }
 
 .order-form {
@@ -251,7 +252,7 @@
 
 .summary-content {
   display: flex;
-  margin-top: 40px; /* Reduced margin-top */
+  margin-top: 40px; 
   width: 100%;
   flex-direction: column;
   align-items: start;
@@ -275,9 +276,9 @@
 
 
 .order-info {
-  padding: 8px 10px; /* Adjust padding for input boxes */
-  border: 1px solid #ccc; /* Add border for inputs */
-  border-radius: 5px; /* Rounded corners */
+  padding: 8px 10px; 
+  border: 1px solid #ccc;
+  border-radius: 5px;
   font-size: 14px;
   width: 120px;
 }
@@ -343,7 +344,7 @@
   
 }
 
-/* Center-align text in the second column */
+
 .footer-column-si:nth-child(2) {
   display: flex;
   flex-direction: column;
@@ -351,14 +352,14 @@
   justify-content: center;
 }
 
-/* Highlight style for the first paragraph in the second column */
+
 .footer-column-si:nth-child(2) .highlight {
   font-size: 18px;
   font-weight: bold;
   color: #F6C932;
   margin-bottom: 10px;
 }
-/* Footer column styles */
+
 .footer-column-si:nth-child(3) {
   display: flex;
   flex-direction: column;
@@ -367,7 +368,7 @@
   text-align: center;
 }
 
-/* "Follow Us" heading */
+
 .footer-column-si:nth-child(3) h2 {
   font-size: 24px;
   color: #a4d7f0;
@@ -375,14 +376,14 @@
   margin-bottom: 15px;
 }
 
-/* Social media links list */
+
 .footer-column-si:nth-child(3) ul.social-links {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-/* Social media links */
+
 .footer-column-si:nth-child(3) ul.social-links li {
   margin-bottom: 10px;
 }
@@ -398,11 +399,11 @@
   text-decoration: underline;
 }
 
-/* Apply these styles only to tables within .order-table-container */
+
 .order-table-container {
   margin-top: 20px;
   max-height: 300px;
-  overflow-x: auto; /* Adds horizontal scrolling on small screens */
+  overflow-x: auto; 
   overflow-y: auto;
 }
 
@@ -415,7 +416,7 @@
   
 }
 
-/* Ensure styling is correctly applied to both order-table-container and order-table-container2 */
+
 .order-table-container2 {
   margin-top: 90px;
   padding-left: 50px;
@@ -438,20 +439,20 @@
   text-align: center;
 }
 
-/* Add specific styles for th inside .order-table-container */
+
 .order-table-container th {
-  background-color: #F6C932 !important; /* Force yellow background for header */
+  background-color: #F6C932 !important; 
   color: #121111 !important;
   font-weight: 700;
 }
 
-/* Custom header styling for .order-header class */
+
 .order-table-container .order-header,
 .order-table-container2 .order-header {
   background-color: #d90f13 !important;
   color: #fff;
   font-weight: 700;
-  font-size: 20px; /* Adjust font size as needed */
+  font-size: 20px;
   padding: 12px 15px;
   text-align: center;
   width: 100%;

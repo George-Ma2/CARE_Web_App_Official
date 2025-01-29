@@ -266,7 +266,7 @@ body {
   
 }
 
-/* Center-align text in the second column */
+
 .footer-column-calendar:nth-child(2) {
   display: flex;
   flex-direction: column;
@@ -274,14 +274,13 @@ body {
   justify-content: center;
 }
 
-/* Highlight style for the first paragraph in the second column */
 .footer-column-calendar:nth-child(2) .highlight {
   font-size: 18px;
   font-weight: bold;
   color: #F6C932;
   margin-bottom: 10px;
 }
-/* Footer column styles */
+
 .footer-column-calendar:nth-child(3) {
   display: flex;
   flex-direction: column;
@@ -290,7 +289,7 @@ body {
   text-align: center;
 }
 
-/* "Follow Us" heading */
+
 .footer-column-calendar:nth-child(3) h2 {
   font-size: 24px;
   color: #a4d7f0;
@@ -298,14 +297,14 @@ body {
   margin-bottom: 15px;
 }
 
-/* Social media links list */
+
 .footer-column-calendar:nth-child(3) ul.social-links {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-/* Social media links */
+
 .footer-column-calendar:nth-child(3) ul.social-links li {
   margin-bottom: 10px;
 }

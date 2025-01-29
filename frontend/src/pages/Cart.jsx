@@ -18,12 +18,12 @@ function Cart() {
     document.title = "Cart";
     console.log("selectedPackage:", selectedPackage);
 
-    // Load the selected package into the cart
+ 
     if (selectedPackage) {
       setCartItems([
         {
           name: "Care Package",
-          contents: selectedPackage.contents || ["Item 1", "Item 2", "Item 3"], // Replace with actual contents
+          contents: selectedPackage.contents || ["Item 1", "Item 2", "Item 3"], 
         },
       ]);
     }
@@ -32,15 +32,14 @@ function Cart() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Fetch the current user's profile directly
+   
         const response = await api.get("api/profile");
-        // Assuming response.data contains the logged-in user's information
         console.log("Current User Data:", response.data);
         setUserData(response.data);
       } catch (error) {
         console.error("Error fetching user data:", error.response?.data || error.message);
         if (error.response?.status === 401) {
-          navigate("/login"); // Redirect on unauthorized
+          navigate("/login"); 
         }
       } finally {
         setLoading(false);
@@ -63,16 +62,16 @@ function Cart() {
       setIsSubmitting(true);
 
       const orderData = {
-        package: selectedPackage.id, // Use `package` to match the ForeignKey field name
-        status: "Ordered",          // Set a valid status, matching your CarePackageStatus choices
+        package: selectedPackage.id, 
+        status: "Ordered",          
         user: userData.id
       };
       
       console.log("Order data:", orderData);
-      // Make the API request to create the order
+
       const response = await api.post('/api/order-history/create/', orderData);
       setSelectedPackage(null);
-      // Redirect to order confirmation page
+
       navigate("/orderconfirmation");
 
     } catch (error) {

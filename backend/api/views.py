@@ -6,60 +6,17 @@ from rest_framework.decorators import action, api_view
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, OrderHistorySerializer
-from .models import Inventory, CarePackage, OrderHistory, CarePackageItem
+from .models import Inventory, CarePackage, OrderHistory, CarePackageItem, CarePackageStatus
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db.models import Sum
 from django.utils import timezone
+from datetime import datetime
 
 
-class RegisteredStudentsView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        # Filter users where is_staff=False
-        students = User.objects.filter(is_staff=False).values('id', 'first_name', 'last_name', 'email')
-        return Response({'students': list(students)})
-
-
-class OrderHistoryView(APIView):
-    permission_classes = [IsStaffUser]
-
-    def get(self, request):
-        try:
-            # Fetch all orders, and count total number of orders
-            orders = OrderHistory.objects.all()
-
-            # Count the total number of orders
-            total_orders = orders.count()
-
-            # Get the most recent order (assuming orders have an 'order_date' field)
-            latest_order = orders.order_by('order_date').last()
-
-            # If there's no order yet
-            if not latest_order:
-                return Response({"total_orders": total_orders, "latest_order": None})
-
-            # Extract relevant information about the most recent order, including user details
-            latest_order_data = {
-                'order_id': latest_order.id,
-                'order_date': latest_order.order_date.strftime('%B %d, %Y'),
-                'status': latest_order.status,
-                'user_first_name': latest_order.user.first_name if latest_order.user else None,
-                'user_last_name': latest_order.user.last_name if latest_order.user else None,
-            }
-
-            # Return the total orders and the most recent order information
-            return Response({
-                'total_orders': total_orders,
-                'latest_order': latest_order_data
-            })
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
-
+#AUTHENTICATION---------------------------------------
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -72,163 +29,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-def get_oldest_package_date(request):
-    """
-    View to fetch the oldest package's creation date, considering only packages
-    with a quantity greater than zero. If the oldest package has a quantity of zero,
-    it selects the next closest package with a valid quantity.
-    """
-    try:
-        # Query the oldest package based on `created_at` with a quantity greater than 0
-        oldest_package = CarePackage.objects.filter(quantity__gt=0).order_by('created_at').first()
-        
-        if oldest_package:
-            # If the oldest package has a valid quantity, return its creation date
-            return JsonResponse({'oldest_date': oldest_package.created_at.isoformat()})
-        else:
-            # If no eligible package is found, query the next closest package with quantity > 0
-            next_package = CarePackage.objects.filter(quantity__gt=0).order_by('created_at').skip(1).first()
-
-            if next_package:
-                # Return the next closest package's creation date
-                return JsonResponse({'oldest_date': next_package.created_at.isoformat()})
-            else:
-                # Handle the case where no eligible packages are found
-                return JsonResponse({'oldest_date': None, 'message': 'No packages with valid quantity found'}, status=404)
-
-    except Exception as e:
-        # Handle unexpected errors
-        return JsonResponse({'error': str(e)}, status=500)
-
-
-
-from datetime import datetime
-@csrf_exempt
-def get_packages_with_same_create_date(request):
-    """
-    Get all packages with the same creation date as the oldest package.
-    """
-    try:
-        if request.method == "GET":
-            # Get the createDate from the query parameters
-            createDate = request.GET.get("create_date", None)
-
-            if not createDate:
-                return JsonResponse({"error": "Missing create_date parameter."}, status=400)
-
-            try:
-                # Parse the createDate and extract the date portion
-                create_date_obj = datetime.fromisoformat(createDate).date()
-            except ValueError:
-                return JsonResponse({"error": "Invalid date format. Use ISO 8601 format."}, status=400)
-
-            # Query packages created on the specified date
-            same_date_packages = CarePackage.objects.filter(created_at__date=create_date_obj)
-
-            # Prepare the response data
-            packages_data = [
-                {
-                    "id": package.id,
-                    "created_at": package.created_at.isoformat(),
-                    "delivery_date": package.delivery_date,
-                    "pickup_location": package.description,
-                    "initial_quantity": package.initial_quantity,  # Include initial quantity
-                    "quantity": package.quantity,
-
-       
-                    "contents": [
-                        {
-                            "item_name": item.product.name,
-                            "quantity": item.quantity / package.initial_quantity  # Divide by initial quantity
-                        }
-                        for item in package.care_package_items.all()
-                    ],
-                }
-                for package in same_date_packages
-            ]
-
-            return JsonResponse(packages_data, safe=False, status=200)
-
-        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
-    except Exception as e:
-        # Log the error and return JSON error response
-        print(f"Error in get_packages_with_same_create_date: {e}")
-        return JsonResponse({"error": "An unexpected error occurred."}, status=500)
-
-@csrf_exempt
-def get_packages_details(request):
- 
-    try:
-        if request.method == "GET":
-            all_packages = CarePackage.objects.all()
-
-          
-            # Prepare the response data
-            packages_data = [
-                {
-                    "id": package.id,
-                    "created_at": package.created_at.isoformat(),
-                    "delivery_date": package.delivery_date,
-                    "pickup_location": package.description,
-                    "quantity": package.quantity,
-                    "contents": [
-                        {
-                            "item_name": item.product.name,
-                            "quantity": item.quantity,
-                            
-                        }
-                        
-                        for item in package.care_package_items.all()
-                    ],
-                }
-                for package in all_packages
-            ]
-            return JsonResponse(packages_data, safe=False, status=200)
-
-        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.response import Response
-from .models import CarePackage  # Import your model
-
-@csrf_exempt
-def get_total_packages(request):
-    try:
-        if request.method == "GET":
-            # Retrieve all CarePackage objects
-            all_packages = CarePackage.objects.all()
-
-            # Calculate the sum of all quantities
-            total_quantity = sum(package.quantity for package in all_packages)
-
-            # Get the latest package based on creation time
-            latest_package = all_packages.order_by('created_at').last()
-
-            if not latest_package:
-                # No packages found, return response with None
-                return JsonResponse({"total_quantity": total_quantity, "latest_package": None}, status=200)
-
-            # Prepare data for the latest package
-            latest_package_data = {
-                'name': latest_package.name,
-                'quantity': latest_package.quantity,
-                'created_at': latest_package.created_at.strftime('%B %d, %Y'),  # Format as string
-            }
-
-            # Prepare the response data
-            response_data = {
-                "total_quantity": total_quantity,
-                "latest_package": latest_package_data,  # Use serializable data
-            }
-
-            return JsonResponse(response_data, status=200)
-
-        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+#USERS------------------------------------------------
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -331,76 +132,16 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(user_data)
         except AttributeError:
             return Response({"error": "Profile not found for the user."}, status=status.HTTP_404_NOT_FOUND)
-    
-class InventoryListCreate(generics.ListCreateAPIView):
-    queryset = Inventory.objects.all()
-    serializer_class = InventorySerializer
-    permission_classes = [IsStaffUser]
 
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            print(serializer.errors)
 
-class InventoryRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Inventory.objects.all()
-    serializer_class = InventorySerializer
-    permission_classes = [IsStaffUser]
-from datetime import datetime
-
-from django.utils import timezone
-
-class InventoryCategorySummary(generics.GenericAPIView):
-    permission_classes = [IsStaffUser]
+class RegisteredStudentsView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Aggregate inventory quantity by category
-        category_summary = (
-            Inventory.objects
-            .values('category')
-            .annotate(total_quantity=Sum('quantity'))
-            .order_by('category')
-        )
-        
-        # Get the current time
-        now = timezone.now()
+        # Filter users where is_staff=False
+        students = User.objects.filter(is_staff=False).values('id', 'first_name', 'last_name', 'email')
+        return Response({'students': list(students)})
 
-        # Retrieve the next package with the nearest (earliest) delivery date that has not passed
-        package = CarePackage.objects.filter(delivery_date__gte=now).order_by('delivery_date').first()
-
-        # If no package is found with a future delivery date, handle appropriately
-        if package:
-            package_data = {
-                "delivery_date": package.delivery_date.strftime('%B %d, %Y')
-            }
-        else:
-            package_data = {
-                "delivery_date": None  # No future packages
-            }
-
-        response_data = {
-            'category_summary': category_summary,
-            'nearest_delivery': package_data
-        }
-        return Response(response_data)
-
-
-
-class UpdateProductQuantity(APIView):
-    permission_classes = [IsStaffUser]
-    def patch(self, request, pk):
-        try:
-            product = Inventory.objects.get(pk=pk)
-        except Inventory.DoesNotExist:
-            return Response({"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        # Update the quantity of the product
-        product.quantity = request.data.get('quantity', product.quantity)
-        product.save()
-
-        # Return the updated product
-        return Response(InventorySerializer(product).data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -445,27 +186,8 @@ def update_user_photo(request):
         "photo_id": ProfileSerializer(user_profile).data['photo_base64']
     }, status=status.HTTP_200_OK)
 
-@api_view(['PATCH'])
-def update_product(request, pk):
-    try:
-        product = Inventory.objects.get(pk=pk)
-    except Inventory.DoesNotExist:
-        return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Update the fields
-    serializer_product = InventorySerializer(product, data=request.data, partial=True)
-    if serializer_product.is_valid():
-        updated_product = serializer_product.save()
-
-        # If quantity goes to zero, delete the product
-        if updated_product.quantity == 0:
-            updated_product.delete()
-            return Response({'message': 'Product deleted due to quantity being 0'}, status=status.HTTP_204_NO_CONTENT)
-
-        return Response(serializer_product.data, status=status.HTTP_200_OK)
-
-    return Response(serializer_product.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#CAREPACKAGES---------------------------------------------
 
 
 class CarePackageViewSet(viewsets.ModelViewSet):
@@ -491,14 +213,268 @@ class CarePackageDeleteView(APIView):
             return Response({"detail": "Care package not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-class OrderHistoryCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-    def post(self, request, *args, **kwargs):
-        serializer = OrderHistorySerializer(data=request.data)
+def get_oldest_package_date(request):
+    """
+    View to fetch the oldest package's creation date, considering only packages
+    with a quantity greater than zero. If the oldest package has a quantity of zero,
+    it selects the next closest package with a valid quantity.
+    """
+    try:
+        # Query the oldest package based on `created_at` with a quantity greater than 0
+        oldest_package = CarePackage.objects.filter(quantity__gt=0).order_by('created_at').first()
+        
+        if oldest_package:
+            # If the oldest package has a valid quantity, return its creation date
+            return JsonResponse({'oldest_date': oldest_package.created_at.isoformat()})
+        else:
+            # If no eligible package is found, query the next closest package with quantity > 0
+            next_package = CarePackage.objects.filter(quantity__gt=0).order_by('created_at').skip(1).first()
+
+            if next_package:
+                # Return the next closest package's creation date
+                return JsonResponse({'oldest_date': next_package.created_at.isoformat()})
+            else:
+                # Handle the case where no eligible packages are found
+                return JsonResponse({'oldest_date': None, 'message': 'No packages with valid quantity found'}, status=404)
+
+    except Exception as e:
+        # Handle unexpected errors
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+
+
+@csrf_exempt
+def get_packages_with_same_create_date(request):
+    """
+    Get all packages with the same creation date as the oldest package.
+    """
+    try:
+        if request.method == "GET":
+            # Get the createDate from the query parameters
+            createDate = request.GET.get("create_date", None)
+
+            if not createDate:
+                return JsonResponse({"error": "Missing create_date parameter."}, status=400)
+
+            try:
+                # Parse the createDate and extract the date portion
+                create_date_obj = datetime.fromisoformat(createDate).date()
+            except ValueError:
+                return JsonResponse({"error": "Invalid date format. Use ISO 8601 format."}, status=400)
+
+             # Get the current date
+            today = timezone.now().date()
+
+            # Query packages created on the specified date and with a future or present delivery date
+            same_date_packages = CarePackage.objects.filter(
+                created_at__date=create_date_obj,
+                delivery_date__gte=today  # Exclude past delivery dates
+            )
+
+            # Prepare the response data
+            packages_data = [
+                {
+                    "id": package.id,
+                    "created_at": package.created_at.isoformat(),
+                    "delivery_date": package.delivery_date,
+                    "pickup_location": package.description,
+                    "initial_quantity": package.initial_quantity, 
+                    "quantity": package.quantity,
+
+       
+                    "contents": [
+                        {
+                            "item_name": item.product.name,
+                            "quantity": item.quantity / package.initial_quantity 
+                        }
+                        for item in package.care_package_items.all()
+                    ],
+                }
+                for package in same_date_packages
+            ]
+
+            return JsonResponse(packages_data, safe=False, status=200)
+
+        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
+    except Exception as e:
+        # Log the error and return JSON error response
+        print(f"Error in get_packages_with_same_create_date: {e}")
+        return JsonResponse({"error": "An unexpected error occurred."}, status=500)
+
+@csrf_exempt
+def get_packages_details(request):
+ 
+    try:
+        if request.method == "GET":
+            all_packages = CarePackage.objects.all()
+
+          
+            # Prepare the response data
+            packages_data = [
+                {
+                    "id": package.id,
+                    "created_at": package.created_at.isoformat(),
+                    "delivery_date": package.delivery_date,
+                    "pickup_location": package.description,
+                    "quantity": package.quantity,
+                    "contents": [
+                        {
+                            "item_name": item.product.name,
+                            "quantity": item.quantity,
+                            
+                        }
+                        
+                        for item in package.care_package_items.all()
+                    ],
+                }
+                for package in all_packages
+            ]
+            return JsonResponse(packages_data, safe=False, status=200)
+
+        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+
+@csrf_exempt
+def get_total_packages(request):
+    try:
+        if request.method == "GET":
+            # Retrieve all CarePackage objects
+            all_packages = CarePackage.objects.all()
+
+            # Calculate the sum of all quantities
+            total_quantity = sum(package.quantity for package in all_packages)
+
+            # Get the latest package based on creation time
+            latest_package = all_packages.order_by('created_at').last()
+
+            if not latest_package:
+                # No packages found, return response with None
+                return JsonResponse({"total_quantity": total_quantity, "latest_package": None}, status=200)
+
+            # Prepare data for the latest package
+            latest_package_data = {
+                'name': latest_package.name,
+                'quantity': latest_package.quantity,
+                'created_at': latest_package.created_at.strftime('%B %d, %Y'), 
+            }
+
+            # Prepare the response data
+            response_data = {
+                "total_quantity": total_quantity,
+                "latest_package": latest_package_data,  
+            }
+
+            return JsonResponse(response_data, status=200)
+
+        return JsonResponse({"error": "Invalid HTTP method. Only GET is allowed."}, status=405)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+
+#INVENTORY------------------------------------------------
+
+class InventoryListCreate(generics.ListCreateAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = [IsStaffUser]
+
+    def perform_create(self, serializer):
         if serializer.is_valid():
-            serializer.save(user=request.user)  # Automatically assign the logged-in user
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save()
+        else:
+            print(serializer.errors)
+
+class InventoryRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = [IsStaffUser]
+
+
+
+class UpdateProductQuantity(APIView):
+    permission_classes = [IsStaffUser]
+    def patch(self, request, pk):
+        try:
+            product = Inventory.objects.get(pk=pk)
+        except Inventory.DoesNotExist:
+            return Response({"detail": "Product not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update the quantity of the product
+        product.quantity = request.data.get('quantity', product.quantity)
+        product.save()
+
+        # Return the updated product
+        return Response(InventorySerializer(product).data, status=status.HTTP_200_OK)
+
+
+
+@api_view(['PATCH'])
+def update_product(request, pk):
+    try:
+        product = Inventory.objects.get(pk=pk)
+    except Inventory.DoesNotExist:
+        return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Update the fields
+    serializer_product = InventorySerializer(product, data=request.data, partial=True)
+    if serializer_product.is_valid():
+        updated_product = serializer_product.save()
+
+        # If quantity goes to zero, delete the product
+        if updated_product.quantity == 0:
+            updated_product.delete()
+            return Response({'message': 'Product deleted due to quantity being 0'}, status=status.HTTP_204_NO_CONTENT)
+
+        return Response(serializer_product.data, status=status.HTTP_200_OK)
+
+    return Response(serializer_product.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+#ORDERHISTORY---------------------------------------------
+
+
+class OrderHistoryView(APIView):
+    permission_classes = [IsStaffUser]
+
+    def get(self, request):
+        try:
+            # Fetch all orders, and count total number of orders
+            orders = OrderHistory.objects.all()
+
+            # Count the total number of orders
+            total_orders = orders.count()
+
+            # Get the most recent order (assuming orders have an 'order_date' field)
+            latest_order = orders.order_by('order_date').last()
+
+            # If there's no order yet
+            if not latest_order:
+                return Response({"total_orders": total_orders, "latest_order": None})
+
+            # Extract relevant information about the most recent order, including user details
+            latest_order_data = {
+                'order_id': latest_order.id,
+                'order_date': latest_order.order_date.strftime('%B %d, %Y'),
+                'status': latest_order.status,
+                'user_first_name': latest_order.user.first_name if latest_order.user else None,
+                'user_last_name': latest_order.user.last_name if latest_order.user else None,
+            }
+
+            # Return the total orders and the most recent order information
+            return Response({
+                'total_orders': total_orders,
+                'latest_order': latest_order_data
+            })
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
 
 
 class UserOrderHistoryView(APIView):
@@ -506,8 +482,8 @@ class UserOrderHistoryView(APIView):
 
     def get(self, request):
         try:
-            # Get the current user's ID
-            user_id = request.user.id
+            # Get user_id from query parameters, default to the authenticated user if not provided
+            user_id = request.query_params.get("user_id", request.user.id)
             print(user_id)
             # Fetch all orders belonging to the current user
             user_orders = OrderHistory.objects.filter(user_id=user_id)
@@ -540,8 +516,6 @@ class UserOrderHistoryView(APIView):
             # Handle unexpected errors
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-from datetime import datetime
 
 class OrderConfirmationView(APIView):
     permission_classes = [IsAuthenticated]
@@ -597,3 +571,77 @@ class OrderConfirmationView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+
+class OrderHistoryCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        serializer = OrderHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)  # Automatically assign the logged-in user
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+#ADMIN DASHBOARD------------------------------------
+
+class InventoryCategorySummary(generics.GenericAPIView):
+    permission_classes = [IsStaffUser]
+
+    def get(self, request):
+        # Aggregate inventory quantity by category
+        category_summary = (
+            Inventory.objects
+            .values('category')
+            .annotate(total_quantity=Sum('quantity'))
+            .order_by('category')
+        )
+        
+        # Get the current time
+        now = timezone.now()
+
+        # Retrieve the next package with the nearest (earliest) delivery date that has not passed
+        package = CarePackage.objects.filter(delivery_date__gte=now).order_by('delivery_date').first()
+
+        # If no package is found with a future delivery date, handle appropriately
+        if package:
+            package_data = {
+                "delivery_date": package.delivery_date.strftime('%B %d, %Y')
+            }
+        else:
+            package_data = {
+                "delivery_date": None  # No future packages
+            }
+
+        response_data = {
+            'category_summary': category_summary,
+            'nearest_delivery': package_data
+        }
+        return Response(response_data)
+
+
+class OrderStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def patch(self, request, *args, **kwargs):
+        # Fetch the order history object by its ID
+        order_history_id = kwargs.get('pk')
+        try:
+            order_history = OrderHistory.objects.get(id=order_history_id)
+        except OrderHistory.DoesNotExist:
+            return Response({'detail': 'Order history not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the provided status is valid
+        new_status = request.data.get('status')
+        if new_status not in dict(CarePackageStatus.choices):
+            return Response({'detail': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update the status of the order history
+        order_history.status = new_status
+        order_history.save()
+
+        # Return the updated data
+        serializer = OrderHistorySerializer(order_history)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+#-----------------------------------------------------

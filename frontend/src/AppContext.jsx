@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
 
-// Create the context
+
 const AppContext = createContext();
 
-// AppProvider wraps your application and provides context
+
 export const AppProvider = ({ children }) => {
   const [selectedPackage, setSelectedPackage] = useState(null);
 
@@ -14,7 +14,7 @@ export const AppProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the context
+
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) {

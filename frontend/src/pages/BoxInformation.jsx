@@ -2,16 +2,17 @@ import "../styles/BoxInformation.css";
 import "../styles/Box.css";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from "../api"; // Ensure this is correctly configured
+import api from "../api"; 
 import { useAppContext } from '../AppContext';
 
 
 function BoxInformation() {
   const { setSelectedPackage } = useAppContext();
+  const [reserve, setReserve] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [orderInfo, setOrderInfo] = useState({
-    packageDate: "", // Initialize packageDate
+    packageDate: "", 
     pickupLocation: "",
     packageContents: "",
   });
@@ -25,19 +26,19 @@ function BoxInformation() {
  
   
   const openModal = () => {
-    setIsModalOpen(true); // Open the modal
-    fetchAvailablePackages(orderInfo.packageDate); // Pass the issue date to fetch available packages
+    setIsModalOpen(true); 
+    fetchAvailablePackages(orderInfo.packageDate); 
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // Close the modal
+    setIsModalOpen(false); 
   };
 
   const fetchAvailablePackages = async (createDate) => {
     createDate = null;
     try {
         console.log("Create date: ", createDate);
-        // If createDate is not provided, fetch the oldest package date from the backend
+     
         if (!createDate) {
             const dateResponse = await api.get("/api/care-packages/oldest-package-date/");
             createDate = dateResponse.data.oldest_date;
@@ -46,20 +47,20 @@ function BoxInformation() {
 
         if (!createDate) {
             console.error("No valid create date found.");
-            return; // Stop execution if no date is available
+            return; 
         }
 
-        // Extract only the date portion
+    
         const formattedDate = new Date(createDate).toISOString().slice(0, 10);
         
-        // Fetch available packages for the given date
+      
         const response = await api.get(`/api/care-packages/same-create-date/?create_date=${formattedDate}`);
         console.log("Initial response:", response.data);
 
-        // Filter out packages with quantity 0
+     
         const filteredPackages = response.data.filter(pkg => pkg.quantity > 0); 
         console.log("Filtered packages:", filteredPackages);
-        setAvailablePackages(filteredPackages); // Update state with the filtered response data
+        setAvailablePackages(filteredPackages); 
     } catch (error) {
         console.error("Error fetching available packages:", error.response?.data || error.message);
     }
@@ -67,7 +68,7 @@ function BoxInformation() {
 
 
 const handlePackageSelect = (pkg) => {
-  setSelectedPackage(pkg);
+  
   console.log("Package INFO:", pkg);
 
   setOrderInfo({
@@ -77,6 +78,7 @@ const handlePackageSelect = (pkg) => {
   });
   console.log("Order:", orderInfo);
   setIsModalOpen(false);
+  setReserve(pkg);
 };
 
 
@@ -90,17 +92,16 @@ const handlePackageSelect = (pkg) => {
  
 
   function formatContents(contents) {
-    if (contents.length === 0) return ''; // Handle empty array
-    return contents.map(item => `${item.item_name}: ${item.quantity}`).join(', '); // Join item names and quantities
-  }
+    if (contents.length === 0) return '';
+    return contents.map(item => `${item.item_name}: ${item.quantity}`).join(', '); }
   
 
-  // Disable background scroll when modal is open
+
   useEffect(() => {
     if (isModalOpen) {
-      document.body.style.overflow = 'hidden'; // Disable background scroll
+      document.body.style.overflow = 'hidden'; 
     } else {
-      document.body.style.overflow = 'auto'; // Re-enable background scroll
+      document.body.style.overflow = 'auto'; 
     }
   }, [isModalOpen]);
 
@@ -206,8 +207,7 @@ const handlePackageSelect = (pkg) => {
                         className="package-contents-textarea"
                         value={orderInfo.packageContents}
                         readOnly
-                       // rows={Math.max(3, orderInfo.packageContents.split(', ').length)} // Dynamically adjusts rows
-                        style={{ resize: "none" }} // Prevents manual resizing by the user
+                        style={{ resize: "none" }} 
                       />
                       <div className="form-row">                       
                       <div className="form-group">
@@ -223,10 +223,16 @@ const handlePackageSelect = (pkg) => {
                         </div>  
                     </div>
                   </div>
-                  
-                  <button className="reserve-button" onClick={() => navigate('/userdash/ordercart')}>
-                    Reserve My Box
-                  </button>
+                      <button
+                        className="reserve-button"
+                        onClick={() => {
+                          setSelectedPackage(reserve); 
+                          navigate('/userdash/ordercart'); 
+                        }}
+                      >
+                        Reserve My Box
+                      </button>
+
                 </form>
               </div>
            
@@ -251,19 +257,19 @@ const handlePackageSelect = (pkg) => {
                 <div className="package-list">
                 {availablePackages.length > 0 ? (
                     availablePackages.map((pkg, index) => {
-                      // Generate the letter (A, B, C, ...) based on the index
-                      const boxLabel = String.fromCharCode(65 + index); // 65 is the ASCII code for 'A'
+                   
+                      const boxLabel = String.fromCharCode(65 + index);
 
-                      // Define an array of colors to be used for the buttons
-                      const colors = ['#F6C932', '#174bda', '#d90f13', '#FFD700', '#8A2BE2']; // Example colors
+                    
+                      const colors = ['#F6C932', '#174bda', '#d90f13', '#FFD700', '#8A2BE2']; 
 
-                      // Assign a color based on the index
-                      const buttonColor = colors[index % colors.length]; // Modulo ensures it loops through the colors if there are more boxes than colors
+          
+                      const buttonColor = colors[index % colors.length]; 
 
                       return (
                         <button
                           key={index}
-                          onClick={() => handlePackageSelect(pkg)} // Close modal and update order info
+                          onClick={() => handlePackageSelect(pkg)} 
                           className="package-button"
                           style={{ backgroundColor: buttonColor }}
                         >

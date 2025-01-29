@@ -34,14 +34,14 @@
   .navbar-layout .form-inline {
     padding: 10px;
     display: flex;
-    flex-wrap: wrap; /* Adjust layout when screen width is smaller */
+    flex-wrap: wrap; 
     justify-content: center;
     align-items: center;
     gap: 20px;
   }
   
   .navbar-layout .btn {
-    flex-shrink: 0; /* Prevent buttons from shrinking */
+    flex-shrink: 0; 
     padding: 10px 15px;
     font-weight: bold;
     border-radius: 5px;
@@ -70,7 +70,7 @@
   }
   
   .navbar-layout .btn-logout-btn {
-    margin-left: 370px;
+    margin-left: 550px;
     background-color: #d90f13;
     border-color: #d90f13;
     color: white;
@@ -83,28 +83,28 @@
   }
   
   .full-height {
-    min-height: 100vh; /* Ensure full height of the viewport */
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
   }
   
   .container {
-    flex: 1; /* Allow the container to grow and fill remaining space */
+    flex: 1;
     display: flex;
     flex-direction: column;
   }
   
   .header {
-    flex-shrink: 0; /* Prevent the header from shrinking */
+    flex-shrink: 0; 
   }
   
   .content-container {
-    flex: 1; /* Allow the content to expand and fill remaining space */
-    padding: 20px; /* Optional padding */
+    flex: 1; 
+    padding: 20px; 
     display: flex;
-    justify-content: center; /* Center content horizontally */
+    justify-content: center; 
     align-items: flex-start;
-    background-color: white; /* Match the background */
+    background-color: white; 
   }
   
   .top-left-img-layout {

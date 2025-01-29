@@ -5,13 +5,13 @@
 }
 
 .form-container {
-    width: 120%; /* Adjusts based on screen size */
-    max-width: 600px; /* Restricts the maximum width */
+    width: 120%; 
+    max-width: 600px; 
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
-    margin: 0 auto; /* Centers horizontally */
+    margin: 0 auto;
 }
 
 
@@ -64,10 +64,10 @@ background-color: #0056b3;
 }
 
 .form-footer a{
-    display: block; /* Makes <p> a block-level element */
-    text-align: center; /* Centers text inside the <p> */
+    display: block; 
+    text-align: center; 
     font-size: 15px;
-    margin: 0 auto; /* Cente*/
+    margin: 0 auto;
 }
 
 .form-footer {
@@ -75,14 +75,14 @@ background-color: #0056b3;
     font-family: 'Poppins', var(--default-font-family);
     font-size: 20px;
     color: #333;
-    text-align: center; /* Ensures the content inside .form-footer is centered */
+    text-align: center; 
 }
 
 .form-footer p {
-    display: block; /* Makes <p> a block-level element */
-    text-align: center; /* Centers text inside the <p> */
+    display: block; 
+    text-align: center; 
     font-size: 15px;
-    margin: 0 auto; /* Centers the <p> itself inside the container */
+    margin: 0 auto; 
 }
 
 
@@ -120,11 +120,11 @@ background-color: #0056b3;
 }
 
 .form-logo {
-    width: 220px; /* Adjust to your desired size */
-    height: auto; /* Maintain aspect ratio */
-    display: block; /* Center horizontally */
-    margin: 0 auto 20px; /* Center within the container */
-    object-fit: contain; /* Ensure the image fits within its dimensions */
+    width: 220px;
+    height: auto;
+    display: block; 
+    margin: 0 auto 20px; 
+    object-fit: contain; 
 }
 
 

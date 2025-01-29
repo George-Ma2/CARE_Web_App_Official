@@ -1,4 +1,4 @@
-/* Root and Global Styles */
+
 :root {
     --primary-color: #174bda;
     --secondary-color: #d90f13;
@@ -16,7 +16,7 @@
     padding: 0;
   }
   
-  /* Navbar Styles */
+
 
   .navbar-oc {
     background-color: #f8f9fa;
@@ -224,7 +224,7 @@
   
 }
 
-/* Center-align text in the second column */
+
 .footer-column-oc:nth-child(2) {
   display: flex;
   flex-direction: column;
@@ -232,14 +232,14 @@
   justify-content: center;
 }
 
-/* Highlight style for the first paragraph in the second column */
+
 .footer-column-oc:nth-child(2) .highlight {
   font-size: 18px;
   font-weight: bold;
   color: #F6C932;
   margin-bottom: 10px;
 }
-/* Footer column styles */
+
 .footer-column-oc:nth-child(3) {
   display: flex;
   flex-direction: column;
@@ -248,7 +248,7 @@
   text-align: center;
 }
 
-/* "Follow Us" heading */
+
 .footer-column-oc:nth-child(3) h2 {
   font-size: 24px;
   color: #a4d7f0;
@@ -256,14 +256,14 @@
   margin-bottom: 15px;
 }
 
-/* Social media links list */
+
 .footer-column-oc:nth-child(3) ul.social-links {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-/* Social media links */
+
 .footer-column-oc:nth-child(3) ul.social-links li {
   margin-bottom: 10px;
 }
