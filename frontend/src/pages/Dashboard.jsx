@@ -3,6 +3,7 @@ import api from "../api";
 import ReactECharts from "echarts-for-react";
 import "../styles/Dashboard.css";
 
+
 const InventoryDashboard = () => {
     const [products, setProducts] = useState([]);
     const [students, setStudents] = useState([]);
@@ -12,7 +13,86 @@ const InventoryDashboard = () => {
     const [orders, setOrders] = useState({ total_orders: 0, latest_order: null });  
     const [totalPackages, setTotalPackages] = useState(0); 
     const [nearestDelivery, setNearestDelivery] = useState([]);
+    const [orderStatus, setOrderStatus] = useState([]);
+    const [orderedStudents, setOrderedStudents] = useState([]);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedStudent, setSelectedStudent] = useState(null);
 
+    const handleCheckboxChange = async (orderId, currentStatus) => {
+        try {
+            const newStatus = currentStatus === "Picked Up" ? "Ordered" : "Picked Up";
+
+            const response = await api.patch(`api/orderhistory/${orderId}/status/`, {
+                status: newStatus,
+            });
+
+            console.log("Before update:", orderedStudents);
+            setOrderedStudents((prevOrders) => [...prevOrders.map((entry) => ({
+                ...entry,
+                orders: entry.orders
+                    .map((order) =>
+                        order.id === orderId ? { ...order, status: newStatus } : order
+                    )
+                    .filter((order) => order.status === "Ordered"), // Remove "Picked Up" orders
+            })).filter((entry) => entry.orders.length > 0)]);
+
+            console.log("After update:", orderedStudents);
+
+            console.log("Status updated successfully", response.data);
+            closeConfirmModal();
+        } catch (err) {
+            console.error("Error updating order status:", err);
+            setError(err.message);
+        }
+    };
+
+    const fetchStudents = async () => {
+        try {
+            const response = await api.get("api/students/");
+            setStudents(response.data.students);
+        } catch (err) {
+            console.error("Error fetching students:", err);
+            setError(err.message);
+        }
+    };
+
+    //Add error if no order history is present
+    const fetchUserOrders = async (userId) => {
+        try {
+            const response = await api.get(`api/user/order-history/?user_id=${userId}`);
+            return response.data.orders || [];
+        } catch (err) {
+            console.error(`Error fetching orders for user ${userId}:`, err);
+            return [];
+        }
+    };
+
+    const fetchAllOrders = async () => {
+        try {
+            const ordersByStudent = await Promise.all(
+                students.map(async (student) => {
+                    const orders = await fetchUserOrders(student.id);
+                    const filteredOrders = orders.filter((order) => order.status === "Ordered");
+    
+                    return filteredOrders.length > 0 ? { student, orders: filteredOrders } : null;
+                })
+            );
+    
+            setOrderedStudents([...ordersByStudent.filter(Boolean)]);
+        } catch (err) {
+            console.error("Error fetching orders:", err);
+            setError(err.message);
+        }
+    };
+    
+    // Call `fetchAllOrders` inside `useEffect`
+    useEffect(() => {
+        if (students.length > 0) {
+            fetchAllOrders();
+        }
+    }, [students]);
+    
 
     const fetchDashboardData = async () => {
         try {
@@ -26,18 +106,6 @@ const InventoryDashboard = () => {
             setError(err.message);
         }
     };
-
-   
-    const fetchStudents = async () => {
-        try {
-            const response = await api.get("api/students/");
-            setStudents(response.data.students); 
-        } catch (err) {
-            console.error("Error fetching students:", err);
-            setError(err.message);
-        }
-    };
-
 
     const fetchOrderHistory = async () => {
         try {
@@ -68,6 +136,7 @@ const InventoryDashboard = () => {
     useEffect(() => {
         fetchDashboardData();
         fetchStudents();
+        fetchUserOrders();
         fetchOrderHistory();
         fetchTotalPackages();
     }, []); 
@@ -112,6 +181,20 @@ const getChartOptions = () => {
     };
 };
 
+const openConfirmModal = (order, student) => {
+    setSelectedOrder(order);
+    setSelectedStudent(student);
+    setShowConfirmModal(true);
+};
+
+const closeConfirmModal = () => {
+    setSelectedOrder(null);
+    setSelectedStudent(null);
+    fetchAllOrders();
+    setShowConfirmModal(false);
+
+};
+
   
     const latestOrder = orders.latest_order;  
     
@@ -135,29 +218,77 @@ const getChartOptions = () => {
 
                 <div className="col-lg-6">
                     <div className="card shadow-sm p-4">
-                        <h5 className="card-title">Student Handout Validation</h5>
+                        <h5 className="card-title">Pending Orders</h5>
                         <div className="card-body">
-                            {students.length > 0 ? (
+                            {orderedStudents.length > 0 ? (
                                 <ul className="list-group">
-                                    {students.map((student) => (
-                                        <li key={student.id} className="list-group-item d-flex align-items-center justify-content-between">
-                                            <div>
-                                                <strong>{student.first_name}</strong> <strong>{student.last_name}</strong><br />
-                                                <small>Email: {student.email}</small>
-                                            </div>
-                                            <input
-                                                type="checkbox"
-                                                className="form-check-input"
-                                            />
-                                        </li>
-                                    ))}
+                                    {orderedStudents.map(({ student, orders }) =>
+                                        orders.map((order) => (
+                                            <li key={order.id} className="list-group-item d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <strong>{student.first_name} {student.last_name}</strong>
+                                                    <br />
+                                                    <small><strong>Order Date:</strong> {order.order_date}</small>
+                                                    <br />
+                                                    <small><strong>Current Status:</strong> {order.status}</small>
+                                                </div>
+                                                <input
+                                                    type="checkbox"
+                                                    className="form-check-input"
+                                                    onChange={() => openConfirmModal(order, student)}
+                                                />
+                                            </li>
+                                        ))
+                                    )}
                                 </ul>
                             ) : (
-                                <p>No students assigned to packages</p>
+                                <p>No pending orders</p>
                             )}
                         </div>
                     </div>
                 </div>
+                
+      {/* Modal */}
+      {showConfirmModal && (
+        <div className="modal fade show" id="exampleModalCenter" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLongTitle">Confirm Pickup</h5>
+              </div>
+              <div className="modal-body">
+                <p>Confirm Pick up for the selected order: </p>
+
+                <div className="package-list">
+             
+                    {selectedOrder ? (
+                                 <div>
+                                <strong>{selectedStudent.first_name} {selectedStudent.last_name}</strong>
+                                <br />
+                                <small><strong>Order Date:</strong> {selectedOrder.order_date}</small>
+                                 <br />
+                                 <small><strong>Current Status:</strong> {selectedOrder.status}</small>
+                                </div>
+
+                    ): (
+                    <p>No order selected.</p>
+                  ) }
+                </div>
+              </div>
+
+              <div className="modal-footer">
+              <button
+                          onClick={() => handleCheckboxChange(selectedOrder.order_number, selectedOrder.status)} >
+                          <strong>Confirm Pick Up</strong>
+                        </button>
+                      
+                <button type="button" className="btn btn-secondary" onClick={closeConfirmModal}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
             </div>
 
                      

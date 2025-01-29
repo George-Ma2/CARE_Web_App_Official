@@ -6,7 +6,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import UserSerializer, ProfileSerializer, InventorySerializer, CarePackageSerializer, OrderHistorySerializer
-from .models import Inventory, CarePackage, OrderHistory, CarePackageItem
+from .models import Inventory, CarePackage, OrderHistory, CarePackageItem, CarePackageStatus
 from rest_framework.views import APIView
 from .permissions import IsStaffUser
 from django.views.decorators.csrf import csrf_exempt
@@ -476,8 +476,8 @@ class UserOrderHistoryView(APIView):
 
     def get(self, request):
         try:
-            # Get the current user's ID
-            user_id = request.user.id
+            # Get user_id from query parameters, default to the authenticated user if not provided
+            user_id = request.query_params.get("user_id", request.user.id)
             print(user_id)
             # Fetch all orders belonging to the current user
             user_orders = OrderHistory.objects.filter(user_id=user_id)
@@ -614,4 +614,28 @@ class InventoryCategorySummary(generics.GenericAPIView):
         }
         return Response(response_data)
 
+
+class OrderStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def patch(self, request, *args, **kwargs):
+        # Fetch the order history object by its ID
+        order_history_id = kwargs.get('pk')
+        try:
+            order_history = OrderHistory.objects.get(id=order_history_id)
+        except OrderHistory.DoesNotExist:
+            return Response({'detail': 'Order history not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the provided status is valid
+        new_status = request.data.get('status')
+        if new_status not in dict(CarePackageStatus.choices):
+            return Response({'detail': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update the status of the order history
+        order_history.status = new_status
+        order_history.save()
+
+        # Return the updated data
+        serializer = OrderHistorySerializer(order_history)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 #-----------------------------------------------------
