@@ -99,7 +99,8 @@ const InventoryDashboard = () => {
             const { category_summary, nearest_delivery } = response.data;
             setProducts(category_summary);  
             setNearestDelivery(nearest_delivery);
-            console.log("Delivery:", nearestDelivery);
+
+            console.log("Delivery:", nearest_delivery);
         } catch (err) {
             console.error("Error fetching dashboard data:", err);
             setError(err.message);
@@ -266,7 +267,7 @@ const closeConfirmModal = () => {
                 <h5 className="modal-title" id="exampleModalLongTitle">Confirm Pickup</h5>
               </div>
               <div className="modal-body">
-                <p>Confirm Pick up for the selected order: </p>
+                <p>Confirm pickup for the selected order: </p>
 
                 <div className="package-list">
              
@@ -286,9 +287,9 @@ const closeConfirmModal = () => {
               </div>
 
               <div className="modal-footer">
-              <button
+              <button style={{ backgroundColor: "green", color: "white", border: "none", padding: "10px 15px", borderRadius: "5px" }}
                           onClick={() => handleCheckboxChange(selectedOrder.order_number, selectedOrder.status)} >
-                          <strong>Confirm Pick Up</strong>
+                          <strong>Confirm Pickup</strong>
                         </button>
                       
                 <button type="button" className="btn btn-secondary" onClick={closeConfirmModal}>Close</button>

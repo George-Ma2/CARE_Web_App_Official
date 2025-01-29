@@ -263,8 +263,14 @@ def get_packages_with_same_create_date(request):
             except ValueError:
                 return JsonResponse({"error": "Invalid date format. Use ISO 8601 format."}, status=400)
 
-            # Query packages created on the specified date
-            same_date_packages = CarePackage.objects.filter(created_at__date=create_date_obj)
+             # Get the current date
+            today = timezone.now().date()
+
+            # Query packages created on the specified date and with a future or present delivery date
+            same_date_packages = CarePackage.objects.filter(
+                created_at__date=create_date_obj,
+                delivery_date__gte=today  # Exclude past delivery dates
+            )
 
             # Prepare the response data
             packages_data = [

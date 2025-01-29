@@ -14,54 +14,58 @@ function Calendar() {
 
   useEffect(() => {
     document.title = 'Calendar';
-  
+    
       const fetchPackages = async () => {
         try {
-    
-              
           const profileResponse = await api.get("api/profile/");
-          setUserData(profileResponse.data);
-
+          const userProfile = profileResponse.data; 
+          setUserData(userProfile);
+          console.log("User info:", userProfile);
+    
           const response = await api.get('/api/package/');
           const packages = response.data;
           console.log('Fetched packages:', packages);
-      
-          const orderResponse = await api.get(`/api/user/order-history/?user_id=${userData.id}`);
-          const userOrders = orderResponse.data.orders || []; 
+    
+          const ID = userProfile.id; 
+    
+          let userOrders = [];
+          try {
+            const orderResponse = await api.get(`/api/user/order-history/?user_id=${ID}`);
+            userOrders = orderResponse.data.orders || []; // Ensure it's an array
+          } catch (orderError) {
+            console.warn('No order history found, continuing with an empty array.');
+          }
+    
           console.log('User orders:', userOrders);
-      
-  
+    
           const userOrdersMap = new Map(
             userOrders.map(order => [order.package_id, order.order_number])
           );
-      
+    
           const eventList = packages
             .filter(pkg => pkg.quantity > 0 || userOrdersMap.has(pkg.id)) 
             .map(pkg => {
               const orderNumber = userOrdersMap.get(pkg.id); 
               const isUserOrder = Boolean(orderNumber); 
-      
+    
               return {
                 title: isUserOrder ? `Order #${orderNumber}` : 'Order Pickup Day!',
                 date: pkg.delivery_date,
                 color: isUserOrder ? '#ac3fca' : '#28A745', 
               };
             });
-      
+    
           console.log('Event list:', eventList);
-      
-       
           setEvents(eventList);
         } catch (error) {
-          console.error('Error fetching package details or user order history:', error.response || error.message);
+          console.error('Error fetching package details:', error.response || error.message);
         }
       };
-      
+    
+      fetchPackages();
+    }, []);
 
-
-  fetchPackages();
-}, []);
-
+    
 const handleLogout = () => {
   localStorage.clear();
   navigate('/login');

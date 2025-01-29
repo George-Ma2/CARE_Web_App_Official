@@ -8,6 +8,7 @@ import { useAppContext } from '../AppContext';
 
 function BoxInformation() {
   const { setSelectedPackage } = useAppContext();
+  const [reserve, setReserve] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [orderInfo, setOrderInfo] = useState({
@@ -67,7 +68,7 @@ function BoxInformation() {
 
 
 const handlePackageSelect = (pkg) => {
-  setSelectedPackage(pkg);
+  
   console.log("Package INFO:", pkg);
 
   setOrderInfo({
@@ -77,6 +78,7 @@ const handlePackageSelect = (pkg) => {
   });
   console.log("Order:", orderInfo);
   setIsModalOpen(false);
+  setReserve(pkg);
 };
 
 
@@ -221,10 +223,16 @@ const handlePackageSelect = (pkg) => {
                         </div>  
                     </div>
                   </div>
-                  
-                  <button className="reserve-button" onClick={() => navigate('/userdash/ordercart')}>
-                    Reserve My Box
-                  </button>
+                      <button
+                        className="reserve-button"
+                        onClick={() => {
+                          setSelectedPackage(reserve); 
+                          navigate('/userdash/ordercart'); 
+                        }}
+                      >
+                        Reserve My Box
+                      </button>
+
                 </form>
               </div>
            

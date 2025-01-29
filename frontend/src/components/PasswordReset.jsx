@@ -20,8 +20,7 @@ const PasswordReset = () => {
         setConfirmPassword(e.target.value);
     };
 
-    const passwordRegex = /^(?=.[a-z])(?=.[A-Z])(?=.[!@#$%^&(),.?":_{}|<>]).{8,}$/; 
-    // password must contain at least 1 lower and upper case letter, 1 symbol and a minimum of 8 characters
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&(),.?":_{}|<>]).{8,}$/;
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
