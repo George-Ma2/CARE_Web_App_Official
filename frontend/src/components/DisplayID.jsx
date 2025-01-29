@@ -57,33 +57,7 @@ function DisplayID() {
     }
   };
 
-  const handleSubmitPhoto = async () => {
-    const formData = new FormData();
-    formData.append("photo_id", photoId); 
 
- 
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-    }
-
-    
-    try {
-       
-        const response = await api.patch("api/profile/update/", formData);
-
-        console.log("Response:", response.data);
-        alert("Photo uploaded successfully!");
-
-      
-        setUserData({ ...userData, profile: { ...userData.profile, photo_base64: response.data.photo_id } });
-    } catch (error) {
-        console.error("Error uploading photo:", error);
-        alert("There was an error uploading your photo.");
-    }
-};
-
-
-  
 
   if (loading) {
     return <p>Loading...</p>;

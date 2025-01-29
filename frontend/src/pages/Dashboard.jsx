@@ -13,11 +13,11 @@ const InventoryDashboard = () => {
     const [orders, setOrders] = useState({ total_orders: 0, latest_order: null });  
     const [totalPackages, setTotalPackages] = useState(0); 
     const [nearestDelivery, setNearestDelivery] = useState([]);
-    const [orderStatus, setOrderStatus] = useState([]);
     const [orderedStudents, setOrderedStudents] = useState([]);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
+    const [checkedOrder, setCheckedOrder] = useState({});
 
     const handleCheckboxChange = async (orderId, currentStatus) => {
         try {
@@ -34,11 +34,10 @@ const InventoryDashboard = () => {
                     .map((order) =>
                         order.id === orderId ? { ...order, status: newStatus } : order
                     )
-                    .filter((order) => order.status === "Ordered"), // Remove "Picked Up" orders
+                    .filter((order) => order.status === "Ordered"), 
             })).filter((entry) => entry.orders.length > 0)]);
 
             console.log("After update:", orderedStudents);
-
             console.log("Status updated successfully", response.data);
             closeConfirmModal();
         } catch (err) {
@@ -57,7 +56,7 @@ const InventoryDashboard = () => {
         }
     };
 
-    //Add error if no order history is present
+    
     const fetchUserOrders = async (userId) => {
         try {
             const response = await api.get(`api/user/order-history/?user_id=${userId}`);
@@ -86,7 +85,7 @@ const InventoryDashboard = () => {
         }
     };
     
-    // Call `fetchAllOrders` inside `useEffect`
+  
     useEffect(() => {
         if (students.length > 0) {
             fetchAllOrders();
@@ -185,6 +184,7 @@ const openConfirmModal = (order, student) => {
     setSelectedOrder(order);
     setSelectedStudent(student);
     setShowConfirmModal(true);
+ 
 };
 
 const closeConfirmModal = () => {
@@ -192,8 +192,10 @@ const closeConfirmModal = () => {
     setSelectedStudent(null);
     fetchAllOrders();
     setShowConfirmModal(false);
+    setCheckedOrder({});
 
 };
+
 
   
     const latestOrder = orders.latest_order;  
@@ -217,36 +219,43 @@ const closeConfirmModal = () => {
                 </div>
 
                 <div className="col-lg-6">
-                    <div className="card shadow-sm p-4">
-                        <h5 className="card-title">Pending Orders</h5>
-                        <div className="card-body">
-                            {orderedStudents.length > 0 ? (
-                                <ul className="list-group">
-                                    {orderedStudents.map(({ student, orders }) =>
-                                        orders.map((order) => (
-                                            <li key={order.id} className="list-group-item d-flex align-items-center justify-content-between">
-                                                <div>
-                                                    <strong>{student.first_name} {student.last_name}</strong>
-                                                    <br />
-                                                    <small><strong>Order Date:</strong> {order.order_date}</small>
-                                                    <br />
-                                                    <small><strong>Current Status:</strong> {order.status}</small>
-                                                </div>
-                                                <input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    onChange={() => openConfirmModal(order, student)}
-                                                />
-                                            </li>
-                                        ))
-                                    )}
-                                </ul>
-                            ) : (
-                                <p>No pending orders</p>
-                            )}
-                        </div>
-                    </div>
-                </div>
+    <div className="card shadow-sm p-4">
+        <h5 className="card-title">Pending Orders</h5>
+        <div className="card-body" style={{ maxHeight: "300px", overflowY: "auto" }}>
+            {orderedStudents.length > 0 ? (
+                <ul className="list-group">
+                    {orderedStudents.map(({ student, orders }) =>
+                        orders.map((order) => (
+                            <li key={order.order_number} className="list-group-item d-flex align-items-center justify-content-between">
+                                <div>
+                                    <strong>{student.first_name} {student.last_name}</strong>
+                                    <br />
+                                    <small><strong>Order Date:</strong> {order.order_date}</small>
+                                    <br />
+                                    <small><strong>Current Status:</strong> {order.status}</small>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    checked={!!checkedOrder[order.order_number]} 
+                                    onChange={() => {
+                                        setCheckedOrder((prev) => ({
+                                            ...prev,
+                                            [order.order_number]: !prev[order.order_number] 
+                                        }));
+                                        openConfirmModal(order, student);
+                                    }}      
+                                />
+                            </li>
+                        ))
+                    )}
+                </ul>
+            ) : (
+                <p>No pending orders</p>
+            )}
+        </div>
+    </div>
+</div>
                 
       {/* Modal */}
       {showConfirmModal && (

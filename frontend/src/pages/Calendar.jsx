@@ -10,21 +10,23 @@ function Calendar() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [orders, setOrders] = useState([]);  
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     document.title = 'Calendar';
   
-
-
       const fetchPackages = async () => {
         try {
     
+              
+          const profileResponse = await api.get("api/profile/");
+          setUserData(profileResponse.data);
+
           const response = await api.get('/api/package/');
           const packages = response.data;
           console.log('Fetched packages:', packages);
       
-
-          const orderResponse = await api.get('/api/user/order-history/');
+          const orderResponse = await api.get(`/api/user/order-history/?user_id=${userData.id}`);
           const userOrders = orderResponse.data.orders || []; 
           console.log('User orders:', userOrders);
       
@@ -32,7 +34,6 @@ function Calendar() {
           const userOrdersMap = new Map(
             userOrders.map(order => [order.package_id, order.order_number])
           );
-      
       
           const eventList = packages
             .filter(pkg => pkg.quantity > 0 || userOrdersMap.has(pkg.id)) 
