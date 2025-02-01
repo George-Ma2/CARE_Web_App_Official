@@ -56,7 +56,7 @@ function BoxInformation() {
       
         const response = await api.get(`/api/care-packages/same-create-date/?create_date=${formattedDate}`);
         console.log("Initial response:", response.data);
-
+        console.log("Formatted date:", formattedDate);
      
         const filteredPackages = response.data.filter(pkg => pkg.quantity > 0); 
         console.log("Filtered packages:", filteredPackages);

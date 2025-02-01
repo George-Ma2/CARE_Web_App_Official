@@ -216,31 +216,30 @@ class CarePackageDeleteView(APIView):
 def get_oldest_package_date(request):
     """
     View to fetch the oldest package's creation date, considering only packages
-    with a quantity greater than zero. If the oldest package has a quantity of zero,
-    it selects the next closest package with a valid quantity.
+    with a quantity greater than zero, a status that is not "Out of Stock",
+    and a delivery date that has not passed.
     """
     try:
-        # Query the oldest package based on `created_at` with a quantity greater than 0
-        oldest_package = CarePackage.objects.filter(quantity__gt=0).order_by('created_at').first()
+        # Get the current date
+        today = timezone.now().date()
+
+        # Query the oldest package based on `created_at`, filtering out packages that are out of stock
+        # and those with past delivery dates
+        oldest_package = CarePackage.objects.filter(
+            quantity__gt=0,
+            delivery_date__gte=today
+        ).exclude(status="Out of Stock").order_by('created_at').first()
         
         if oldest_package:
-            # If the oldest package has a valid quantity, return its creation date
+            # If the oldest package meets the criteria, return its creation date
             return JsonResponse({'oldest_date': oldest_package.created_at.isoformat()})
         else:
-            # If no eligible package is found, query the next closest package with quantity > 0
-            next_package = CarePackage.objects.filter(quantity__gt=0).order_by('created_at').skip(1).first()
-
-            if next_package:
-                # Return the next closest package's creation date
-                return JsonResponse({'oldest_date': next_package.created_at.isoformat()})
-            else:
-                # Handle the case where no eligible packages are found
-                return JsonResponse({'oldest_date': None, 'message': 'No packages with valid quantity found'}, status=404)
+            # Handle the case where no eligible packages are found
+            return JsonResponse({'oldest_date': None, 'message': 'No valid packages found'}, status=404)
 
     except Exception as e:
         # Handle unexpected errors
         return JsonResponse({'error': str(e)}, status=500)
-
 
 
 

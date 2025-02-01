@@ -110,7 +110,7 @@ const Inventory = () => {
                                 <button 
                                     className="delete-btn-inv" 
                                     onClick={() => {
-                                        if (window.confirm("Are you sure you want to delete this care package?")) {
+                                        if (window.confirm("Are you sure you want to delete this product?")) {
                                             handleDeleteProduct(product.id);
                                         }
                                     }}
