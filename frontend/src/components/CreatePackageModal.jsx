@@ -43,7 +43,12 @@ const CreatePackageModal = ({
             return;
         }
 
-        if (!selectedItems.length) {
+        if (!deliveryDate) {
+            alert('Delivery date is required.');
+            return
+        }
+
+        if (!selectedItems.length || selectedItems.every(item => item.quantity === 0)) {
             alert('Please add at least one item to the care package.');
             return;
         }
